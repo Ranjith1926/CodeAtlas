@@ -14,6 +14,7 @@
     },
     "android": {
       "package": "in.tendersoftware.codeatlas",
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#102A43",
         "foregroundImage": "./assets/android-icon-foreground.png",

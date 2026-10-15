@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Link } from 'expo-router';
 import { useTheme } from '../../theme/ThemeProvider';
 import { useAuth } from '../../context/AuthContext';
@@ -40,7 +40,7 @@ export default function RegisterScreen() {
   return (
     <KeyboardAvoidingView
       style={[styles.flex, { backgroundColor: colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior="padding"
     >
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
