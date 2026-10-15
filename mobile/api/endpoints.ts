@@ -287,5 +287,9 @@ export async function getChatMessages(sessionId: string) {
   return raw.map(mapChatMessage);
 }
 
+export async function deleteChatSession(sessionId: string) {
+  await apiFetch<void>(`/chat/sessions/${sessionId}`, { method: 'DELETE' });
+}
+
 // Note: posting a chat message is handled via api/sse.ts (streamChatMessage),
 // not apiFetch, because the response is a text/event-stream, not JSON.

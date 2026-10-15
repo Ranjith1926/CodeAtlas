@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -106,6 +107,21 @@ export default function ChatScreen() {
     });
   }, [input, isOnline, isNew, streamingId, params.sessionId, scrollToEnd]);
 
+  const handleDelete = useCallback(() => {
+    Alert.alert('Delete conversation?', 'This chat history will be permanently deleted.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await chatRepo.deleteSession(params.sessionId, isOnline);
+          queryClient.invalidateQueries({ queryKey: ['chat-sessions'] });
+          router.replace('/(tabs)/ai-tutor');
+        },
+      },
+    ]);
+  }, [params.sessionId, isOnline, queryClient]);
+
   if (isNew && creatingSession) {
     return (
       <View style={[styles.flex, styles.center, { backgroundColor: colors.background }]}>
@@ -120,7 +136,40 @@ export default function ChatScreen() {
       behavior="padding"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <Stack.Screen options={{ title: 'AI Tutor' }} />
+      <Stack.Screen
+        options={{
+          title: 'AI Tutor',
+          // Reaching this screen via a cross-tab deep link (e.g. "Ask AI about
+          // this topic" from Tutorials) makes it the root of this tab's own
+          // stack, so there's no in-stack history to pop — the default header
+          // then omits the back button entirely. Always show one and fall
+          // back to the session list when there's nothing to go back to.
+          headerLeft: () => (
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/ai-tutor'))}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              style={styles.backBtn}
+            >
+              <Ionicons name="arrow-back" size={22} color={colors.text} />
+            </Pressable>
+          ),
+          headerRight: isNew
+            ? undefined
+            : () => (
+                <Pressable
+                  onPress={handleDelete}
+                  hitSlop={12}
+                  accessibilityRole="button"
+                  accessibilityLabel="Delete conversation"
+                  style={styles.backBtn}
+                >
+                  <Ionicons name="trash-outline" size={20} color={colors.danger} />
+                </Pressable>
+              ),
+        }}
+      />
 
       {isLoading ? (
         <LoadingSkeleton rows={4} />
@@ -194,4 +243,5 @@ const styles = StyleSheet.create({
   },
   input: { flex: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, maxHeight: 120, fontSize: 15 },
   sendBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { paddingHorizontal: 4, paddingVertical: 4 },
 });

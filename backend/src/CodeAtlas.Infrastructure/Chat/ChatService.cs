@@ -81,6 +81,20 @@ public class ChatService : IChatService
         return (true, true, session.ContextTopicId);
     }
 
+    public async Task<(bool Found, bool Owned)> DeleteSessionAsync(Guid userId, int sessionId)
+    {
+        var session = await _db.ChatSessions.FirstOrDefaultAsync(s => s.Id == sessionId);
+        if (session == null) return (false, false);
+        if (session.UserId != userId) return (true, false);
+
+        // ChatMessage -> ChatSession is configured with cascade delete, so
+        // removing the session also removes its messages.
+        _db.ChatSessions.Remove(session);
+        await _db.SaveChangesAsync();
+
+        return (true, true);
+    }
+
     public async Task<ChatMessageDto> AddUserMessageAsync(int sessionId, string content)
     {
         var message = new ChatMessage

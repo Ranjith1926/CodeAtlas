@@ -54,6 +54,24 @@ public class ChatController : ControllerBase
         return Ok(messages);
     }
 
+    [HttpDelete("sessions/{id:int}")]
+    public async Task<IActionResult> DeleteSession(int id)
+    {
+        var userId = User.GetUserId();
+        var (found, owned) = await _chatService.DeleteSessionAsync(userId, id);
+        if (!found)
+        {
+            return NotFound(new { error = new { message = $"Chat session {id} was not found.", statusCode = 404 } });
+        }
+
+        if (!owned)
+        {
+            return Forbid();
+        }
+
+        return NoContent();
+    }
+
     [HttpPost("sessions/{id:int}/messages")]
     public async Task PostMessage(int id, [FromBody] PostChatMessageRequest request, CancellationToken ct)
     {

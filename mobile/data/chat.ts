@@ -110,3 +110,16 @@ export async function updateLocalMessageContent(id: string, content: string): Pr
 export async function markMessageSynced(id: string): Promise<void> {
   await runWrite((db) => db.runAsync('UPDATE chat_messages SET pendingSync = 0 WHERE id = ?', [id]));
 }
+
+/** Deletes a conversation server-side (when online) and always purges its local cache. */
+export async function deleteSession(sessionId: string, online: boolean): Promise<void> {
+  if (online) {
+    await api.deleteChatSession(sessionId);
+  }
+  await runWrite((db) =>
+    db.withTransactionAsync(async () => {
+      await db.runAsync('DELETE FROM chat_messages WHERE sessionId = ?', [sessionId]);
+      await db.runAsync('DELETE FROM chat_sessions WHERE id = ?', [sessionId]);
+    })
+  );
+}
