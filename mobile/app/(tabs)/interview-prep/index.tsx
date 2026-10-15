@@ -15,7 +15,7 @@ export default function InterviewPrepLanguagesScreen() {
 
   return (
     <ScreenContainer>
-      <Text style={[styles.title, { color: colors.text }]}>Interview Prep</Text>
+      <Text style={[styles.title, { color: colors.text }]}>Choose a language</Text>
       <Text style={[styles.subtitle, { color: colors.textMuted }]}>
         Pick a language to practice common interview questions by topic.
       </Text>

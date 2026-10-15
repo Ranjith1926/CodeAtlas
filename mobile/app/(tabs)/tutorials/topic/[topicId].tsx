@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../../../theme/ThemeProvider';
@@ -34,7 +34,25 @@ export default function TopicDetailScreen() {
 
   return (
     <ScreenContainer>
-      <Stack.Screen options={{ title: topic.title }} />
+      <Stack.Screen
+        options={{
+          title: topic.title,
+          // Reached via a cross-tab deep link (Home's "Recommended for you")
+          // makes this the root of the Tutorials tab's own stack, so there's
+          // no in-stack history to pop — fall back to the language list.
+          headerLeft: () => (
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/tutorials'))}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              style={styles.backBtn}
+            >
+              <Ionicons name="arrow-back" size={22} color={colors.text} />
+            </Pressable>
+          ),
+        }}
+      />
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>{topic.title}</Text>
         <DifficultyBadge difficulty={topic.difficulty} />
@@ -113,4 +131,5 @@ const styles = StyleSheet.create({
   lessonTitle: { flex: 1, fontSize: 15, fontWeight: '600' },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingVertical: 8, paddingHorizontal: 12 },
+  backBtn: { paddingHorizontal: 4, paddingVertical: 4 },
 });

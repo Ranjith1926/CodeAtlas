@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import { useResponsive } from '../hooks/useResponsive';
@@ -69,7 +70,16 @@ export function AppTabBar({ state, descriptors, navigation }: AppTabBarProps) {
 
     const onPress = () => {
       const event = navigation.emit({ type: 'tabPress' as const, target: route.key, canPreventDefault: true as const });
-      if (!isFocused && !event.defaultPrevented) {
+      if (event.defaultPrevented) return;
+      if (isFocused) {
+        // A cross-tab deep link (e.g. a card on Home) can land a detail
+        // screen as the entire contents of a tab's stack, with no list
+        // screen left underneath it. Without this, tapping that tab's own
+        // icon while already on it does nothing — the standard "tap the
+        // active tab to go back to its root" convention doesn't happen on
+        // its own here, so the tab bar becomes a dead end.
+        router.navigate(`/(tabs)/${route.name}`);
+      } else {
         navigation.navigate(route.name);
       }
     };

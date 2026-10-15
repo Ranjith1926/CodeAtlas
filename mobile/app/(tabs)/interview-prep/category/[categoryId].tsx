@@ -17,7 +17,6 @@ export default function InterviewPrepTopicsScreen() {
   return (
     <ScreenContainer>
       <Stack.Screen options={{ title: 'Topics' }} />
-      <Text style={[styles.title, { color: colors.text }]}>Topics</Text>
 
       {isLoading ? (
         <LoadingSkeleton rows={4} />
@@ -42,7 +41,6 @@ export default function InterviewPrepTopicsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 20, fontWeight: '800', marginBottom: 16 },
   card: { marginBottom: 12 },
   rowHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   cardTitle: { fontSize: 16, fontWeight: '700', flexShrink: 1 },

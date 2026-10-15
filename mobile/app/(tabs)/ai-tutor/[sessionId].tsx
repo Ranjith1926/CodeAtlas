@@ -35,31 +35,10 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState(params.starter ?? '');
   const [streamingId, setStreamingId] = useState<string | null>(null);
-  const [creatingSession, setCreatingSession] = useState(isNew);
-
-  // "new" sessions: create it on the server, then swap the URL to the real
-  // id so the rest of this screen behaves identically either way.
-  useEffect(() => {
-    if (!isNew) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const session = await chatRepo.createSession(undefined, params.contextTopicId);
-        if (cancelled) return;
-        queryClient.invalidateQueries({ queryKey: ['chat-sessions'] });
-        router.replace({
-          pathname: '/(tabs)/ai-tutor/[sessionId]',
-          params: { sessionId: session.id, starter: params.starter ?? '' },
-        });
-      } catch {
-        if (!cancelled) setCreatingSession(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNew]);
+  // Created lazily on first send (see handleSend) and reused across retries
+  // after a failed send, so a flaky first attempt doesn't leave behind one
+  // orphan session per retry.
+  const draftSessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (serverMessages) setMessages(serverMessages);
@@ -71,17 +50,26 @@ export default function ChatScreen() {
 
   const handleSend = useCallback(async () => {
     const content = input.trim();
-    if (!content || !isOnline || isNew || streamingId) return;
+    if (!content || !isOnline || streamingId) return;
     setInput('');
 
-    const userMessage = await chatRepo.addLocalMessage(params.sessionId, 'User', content);
-    const assistantMessage = await chatRepo.addLocalMessage(params.sessionId, 'Assistant', '');
+    let sessionId = params.sessionId;
+    if (isNew) {
+      if (!draftSessionIdRef.current) {
+        const session = await chatRepo.createSession(undefined, params.contextTopicId);
+        draftSessionIdRef.current = session.id;
+      }
+      sessionId = draftSessionIdRef.current;
+    }
+
+    const userMessage = await chatRepo.addLocalMessage(sessionId, 'User', content);
+    const assistantMessage = await chatRepo.addLocalMessage(sessionId, 'Assistant', '');
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
     setStreamingId(assistantMessage.id);
     scrollToEnd();
 
     let accumulated = '';
-    streamChatMessage(params.sessionId, content, {
+    streamChatMessage(sessionId, content, {
       onDelta: (delta) => {
         accumulated += delta;
         const snapshot = accumulated;
@@ -93,6 +81,17 @@ export default function ChatScreen() {
         setStreamingId(null);
         void chatRepo.markMessageSynced(assistantMessage.id);
         void chatRepo.markMessageSynced(userMessage.id);
+        // Only now swap the URL from the "new" draft placeholder to the real
+        // session id — the server has actually persisted this exchange by
+        // this point. Doing this right after creating the session instead
+        // (before the message was even sent) flips `isNew` false and enables
+        // the server-messages fetch while the reply is still streaming; that
+        // fetch would see a session with zero messages yet and wipe the
+        // optimistic UI with an empty list.
+        if (isNew) {
+          queryClient.invalidateQueries({ queryKey: ['chat-sessions'] });
+          router.replace({ pathname: '/(tabs)/ai-tutor/[sessionId]', params: { sessionId } });
+        }
       },
       onError: () => {
         setStreamingId(null);
@@ -103,9 +102,14 @@ export default function ChatScreen() {
               : m
           )
         );
+        // Leave the URL on "new" so the screen keeps showing this local,
+        // unsynced state rather than racing a now-enabled server fetch that
+        // may see an incomplete (or empty) version of this turn. The session
+        // itself is kept in draftSessionIdRef so a retry reuses it instead
+        // of creating another one.
       },
     });
-  }, [input, isOnline, isNew, streamingId, params.sessionId, scrollToEnd]);
+  }, [input, isOnline, isNew, streamingId, params.sessionId, params.contextTopicId, queryClient, scrollToEnd]);
 
   const handleDelete = useCallback(() => {
     Alert.alert('Delete conversation?', 'This chat history will be permanently deleted.', [
@@ -121,14 +125,6 @@ export default function ChatScreen() {
       },
     ]);
   }, [params.sessionId, isOnline, queryClient]);
-
-  if (isNew && creatingSession) {
-    return (
-      <View style={[styles.flex, styles.center, { backgroundColor: colors.background }]}>
-        <LoadingSkeleton rows={2} />
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -206,19 +202,19 @@ export default function ChatScreen() {
           placeholderTextColor={colors.textMuted}
           style={[styles.input, { color: colors.text, backgroundColor: colors.surfaceAlt }]}
           multiline
-          editable={isOnline && !isNew}
+          editable={isOnline}
           accessibilityLabel="Message"
         />
         <Pressable
           onPress={handleSend}
-          disabled={!isOnline || isNew || !input.trim() || Boolean(streamingId)}
+          disabled={!isOnline || !input.trim() || Boolean(streamingId)}
           accessibilityRole="button"
           accessibilityLabel="Send message"
           style={({ pressed }) => [
             styles.sendBtn,
             {
               backgroundColor: colors.primary,
-              opacity: !isOnline || isNew || !input.trim() || streamingId ? 0.4 : pressed ? 0.85 : 1,
+              opacity: !isOnline || !input.trim() || streamingId ? 0.4 : pressed ? 0.85 : 1,
             },
           ]}
         >
@@ -231,7 +227,6 @@ export default function ChatScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  center: { alignItems: 'center', justifyContent: 'center' },
   listContent: { padding: 16, flexGrow: 1 },
   offlineNotice: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 6 },
   inputRow: {

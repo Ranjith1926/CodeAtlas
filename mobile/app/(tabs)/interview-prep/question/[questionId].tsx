@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { ScreenContainer } from '../../../../components/ScreenContainer';
@@ -52,7 +52,25 @@ export default function InterviewQuestionDetailScreen() {
 
   return (
     <ScreenContainer>
-      <Stack.Screen options={{ title: 'Question' }} />
+      <Stack.Screen
+        options={{
+          title: 'Question',
+          // Reached via a cross-tab deep link (Bookmarks) makes this the
+          // root of the Interview Prep tab's own stack, so there's no
+          // in-stack history to pop — fall back to the language list.
+          headerLeft: () => (
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/interview-prep'))}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              style={styles.backBtn}
+            >
+              <Ionicons name="arrow-back" size={22} color={colors.text} />
+            </Pressable>
+          ),
+        }}
+      />
 
       <View style={styles.headerRow}>
         <DifficultyBadge difficulty={question.difficulty} />
@@ -113,4 +131,5 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   practicedCardOuter: { marginTop: 8 },
   practicedCard: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backBtn: { paddingHorizontal: 4, paddingVertical: 4 },
 });

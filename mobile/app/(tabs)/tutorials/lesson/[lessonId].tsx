@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../../../theme/ThemeProvider';
@@ -92,7 +92,25 @@ export default function LessonReaderScreen() {
 
   return (
     <ScreenContainer>
-      <Stack.Screen options={{ title: lesson.title }} />
+      <Stack.Screen
+        options={{
+          title: lesson.title,
+          // Reached via a cross-tab deep link (Home's "Continue Learning" or
+          // Bookmarks) makes this the root of the Tutorials tab's own stack,
+          // so there's no in-stack history to pop — fall back to the list.
+          headerLeft: () => (
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/tutorials'))}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              style={styles.backBtn}
+            >
+              <Ionicons name="arrow-back" size={22} color={colors.text} />
+            </Pressable>
+          ),
+        }}
+      />
 
       <View style={styles.headerRow}>
         <Text style={[styles.title, { color: colors.text }]}>{lesson.title}</Text>
@@ -156,7 +174,9 @@ export default function LessonReaderScreen() {
 
       <View style={styles.navRow}>
         <Card
-          onPress={() => lesson.prevLessonId && router.replace(`/(tabs)/tutorials/lesson/${lesson.prevLessonId}`)}
+          onPress={() => {
+            if (lesson.prevLessonId) router.replace(`/(tabs)/tutorials/lesson/${lesson.prevLessonId}`);
+          }}
           style={[styles.navCardOuter, !lesson.prevLessonId && styles.navDisabled]}
           contentStyle={styles.navCard}
         >
@@ -164,7 +184,9 @@ export default function LessonReaderScreen() {
           <Text style={{ color: colors.text }}>Previous</Text>
         </Card>
         <Card
-          onPress={() => lesson.nextLessonId && router.replace(`/(tabs)/tutorials/lesson/${lesson.nextLessonId}`)}
+          onPress={() => {
+            if (lesson.nextLessonId) router.replace(`/(tabs)/tutorials/lesson/${lesson.nextLessonId}`);
+          }}
           style={[styles.navCardOuter, !lesson.nextLessonId && styles.navDisabled]}
           contentStyle={styles.navCard}
         >
@@ -187,4 +209,5 @@ const styles = StyleSheet.create({
   navCardOuter: { flex: 1 },
   navCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   navDisabled: { opacity: 0.4 },
+  backBtn: { paddingHorizontal: 4, paddingVertical: 4 },
 });

@@ -21,7 +21,7 @@ export default function ChatSessionsScreen() {
   return (
     <ScreenContainer>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>AI Tutor</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Conversations</Text>
         <PrimaryButton title="New chat" onPress={() => router.push('/(tabs)/ai-tutor/new')} />
       </View>
 

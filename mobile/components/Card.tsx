@@ -1,10 +1,10 @@
-import React from 'react';
-import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 
 interface CardProps {
   children: React.ReactNode;
-  onPress?: () => void;
+  onPress?: () => void | Promise<void>;
   /** Outer sizing/position within whatever row or grid holds this card: width, flex, minHeight, margin. */
   style?: StyleProp<ViewStyle>;
   /** How `children` are arranged inside the card's chrome: flexDirection, alignItems, justifyContent, gap, padding overrides. */
@@ -12,8 +12,36 @@ interface CardProps {
   accessibilityLabel?: string;
 }
 
+// Every tap gets visible feedback, even a synchronous one (e.g. a plain
+// navigation call) that would otherwise resolve before a human could see it.
+const MIN_SPINNER_MS = 300;
+
 export function Card({ children, onPress, style, contentStyle, accessibilityLabel }: CardProps) {
   const { colors } = useTheme();
+  const [pending, setPending] = useState(false);
+  const mountedRef = useRef(true);
+  useEffect(() => () => {
+    mountedRef.current = false;
+  }, []);
+
+  const handlePress = useCallback(() => {
+    if (!onPress) return;
+    const start = Date.now();
+    setPending(true);
+    const settle = () => {
+      const remaining = Math.max(0, MIN_SPINNER_MS - (Date.now() - start));
+      setTimeout(() => {
+        if (mountedRef.current) setPending(false);
+      }, remaining);
+    };
+    const result = onPress();
+    if (result && typeof (result as Promise<void>).then === 'function') {
+      (result as Promise<void>).then(settle, settle);
+    } else {
+      settle();
+    }
+  }, [onPress]);
+
   const content = (
     <View
       style={[
@@ -23,6 +51,11 @@ export function Card({ children, onPress, style, contentStyle, accessibilityLabe
       ]}
     >
       {children}
+      {pending && (
+        <View style={[StyleSheet.absoluteFill, styles.overlay, { backgroundColor: colors.card }]}>
+          <ActivityIndicator color={colors.accent} />
+        </View>
+      )}
     </View>
   );
 
@@ -40,7 +73,8 @@ export function Card({ children, onPress, style, contentStyle, accessibilityLabe
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
+      disabled={pending}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       style={({ pressed }) => [style, { opacity: pressed ? 0.85 : 1 }]}
@@ -61,4 +95,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
   },
+  overlay: { alignItems: 'center', justifyContent: 'center', borderRadius: 14 },
 });
