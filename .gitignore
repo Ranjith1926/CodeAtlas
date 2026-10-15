@@ -1,0 +1,19 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/logs/
+
+# Local-only backend secrets (real API keys, signing keys) — see
+# backend/src/CodeAtlas.Api/appsettings.json for the committed placeholders.
+backend/src/CodeAtlas.Api/appsettings.Development.json
+
+# Claude Code session-local files (not project source)
+.claude/
+
+# IDE / OS
+.vs/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

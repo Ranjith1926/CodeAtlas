@@ -1,0 +1,22 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=CodeAtlasDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "Gemini": {
+    "ApiKey": "your-gemini-api-key"
+  },
+  "Jwt": {
+    "SigningKey": "replace-with-a-long-random-local-dev-secret",
+    "Issuer": "CodeAtlas.Api",
+    "Audience": "CodeAtlas.Client",
+    "AccessTokenMinutes": 15,
+    "RefreshTokenDays": 30
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://0.0.0.0:5212"
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "CodeAtlas",
+    "slug": "codeatlas",
+    "scheme": "codeatlas",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "in.tendersoftware.codeatlas"
+    },
+    "android": {
+      "package": "in.tendersoftware.codeatlas",
+      "adaptiveIcon": {
+        "backgroundColor": "#102A43",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-status-bar",
+      "expo-splash-screen"
+    ]
+  }
+}
