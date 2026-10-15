@@ -3,13 +3,34 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import Prism from 'prismjs';
-// Core-only grammars (no DOM plugins): clike is required by both javascript and csharp.
+// Core-only grammars (no DOM plugins). Load order matters: clike underlies
+// javascript/csharp, markup+javascript underlie jsx, javascript underlies
+// typescript.
 import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-sql';
 import { useTheme } from '../theme/ThemeProvider';
 
-export type CodeLanguage = 'javascript' | 'csharp' | 'js' | 'cs' | string;
+export type CodeLanguage =
+  | 'javascript'
+  | 'typescript'
+  | 'csharp'
+  | 'jsx'
+  | 'markup'
+  | 'css'
+  | 'python'
+  | 'sql'
+  | 'js'
+  | 'cs'
+  | 'html'
+  | 'py'
+  | string;
 
 interface CodeBlockProps {
   code: string;
@@ -50,6 +71,12 @@ function normalizeLanguage(language?: CodeLanguage): string {
   const lang = (language ?? 'javascript').toLowerCase();
   if (lang === 'cs' || lang === 'c#' || lang === 'csharp') return 'csharp';
   if (lang === 'js' || lang === 'javascript') return 'javascript';
+  if (lang === 'ts' || lang === 'typescript') return 'typescript';
+  if (lang === 'html' || lang === 'markup' || lang === 'xml') return 'markup';
+  if (lang === 'jsx' || lang === 'tsx' || lang === 'react') return 'jsx';
+  if (lang === 'py' || lang === 'python') return 'python';
+  if (lang === 'react' || lang === 'nextjs') return 'jsx';
+  if (lang === 'dotnet' || lang === 'aspnet-web-api') return 'csharp';
   return Prism.languages[lang] ? lang : 'javascript';
 }
 

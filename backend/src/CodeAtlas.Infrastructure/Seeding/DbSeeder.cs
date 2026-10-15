@@ -47,19 +47,16 @@ public static class DbSeeder
 
         foreach (var language in languages)
         {
-            if (language.Code is "javascript" or "csharp")
+            var jsonPath = Path.Combine(contentDir, $"{language.Code}.json");
+            if (File.Exists(jsonPath))
             {
-                var jsonPath = Path.Combine(contentDir, $"{language.Code}.json");
-                if (File.Exists(jsonPath))
-                {
-                    await SeedFromJsonAsync(db, language, jsonPath, logger);
-                    continue;
-                }
-
-                logger.LogWarning(
-                    "Seed content file not found at {Path} for language '{Code}'. Falling back to a stub topic.",
-                    jsonPath, language.Code);
+                await SeedFromJsonAsync(db, language, jsonPath, logger);
+                continue;
             }
+
+            logger.LogWarning(
+                "Seed content file not found at {Path} for language '{Code}'. Falling back to a stub topic.",
+                jsonPath, language.Code);
 
             await SeedStubAsync(db, language);
         }

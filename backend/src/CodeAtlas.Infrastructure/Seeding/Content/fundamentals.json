@@ -1,0 +1,1170 @@
+{
+  "languageCode": "fundamentals",
+  "categories": [
+    {
+      "name": "Basics",
+      "slug": "basics",
+      "topics": [
+        {
+          "title": "Variables and Data Types",
+          "slug": "variables-and-data-types",
+          "summary": "Learn how to store values in variables and the basic data types every programming language works with.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Declaring Variables",
+              "slug": "declaring-variables",
+              "contentMarkdown": "## Why variables matter\n\nA variable is a named container that holds a value so you can use it later without retyping it. Instead of writing the number `5` everywhere in your program, you give it a name like `score`, and from then on you refer to `score` instead of the raw value.\n\nIn JavaScript there are three keywords used to declare a variable: `let`, `const`, and the older `var`.\n\n- `let` declares a variable that can be reassigned later.\n- `const` declares a variable whose binding cannot be reassigned after it is created — use it by default.\n- `var` is the original way to declare variables in JavaScript. It behaves differently from `let` (it is function-scoped, not block-scoped), and modern code generally avoids it in favor of `let` and `const`.\n\n```js\nlet score = 0;\nscore = score + 10; // reassignment is allowed with let\n\nconst name = \"Alice\"; // this binding can never be reassigned\n```\n\n## Naming rules\n\nA variable name must start with a letter, `_`, or `$`, and can contain letters, digits, `_`, and `$` after that. Names are case-sensitive, so `total` and `Total` are different variables. Most languages also reserve certain words (like `if`, `for`, `class`) so you cannot use them as variable names.\n\n## Dynamic typing\n\nJavaScript is *dynamically typed*: a variable is not locked to one data type. The same variable can hold a number, then later a string, although doing this on purpose usually makes code harder to follow, so it is best avoided.\n\n```js\nlet value = 42;\nvalue = \"now I'm text\"; // legal, but use sparingly\n```\n\nThe general rule in professional code: prefer `const` unless you know the value needs to change, and only use `let` when reassignment is genuinely needed.",
+              "codeExamples": [
+                {
+                  "description": "Declaring and reassigning variables with let and const",
+                  "code": "let score = 0;\nscore = score + 10;\nconsole.log(score);\n\nconst name = \"Alice\";\nconsole.log(name);",
+                  "expectedOutput": "10\nAlice"
+                }
+              ]
+            },
+            {
+              "title": "Core Data Types",
+              "slug": "core-data-types",
+              "contentMarkdown": "## The basic building blocks\n\nAlmost every programming language gives you a small set of primitive data types to represent information. In JavaScript these are:\n\n- **Number** — both integers and decimals, e.g. `42` or `3.14`.\n- **String** — text, written inside quotes, e.g. `\"hello\"`.\n- **Boolean** — one of two values, `true` or `false`, used for yes/no logic.\n- **Undefined** — a variable that has been declared but not yet given a value.\n- **Null** — an intentional \"no value\", explicitly assigned by the programmer.\n\n```js\nlet age = 30;           // number\nlet city = \"London\";    // string\nlet isOnline = true;    // boolean\nlet middleName;        // undefined\nlet partner = null;    // null, on purpose\n```\n\n## Checking a value's type\n\nThe `typeof` operator tells you the data type of a value at runtime, which is useful for debugging and for validating input.\n\n```js\nconsole.log(typeof 42);        // \"number\"\nconsole.log(typeof \"hi\");      // \"string\"\nconsole.log(typeof true);      // \"boolean\"\nconsole.log(typeof undefined); // \"undefined\"\n```\n\nNote that `typeof null` famously returns `\"object\"` — this is a long-standing quirk in JavaScript, not a sign that `null` is actually an object.\n\n## Type conversion\n\nSometimes you need to convert between types, for example turning user input (always text) into a number before doing arithmetic on it:\n\n```js\nlet input = \"25\";\nlet asNumber = Number(input);\nconsole.log(asNumber + 5); // 30\n```",
+              "codeExamples": [
+                {
+                  "description": "Checking the type of different values with typeof",
+                  "code": "console.log(typeof 42);\nconsole.log(typeof \"hi\");\nconsole.log(typeof true);\nconsole.log(typeof undefined);",
+                  "expectedOutput": "number\nstring\nboolean\nundefined"
+                },
+                {
+                  "description": "Converting a string to a number before doing arithmetic",
+                  "code": "let input = \"25\";\nlet asNumber = Number(input);\nconsole.log(asNumber + 5);",
+                  "expectedOutput": "30"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `let`, `const`, and `var` when declaring a variable?",
+              "answer": "All three keywords declare a variable, but they differ in reassignment rules and scope:\n\n- **`const`** creates a binding that cannot be reassigned after initialization. The value itself can still be mutated if it is an object or array, but the variable cannot be pointed at a new value.\n- **`let`** creates a variable that can be reassigned, and is scoped to the nearest enclosing block (`{ }`), such as inside an `if` statement or a loop.\n- **`var`** is function-scoped rather than block-scoped, meaning it \"leaks\" out of blocks like `if` and `for` into the whole function, which often leads to confusing bugs. It also allows accidental re-declaration of the same name.\n\n```js\nif (true) {\n  var a = 1;\n  let b = 2;\n}\nconsole.log(a); // 1 (leaked out of the block)\nconsole.log(b); // ReferenceError: b is not defined\n```\n\nModern style guides recommend using `const` by default and `let` only when a variable truly needs to be reassigned, avoiding `var` entirely.",
+              "scenario": "A new team member keeps declaring everything with `var` out of habit from an older course, and a teammate asks them to switch during code review.",
+              "commonMistakes": "Assuming `const` makes an object fully immutable (it only prevents reassignment of the variable itself, not mutation of the object's contents). Believing `var` and `let` behave the same way, just with different keywords.",
+              "followUps": "What does it mean for const objects to still be mutable?\nWhat is 'hoisting' and how does it differ between var and let?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "Why does `typeof null` return `\"object\"` instead of `\"null\"`?",
+              "answer": "This is a well-known historical bug in JavaScript's first implementation. Values were originally represented internally with a type tag, and the tag for objects was `0`. `null` was represented as the all-zero bits pattern, which happened to match the tag for objects, so `typeof null` incorrectly reported `\"object\"`.\n\nBy the time this was discovered, enough code on the web depended on the existing behavior that fixing it would have broken many websites, so it was never corrected and is now a permanent, documented quirk of the language.\n\n```js\nconsole.log(typeof null); // \"object\" (quirk, not a real object)\nconsole.log(null === undefined); // false, they are different values\nconsole.log(null == undefined);  // true, loose equality treats them as equal\n```\n\nIn practice, developers check specifically for `null` with strict equality (`value === null`) rather than relying on `typeof`.",
+              "scenario": "A developer writes `if (typeof value === 'object')` to check whether a variable holds an object, and it unexpectedly runs for a variable holding `null`.",
+              "commonMistakes": "Using `typeof` to safely detect `null`, instead of comparing directly with `=== null`. Confusing `null` and `undefined` as being exactly the same value.",
+              "followUps": "How would you write a check that correctly distinguishes null from an actual object?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between primitive types and reference types, and why does it matter when copying variables?",
+              "answer": "Primitive types (number, string, boolean, undefined, null, and a few others) are stored **by value**. When you assign a primitive to a new variable, the value is copied, and the two variables are completely independent afterward.\n\nReference types (objects, arrays, functions) are stored **by reference**. When you assign one of these to a new variable, both variables point to the *same* underlying data in memory. Changing the data through one variable is visible through the other.\n\n```js\nlet a = 5;\nlet b = a;\nb = 10;\nconsole.log(a); // 5 — unaffected, because numbers copy by value\n\nlet obj1 = { count: 5 };\nlet obj2 = obj1;\nobj2.count = 10;\nconsole.log(obj1.count); // 10 — both variables reference the same object\n```\n\nThis distinction explains many bugs where modifying what looks like a 'copy' of an array or object unexpectedly changes the original. To make an independent copy of an object or array, you need an explicit copy, such as `{ ...obj1 }` or `[...array1]` for a shallow copy.",
+              "scenario": "A function receives an array as a parameter, sorts it internally to display results, and the caller is confused when their original array is unexpectedly reordered.",
+              "commonMistakes": "Assuming `const` or simple assignment protects an object from mutation elsewhere in the code. Not realizing that passing an object into a function passes a reference, not a copy.",
+              "followUps": "What is the difference between a shallow copy and a deep copy?\nHow would you safely copy a nested object?"
+            }
+          ]
+        },
+        {
+          "title": "Operators and Expressions",
+          "slug": "operators-and-expressions",
+          "summary": "Understand arithmetic, comparison, and logical operators, and how they combine to form expressions.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Arithmetic and Assignment Operators",
+              "slug": "arithmetic-and-assignment-operators",
+              "contentMarkdown": "## Arithmetic operators\n\nArithmetic operators perform math on numbers: `+` (addition), `-` (subtraction), `*` (multiplication), `/` (division), `%` (remainder, also called modulo), and `**` (exponentiation).\n\n```js\nconsole.log(7 + 3);  // 10\nconsole.log(7 % 3);  // 1 (remainder after dividing 7 by 3)\nconsole.log(2 ** 3); // 8 (2 to the power of 3)\n```\n\nThe `%` operator is especially useful for tasks like checking whether a number is even (`n % 2 === 0`) or wrapping a value around a fixed range.\n\n## The special behavior of `+` with strings\n\nWhen `+` is used with a string on either side, it performs text concatenation instead of addition:\n\n```js\nconsole.log(\"Score: \" + 10); // \"Score: 10\"\nconsole.log(1 + 2 + \"3\");    // \"33\" — left to right: 1+2=3, then 3+\"3\"=\"33\"\n```\n\n## Assignment operators\n\nBesides the plain `=` assignment, there are shorthand operators that combine an operation with assignment: `+=`, `-=`, `*=`, `/=`, `%=`.\n\n```js\nlet total = 10;\ntotal += 5;  // same as total = total + 5\nconsole.log(total); // 15\n```\n\n## Increment and decrement\n\n`++` and `--` add or subtract one from a variable. They are a shorthand frequently seen in loop counters.",
+              "codeExamples": [
+                {
+                  "description": "Basic arithmetic including remainder and exponentiation",
+                  "code": "console.log(7 + 3);\nconsole.log(7 % 3);\nconsole.log(2 ** 3);",
+                  "expectedOutput": "10\n1\n8"
+                },
+                {
+                  "description": "Using a compound assignment operator",
+                  "code": "let total = 10;\ntotal += 5;\nconsole.log(total);",
+                  "expectedOutput": "15"
+                }
+              ]
+            },
+            {
+              "title": "Comparison and Logical Operators",
+              "slug": "comparison-and-logical-operators",
+              "contentMarkdown": "## Comparison operators\n\nComparison operators compare two values and produce a boolean (`true` or `false`): `===` (strict equal), `!==` (strict not equal), `<`, `>`, `<=`, `>=`.\n\nJavaScript also has `==` and `!=`, which perform *loose* comparison and convert the two values' types before comparing them. This can produce surprising results, so professional code almost always prefers `===` and `!==`.\n\n```js\nconsole.log(5 === 5);     // true\nconsole.log(5 === \"5\");   // false — different types, strict comparison\nconsole.log(5 == \"5\");    // true  — loose comparison converts \"5\" to 5 first\n```\n\n## Logical operators\n\nLogical operators combine boolean expressions: `&&` (AND, true only if both sides are true), `||` (OR, true if at least one side is true), and `!` (NOT, flips a boolean).\n\n```js\nlet age = 20;\nlet hasTicket = true;\nconsole.log(age >= 18 && hasTicket); // true — both conditions hold\nconsole.log(age < 18 || hasTicket);  // true — at least one holds\nconsole.log(!hasTicket);             // false\n```\n\n## Short-circuit evaluation\n\n`&&` and `||` stop evaluating as soon as the result is already determined. For `&&`, if the left side is false, the right side is never checked. For `||`, if the left side is true, the right side is skipped. This is used in real code to provide default values or guard against errors, e.g. `user && user.name`.",
+              "codeExamples": [
+                {
+                  "description": "Strict vs loose equality",
+                  "code": "console.log(5 === 5);\nconsole.log(5 === \"5\");\nconsole.log(5 == \"5\");",
+                  "expectedOutput": "true\nfalse\ntrue"
+                },
+                {
+                  "description": "Combining conditions with logical AND and OR",
+                  "code": "let age = 20;\nlet hasTicket = true;\nconsole.log(age >= 18 && hasTicket);\nconsole.log(age < 18 || hasTicket);",
+                  "expectedOutput": "true\ntrue"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `==` and `===` in JavaScript?",
+              "answer": "`==` is the loose equality operator. Before comparing, it converts the two operands to a common type if they differ, which can produce results that surprise beginners.\n\n`===` is the strict equality operator. It compares both value *and* type, and performs no conversion, so the two operands must already be the same type to be considered equal.\n\n```js\nconsole.log(0 == \"\");     // true  — \"\" is converted to 0\nconsole.log(0 === \"\");    // false — different types\nconsole.log(null == undefined);  // true\nconsole.log(null === undefined); // false\n```\n\nBecause the conversion rules for `==` are easy to misremember and can hide bugs, the strong convention in modern JavaScript is to always use `===` and `!==` unless there is a specific, well-understood reason to use loose equality.",
+              "scenario": "A form validation check using `if (value == 0)` accidentally treats an empty string as equal to zero, letting invalid input through.",
+              "commonMistakes": "Using `==` out of habit and being surprised when empty strings, `null`, or `false` compare equal to other falsy-looking values.",
+              "followUps": "What values in JavaScript are considered 'falsy'?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does short-circuit evaluation mean for the `&&` and `||` operators?",
+              "answer": "Short-circuit evaluation means that `&&` and `||` do not always evaluate both of their operands — they stop as soon as the overall result is already known from the left-hand side.\n\n- `a && b`: if `a` is falsy, the expression is already false, so `b` is never evaluated, and the expression returns `a`'s value.\n- `a || b`: if `a` is truthy, the expression is already true, so `b` is never evaluated, and the expression returns `a`'s value.\n\n```js\nfunction risky() {\n  console.log(\"risky called\");\n  return true;\n}\n\nfalse && risky(); // risky() is never called — prints nothing\ntrue || risky();  // risky() is never called — prints nothing\n```\n\nThis behavior is commonly used to guard against errors, e.g. `user && user.address && user.address.city` avoids crashing when `user` is `null`, and to provide default values, e.g. `const name = suppliedName || \"Guest\";`.",
+              "scenario": "A line like `userInput && saveToDatabase(userInput)` is used to only call a function when input is present, without a separate if statement.",
+              "commonMistakes": "Assuming both sides of `&&`/`||` always run, and writing code with side effects on the right-hand side that unexpectedly never execute.",
+              "followUps": "How does the nullish coalescing operator `??` differ from `||`?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What are 'truthy' and 'falsy' values, and how do they affect conditions written without an explicit comparison?",
+              "answer": "Every value in JavaScript, not just `true` and `false`, can be used where a boolean is expected (such as in an `if` condition), because it gets implicitly converted to `true` or `false`.\n\nThere are exactly six falsy values in JavaScript: `false`, `0`, `\"\"` (empty string), `null`, `undefined`, and `NaN`. Every other value — including `\"0\"`, `[]`, and `{}` — is truthy.\n\n```js\nif (\"\") console.log(\"a\");     // does not run, \"\" is falsy\nif (\"0\") console.log(\"b\");    // runs, \"0\" is a non-empty string, which is truthy\nif ([]) console.log(\"c\");     // runs, an empty array is truthy\nif (0) console.log(\"d\");      // does not run, 0 is falsy\n```\n\nUnderstanding this list is essential for writing conditions like `if (items.length)` (checks for a non-empty array) or `if (!value)` (checks for one of the falsy values), and for avoiding bugs where an empty array or the string `\"0\"` is mistakenly treated as 'no value'.",
+              "scenario": "A function treats the number `0` as a valid quantity, but a check written as `if (!quantity)` incorrectly treats a quantity of zero the same as a missing quantity.",
+              "commonMistakes": "Assuming only `false` is falsy. Using `if (!value)` to check for 'missing' when `0` or an empty string are legitimate values that should not be treated as missing.",
+              "followUps": "How would you explicitly check for 'missing' (null or undefined) without treating 0 or an empty string as missing?"
+            }
+          ]
+        },
+        {
+          "title": "Input/Output and String Formatting",
+          "slug": "input-output-and-string-formatting",
+          "summary": "Learn how programs read input and produce output, and how to build readable, formatted strings.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Producing Output",
+              "slug": "producing-output",
+              "contentMarkdown": "## Why output matters\n\nA program is not very useful if it cannot communicate results back to a user or another system. The most common way to produce output while learning and debugging JavaScript is `console.log()`, which prints a value to the console (a terminal or browser dev tools panel).\n\n```js\nconsole.log(\"Hello, world!\");\nconsole.log(42);\nconsole.log(\"Result:\", 42); // multiple arguments are printed space-separated\n```\n\n`console.log` can take multiple comma-separated arguments, and it will print each one separated by a space, which is convenient for labeling values while debugging.\n\nOther related console methods exist for different purposes: `console.error()` for errors (often shown in red), and `console.warn()` for warnings.\n\n## Output in other contexts\n\nIn a web page, output might instead mean updating the visible page content (the DOM). In a server program, output might mean sending a response over a network, or writing a line to a log file. The *concept* of output — producing a result that something else can observe — stays the same even though the exact mechanism differs between environments.",
+              "codeExamples": [
+                {
+                  "description": "Printing simple output and multiple labeled values",
+                  "code": "console.log(\"Hello, world!\");\nconsole.log(\"Result:\", 42);",
+                  "expectedOutput": "Hello, world!\nResult: 42"
+                }
+              ]
+            },
+            {
+              "title": "Building Formatted Strings",
+              "slug": "building-formatted-strings",
+              "contentMarkdown": "## Combining text and values\n\nReal programs rarely print a single fixed message — they usually need to mix static text with dynamic values, such as a username or a calculated total. The cleanest way to do this in modern JavaScript is **template literals**, written with backticks (`` ` ``) instead of regular quotes, which let you embed expressions directly using `${ }`.\n\n```js\nlet name = \"Alice\";\nlet age = 30;\nconsole.log(`${name} is ${age} years old.`);\n```\n\nTemplate literals can contain any expression inside `${ }`, including arithmetic and function calls:\n\n```js\nlet price = 19.999;\nconsole.log(`Total: $${(price * 2).toFixed(2)}`);\n```\n\n## Older style: string concatenation\n\nBefore template literals existed, strings were built using the `+` operator, which is still valid but gets harder to read as more values are mixed in:\n\n```js\nconsole.log(name + \" is \" + age + \" years old.\");\n```\n\n## Controlling number formatting\n\n`toFixed(n)` rounds a number to `n` decimal places and returns it as a string, which is useful for displaying currency or percentages consistently.",
+              "codeExamples": [
+                {
+                  "description": "Using a template literal to embed variables in a string",
+                  "code": "let name = \"Alice\";\nlet age = 30;\nconsole.log(`${name} is ${age} years old.`);",
+                  "expectedOutput": "Alice is 30 years old."
+                },
+                {
+                  "description": "Formatting a number to two decimal places inside a template literal",
+                  "code": "let price = 19.999;\nconsole.log(`Total: $${(price * 2).toFixed(2)}`);",
+                  "expectedOutput": "Total: $40.00"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the advantage of template literals over regular string concatenation with `+`?",
+              "answer": "Template literals (backtick-delimited strings with `${ }` placeholders) offer several advantages over building strings with `+`:\n\n1. **Readability** — the final shape of the string is visible directly in the code, rather than being pieced together from fragments and operators.\n2. **Fewer quoting mistakes** — there is no need to open and close quotes around every piece of literal text between variables.\n3. **Embedded expressions** — any valid expression, not just variables, can go inside `${ }`, including function calls and arithmetic.\n4. **Multi-line strings** — template literals can span multiple lines without special escape characters, which plain quoted strings cannot do.\n\n```js\nconst first = \"Jane\", last = \"Doe\";\n\n// concatenation\nconsole.log(\"Name: \" + first + \" \" + last + \".\");\n\n// template literal\nconsole.log(`Name: ${first} ${last}.`);\n```\n\nBoth produce the same output, but the template literal is easier to read and far less error-prone as the number of embedded values grows.",
+              "scenario": "A report-generation function builds a multi-line summary message mixing five different variables, and the concatenated version becomes hard to review in a pull request.",
+              "commonMistakes": "Forgetting that template literals require backticks, not regular single or double quotes, which silently disables the `${}` interpolation.",
+              "followUps": "Can template literals span multiple lines, and how does that compare to regular strings?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does `console.log()` do when passed multiple arguments, and when might `console.error()` be preferred?",
+              "answer": "`console.log()` accepts any number of comma-separated arguments and prints each one, separated by a single space, on the same line. This is convenient for debugging because you can label a value without manually concatenating strings:\n\n```js\nlet total = 42;\nconsole.log(\"total is:\", total); // total is: 42\n```\n\n`console.error()` behaves similarly but is intended specifically for error messages. Many environments display it differently (e.g. in red text) and route it to a separate error stream, which makes genuine problems easier to spot in a sea of normal log output, and lets logging tools filter errors from regular informational logs.\n\nAs a practical rule: use `console.log` for normal informational output and debugging, and `console.error` for anything representing a real failure that should stand out.",
+              "scenario": "A developer silences a failing API call by printing the error with `console.log` instead of `console.error`, and it gets lost among hundreds of other log lines in production.",
+              "commonMistakes": "Using `console.log` for everything, including genuine errors, which makes it harder to search logs for real problems later.",
+              "followUps": "What other console methods exist besides log, error, and warn?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How would you format a number as currency with exactly two decimal places, and what pitfall should you watch for with floating-point numbers?",
+              "answer": "The `toFixed(n)` method on a number rounds it to `n` decimal places and returns the result as a *string* (not a number), which is well suited for displaying currency:\n\n```js\nlet price = 9.5;\nconsole.log(price.toFixed(2)); // \"9.50\"\n```\n\nThe main pitfall is that JavaScript numbers use the IEEE 754 floating-point format, which cannot represent every decimal fraction exactly. This can cause small rounding artifacts in arithmetic:\n\n```js\nconsole.log(0.1 + 0.2); // 0.30000000000000004, not exactly 0.3\n```\n\n`toFixed()` masks this for *display* purposes since it rounds to a fixed number of decimals, but the underlying stored number can still carry tiny errors, which matters if you compare floating-point totals for exact equality or perform many chained calculations (errors can accumulate). For applications where exact decimal precision really matters, such as financial systems, it's safer to work in integer cents, or use a dedicated decimal/currency library, rather than relying on plain floating-point arithmetic.",
+              "scenario": "A shopping cart totals several item prices and displays the sum directly, occasionally showing results like `$19.999999999998` instead of a clean two-decimal amount.",
+              "commonMistakes": "Comparing floating-point totals with `===` expecting an exact match. Assuming `toFixed()` fixes the stored value instead of just its displayed string form.",
+              "followUps": "Why does 0.1 + 0.2 not equal 0.3 exactly in JavaScript?\nHow would you safely compare two floating-point numbers for 'close enough' equality?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Control Flow",
+      "slug": "control-flow",
+      "topics": [
+        {
+          "title": "Conditionals: if/else and switch",
+          "slug": "conditionals-if-else-and-switch",
+          "summary": "Make your program choose between different paths of execution based on conditions.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "if, else if, and else",
+              "slug": "if-else-if-and-else",
+              "contentMarkdown": "## Branching based on a condition\n\nThe `if` statement runs a block of code only when a condition is true. Pair it with `else` to run a different block when the condition is false, and `else if` to check additional conditions in sequence.\n\n```js\nlet temperature = 15;\n\nif (temperature > 30) {\n  console.log(\"It's hot\");\n} else if (temperature > 10) {\n  console.log(\"It's mild\");\n} else {\n  console.log(\"It's cold\");\n}\n```\n\nOnly the first matching branch runs. JavaScript checks each condition from top to bottom and stops as soon as one is true, so order matters when conditions could overlap.\n\n## Conditions must be clear expressions\n\nThe value inside `if (...)` is converted to a boolean (see truthy/falsy values). It is good practice to write explicit, readable conditions rather than relying on implicit conversions, e.g. prefer `if (items.length > 0)` over `if (items.length)` when clarity matters more than brevity.\n\n## The ternary operator\n\nFor simple two-way choices that produce a value, the ternary operator `condition ? valueIfTrue : valueIfFalse` is a compact alternative to a full if/else:\n\n```js\nlet age = 20;\nlet status = age >= 18 ? \"adult\" : \"minor\";\nconsole.log(status);\n```",
+              "codeExamples": [
+                {
+                  "description": "Branching between three outcomes with if/else if/else",
+                  "code": "let temperature = 15;\nif (temperature > 30) {\n  console.log(\"It's hot\");\n} else if (temperature > 10) {\n  console.log(\"It's mild\");\n} else {\n  console.log(\"It's cold\");\n}",
+                  "expectedOutput": "It's mild"
+                },
+                {
+                  "description": "Using the ternary operator for a simple two-way choice",
+                  "code": "let age = 20;\nlet status = age >= 18 ? \"adult\" : \"minor\";\nconsole.log(status);",
+                  "expectedOutput": "adult"
+                }
+              ]
+            },
+            {
+              "title": "The switch Statement",
+              "slug": "the-switch-statement",
+              "contentMarkdown": "## When to reach for switch\n\nA `switch` statement compares one value against several possible exact matches, which can be clearer than a long `if/else if` chain when you are checking the same variable against many specific values.\n\n```js\nlet day = \"Tue\";\n\nswitch (day) {\n  case \"Mon\":\n    console.log(\"Start of the week\");\n    break;\n  case \"Tue\":\n  case \"Wed\":\n  case \"Thu\":\n    console.log(\"Midweek\");\n    break;\n  case \"Fri\":\n    console.log(\"Almost the weekend\");\n    break;\n  default:\n    console.log(\"Weekend\");\n}\n```\n\n## Why `break` matters\n\nWithout a `break` statement, execution 'falls through' into the next `case`, running its code too, even if its condition doesn't match. This is sometimes done intentionally (as with `\"Tue\"`, `\"Wed\"`, `\"Thu\"` sharing one block above), but forgetting a `break` where you didn't mean to is a classic bug.\n\n## The default case\n\n`default` runs when none of the `case` values match. It is optional but good practice to include, so unexpected values are handled explicitly rather than silently ignored.\n\n`switch` uses strict comparison (like `===`) to match cases, so type matters: `case \"1\":` will not match the number `1`.",
+              "codeExamples": [
+                {
+                  "description": "A switch statement with grouped cases and a default",
+                  "code": "let day = \"Tue\";\nswitch (day) {\n  case \"Mon\":\n    console.log(\"Start of the week\");\n    break;\n  case \"Tue\":\n  case \"Wed\":\n  case \"Thu\":\n    console.log(\"Midweek\");\n    break;\n  case \"Fri\":\n    console.log(\"Almost the weekend\");\n    break;\n  default:\n    console.log(\"Weekend\");\n}",
+                  "expectedOutput": "Midweek"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What happens if you forget a `break` statement inside a `switch` block?",
+              "answer": "Without `break`, execution 'falls through' from the matching `case` into the code of the *next* case, regardless of whether that next case's value matches. This continues until a `break`, `return`, or the end of the `switch` block is reached.\n\n```js\nlet grade = \"B\";\nswitch (grade) {\n  case \"A\":\n    console.log(\"Excellent\");\n  case \"B\":\n    console.log(\"Good\");\n  case \"C\":\n    console.log(\"Pass\");\n    break;\n  default:\n    console.log(\"Unknown\");\n}\n// Prints:\n// Good\n// Pass\n```\n\nHere, because `case \"B\"` has no `break`, it falls through into `case \"C\"` and prints that too. This is sometimes used deliberately to group cases that share behavior, but when unintentional, it is a very common source of bugs — code silently runs extra branches that were never meant to execute together.",
+              "scenario": "A permissions switch statement grants 'read' access for one role but, due to a missing break, also silently grants 'write' access intended only for the next case.",
+              "commonMistakes": "Forgetting `break` on cases that should be independent. Not realizing multiple case labels can intentionally share one block by stacking them with no code in between.",
+              "followUps": "How could you rewrite a switch statement using an object lookup instead?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "When would you choose a `switch` statement over a chain of `if/else if` statements?",
+              "answer": "Both achieve branching, but they fit different situations best:\n\n- **`switch`** reads more clearly when you are comparing *one single value* against many specific, discrete possibilities (e.g. a day name, a status code, a menu option).\n- **`if/else if`** is more flexible and necessary when conditions involve ranges, multiple different variables, or complex boolean logic that `switch`'s exact-match comparison cannot express.\n\n```js\n// Good fit for switch: discrete exact values\nswitch (httpStatus) {\n  case 200: return \"OK\";\n  case 404: return \"Not Found\";\n  case 500: return \"Server Error\";\n}\n\n// Needs if/else: a range and multiple variables\nif (age >= 18 && hasId) {\n  console.log(\"Entry allowed\");\n} else {\n  console.log(\"Entry denied\");\n}\n```\n\nIn short: reach for `switch` for a single value with many distinct exact matches, and `if/else if` for ranges or combined conditions.",
+              "scenario": "A developer tries to rewrite a range check like `score >= 90` as a switch statement and discovers switch cannot naturally express ranges.",
+              "commonMistakes": "Trying to force range comparisons or multi-variable logic into a switch statement, producing awkward or incorrect code.",
+              "followUps": "Can a switch statement's case be a range or expression rather than an exact value?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How does `switch` decide whether a case matches, and how can that cause bugs with mixed types?",
+              "answer": "`switch` compares the switched value to each `case` value using strict equality (`===`), just like the strict equality operator — no type conversion happens. This means the value and the case label must match in both value *and* type.\n\n```js\nlet id = \"1\"; // a string, perhaps from form input\n\nswitch (id) {\n  case 1:\n    console.log(\"Matched number 1\");\n    break;\n  case \"1\":\n    console.log(\"Matched string '1'\");\n    break;\n  default:\n    console.log(\"No match\");\n}\n// Prints: Matched string '1'\n```\n\nIf `id` had been compared only against `case 1:` (the number), it would never match and would silently fall through to `default`, even though the value 'looks' like 1. This is a common bug when values come from sources that produce strings, such as HTML form fields or URL parameters, and are compared against numeric case labels without first converting them.",
+              "scenario": "A routing function switches on a URL parameter (always a string) using numeric case labels, and every route silently falls through to the default handler.",
+              "commonMistakes": "Assuming switch performs loose/flexible matching like `==`. Forgetting to convert input types (e.g., string to number) before switching on them.",
+              "followUps": "Why does switch use strict equality instead of loose equality?"
+            }
+          ]
+        },
+        {
+          "title": "Loops: for and while",
+          "slug": "loops-for-and-while",
+          "summary": "Repeat actions efficiently using for loops, while loops, and loop control statements.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "The for Loop",
+              "slug": "the-for-loop",
+              "contentMarkdown": "## Repeating a known number of times\n\nA `for` loop is ideal when you know (or can calculate) how many times you want to repeat something. It has three parts separated by semicolons: initialization, condition, and update.\n\n```js\nfor (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n// prints 0 1 2 3 4\n```\n\n1. `let i = 0` runs once, before the loop starts.\n2. `i < 5` is checked before every iteration; the loop stops as soon as it's false.\n3. `i++` runs after every iteration, before the condition is checked again.\n\n## Looping over an array\n\nA very common use is iterating over the elements of an array by index:\n\n```js\nlet fruits = [\"apple\", \"banana\", \"cherry\"];\nfor (let i = 0; i < fruits.length; i++) {\n  console.log(fruits[i]);\n}\n```\n\nModern JavaScript also offers `for...of`, which iterates directly over the values of an array without manual indexing:\n\n```js\nfor (const fruit of fruits) {\n  console.log(fruit);\n}\n```\n\n`for...of` is usually preferred when you just need each value and don't need the index.",
+              "codeExamples": [
+                {
+                  "description": "A classic counting for loop",
+                  "code": "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}",
+                  "expectedOutput": "0\n1\n2\n3\n4"
+                },
+                {
+                  "description": "Iterating over an array with for...of",
+                  "code": "let fruits = [\"apple\", \"banana\", \"cherry\"];\nfor (const fruit of fruits) {\n  console.log(fruit);\n}",
+                  "expectedOutput": "apple\nbanana\ncherry"
+                }
+              ]
+            },
+            {
+              "title": "The while Loop and Loop Control",
+              "slug": "the-while-loop-and-loop-control",
+              "contentMarkdown": "## Repeating until a condition changes\n\nA `while` loop repeats as long as its condition stays true, and is the right choice when you don't know in advance exactly how many iterations are needed.\n\n```js\nlet count = 0;\nwhile (count < 3) {\n  console.log(\"Count is \" + count);\n  count++;\n}\n```\n\nA close relative, `do...while`, always runs its body at least once before checking the condition:\n\n```js\nlet n = 10;\ndo {\n  console.log(n);\n} while (n < 5); // body already ran once, even though condition is false\n```\n\n## break and continue\n\n`break` immediately exits the nearest loop entirely. `continue` skips the rest of the current iteration and jumps to the next one, without exiting the loop.\n\n```js\nfor (let i = 0; i < 10; i++) {\n  if (i === 3) continue; // skip printing 3\n  if (i === 6) break;    // stop the loop entirely at 6\n  console.log(i);\n}\n// prints 0 1 2 4 5\n```\n\n## Avoiding infinite loops\n\nA `while` loop whose condition never becomes false will run forever, freezing or crashing the program. Always make sure something inside the loop body moves it toward the condition becoming false.",
+              "codeExamples": [
+                {
+                  "description": "A while loop that counts up to a limit",
+                  "code": "let count = 0;\nwhile (count < 3) {\n  console.log(\"Count is \" + count);\n  count++;\n}",
+                  "expectedOutput": "Count is 0\nCount is 1\nCount is 2"
+                },
+                {
+                  "description": "Using continue to skip a value and break to stop early",
+                  "code": "for (let i = 0; i < 10; i++) {\n  if (i === 3) continue;\n  if (i === 6) break;\n  console.log(i);\n}",
+                  "expectedOutput": "0\n1\n2\n4\n5"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `break` and `continue` inside a loop?",
+              "answer": "`break` immediately terminates the nearest enclosing loop entirely — execution jumps to the first statement after the loop.\n\n`continue` skips only the remainder of the *current* iteration and moves straight to the next one (re-checking the loop's condition), without stopping the loop as a whole.\n\n```js\nfor (let i = 0; i < 5; i++) {\n  if (i === 2) continue; // skip just this iteration\n  if (i === 4) break;    // stop the whole loop here\n  console.log(i);\n}\n// prints: 0 1 3\n```\n\n`i === 2` triggers `continue`, so `2` is never printed, but the loop keeps going. `i === 4` triggers `break`, so the loop stops before `4` is ever printed or checked again.",
+              "scenario": "A function scanning a list for the first invalid entry needs to stop scanning entirely once found, while skipping over entries that are merely empty placeholders.",
+              "commonMistakes": "Using `break` when `continue` was intended, accidentally exiting the loop early. Forgetting that both only affect the nearest enclosing loop, not any outer loop.",
+              "followUps": "How do break and continue behave differently in nested loops, and how can you target an outer loop specifically?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "When would you use a `while` loop instead of a `for` loop?",
+              "answer": "A `for` loop is the natural choice when the number of iterations is known or easily computed in advance, such as iterating a fixed number of times or walking through every index of an array.\n\nA `while` loop is better suited when the stopping condition depends on something that can't be predicted ahead of time, such as waiting for user input, reading from a stream until it runs dry, or repeating an operation until some external state changes.\n\n```js\n// Known number of repetitions: for\nfor (let i = 0; i < 10; i++) { /* ... */ }\n\n// Unknown number of repetitions: while\nlet line;\nwhile ((line = readNextLine()) !== null) {\n  process(line);\n}\n```\n\nBoth are functionally capable of expressing the other's use case, so the real distinction is about which one most clearly communicates intent to someone reading the code.",
+              "scenario": "A program repeatedly prompts a user for a valid number, looping until the user finally types something that parses correctly, with no fixed number of attempts.",
+              "commonMistakes": "Forcing a while loop into a for loop's shape (or vice versa) in a way that obscures why the loop runs the number of times it does.",
+              "followUps": "What is a do...while loop, and when is it preferable to a plain while loop?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What causes an infinite loop, and what are common ways it happens by accident?",
+              "answer": "An infinite loop occurs when a loop's stopping condition never becomes false (or, for a `for...of`/`for...in`, when the thing being iterated never ends). The program then keeps executing the loop body forever, typically freezing the application or exhausting resources.\n\nCommon accidental causes include:\n\n1. **Forgetting to update the loop variable.**\n```js\nlet i = 0;\nwhile (i < 5) {\n  console.log(i);\n  // forgot i++ here — i stays 0 forever\n}\n```\n2. **Updating the wrong variable**, or updating it in a way that moves away from, rather than toward, the stopping condition (e.g. `i--` instead of `i++` when counting up to a limit).\n3. **A condition that can never become false** due to a logic mistake, such as checking a value that the loop body doesn't actually affect.\n4. **Mutating the array being iterated** in a way that keeps regenerating entries for certain loop constructs.\n\nThe fix is always the same: make sure every path through the loop body makes measurable progress toward the condition eventually becoming false, and test loops with small, traceable inputs before trusting them with larger ones.",
+              "scenario": "A deployed service becomes unresponsive and maxes out CPU after a recent change accidentally removed the counter increment inside a retry loop.",
+              "commonMistakes": "Not tracing through a loop's first few iterations by hand before running it. Relying on an external condition to change without any guarantee that it will.",
+              "followUps": "How would you add a safety limit (like a maximum iteration count) to guard against an unexpected infinite loop in production code?"
+            }
+          ]
+        },
+        {
+          "title": "Nested Logic and Early Returns",
+          "slug": "nested-logic-and-early-returns",
+          "summary": "Manage complexity when conditions and loops combine, and simplify code with early returns and guard clauses.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Nested Conditionals and Loops",
+              "slug": "nested-conditionals-and-loops",
+              "contentMarkdown": "## What nesting means\n\nNesting happens when one control structure (an `if`, `for`, or `while`) is placed inside another. It is necessary for expressing many real problems, such as checking a condition for every item in a loop, or looping over rows and columns of a grid.\n\n```js\nlet grid = [[1, 2], [3, 4]];\n\nfor (let row = 0; row < grid.length; row++) {\n  for (let col = 0; col < grid[row].length; col++) {\n    if (grid[row][col] % 2 === 0) {\n      console.log(grid[row][col] + \" is even\");\n    }\n  }\n}\n```\n\n## The readability cost of deep nesting\n\nEach additional level of nesting adds a layer of indentation and a layer of mental bookkeeping for the reader — they must track every surrounding condition and loop to understand what a deeply nested line actually does. Beyond two or three levels, code becomes noticeably harder to follow, and is often a sign the logic should be restructured, for example by extracting part of it into a separate function with a clear name.\n\n```js\n// Deeply nested and hard to scan\nfunction process(users) {\n  for (const user of users) {\n    if (user.active) {\n      if (user.age >= 18) {\n        if (user.verified) {\n          console.log(user.name + \" can proceed\");\n        }\n      }\n    }\n  }\n}\n```\n\nThis same logic can be made flatter and easier to read using early returns and guard clauses, covered in the next lesson.",
+              "codeExamples": [
+                {
+                  "description": "Nested loops combined with a condition to inspect a 2D grid",
+                  "code": "let grid = [[1, 2], [3, 4]];\nfor (let row = 0; row < grid.length; row++) {\n  for (let col = 0; col < grid[row].length; col++) {\n    if (grid[row][col] % 2 === 0) {\n      console.log(grid[row][col] + \" is even\");\n    }\n  }\n}",
+                  "expectedOutput": "2 is even\n4 is even"
+                }
+              ]
+            },
+            {
+              "title": "Guard Clauses and Early Returns",
+              "slug": "guard-clauses-and-early-returns",
+              "contentMarkdown": "## The idea of an early return\n\nInstead of wrapping the 'main' logic of a function inside multiple nested `if` blocks, you can check for disqualifying conditions first and `return` immediately when one is found. Each of these upfront checks is called a **guard clause**.\n\n```js\n// Nested version\nfunction canProceed(user) {\n  if (user.active) {\n    if (user.age >= 18) {\n      if (user.verified) {\n        return true;\n      }\n    }\n  }\n  return false;\n}\n\n// Guard clause version — flatter and easier to scan\nfunction canProceedFlat(user) {\n  if (!user.active) return false;\n  if (user.age < 18) return false;\n  if (!user.verified) return false;\n  return true;\n}\n```\n\nBoth versions behave identically, but the guard clause version reads top-to-bottom as a list of disqualifying conditions, with no need to hold several layers of indentation in your head at once.\n\n## Early returns inside loops\n\nThe same idea applies inside loops: `return` from within a loop (inside a function) stops both the loop and the function immediately once an answer is found, which is often clearer than setting a flag variable and checking it later.\n\n```js\nfunction findFirstNegative(numbers) {\n  for (const n of numbers) {\n    if (n < 0) return n; // stop as soon as we find one\n  }\n  return null; // none found\n}\n\nconsole.log(findFirstNegative([3, 7, -2, 9]));\n```",
+              "codeExamples": [
+                {
+                  "description": "Simplifying nested conditions with guard clauses",
+                  "code": "function canProceedFlat(user) {\n  if (!user.active) return false;\n  if (user.age < 18) return false;\n  if (!user.verified) return false;\n  return true;\n}\n\nconsole.log(canProceedFlat({ active: true, age: 20, verified: true }));\nconsole.log(canProceedFlat({ active: true, age: 16, verified: true }));",
+                  "expectedOutput": "true\nfalse"
+                },
+                {
+                  "description": "Returning early from inside a loop as soon as an answer is found",
+                  "code": "function findFirstNegative(numbers) {\n  for (const n of numbers) {\n    if (n < 0) return n;\n  }\n  return null;\n}\n\nconsole.log(findFirstNegative([3, 7, -2, 9]));",
+                  "expectedOutput": "-2"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a 'guard clause', and how does it improve on deeply nested if statements?",
+              "answer": "A guard clause is an early check, usually placed at the very top of a function, that immediately returns (or throws, or continues) when some disqualifying condition is met, instead of wrapping the function's main logic inside a matching nested `if`.\n\n```js\n// Deeply nested\nfunction getDiscount(order) {\n  if (order != null) {\n    if (order.total > 0) {\n      if (order.isMember) {\n        return order.total * 0.9;\n      }\n    }\n  }\n  return 0;\n}\n\n// With guard clauses\nfunction getDiscountFlat(order) {\n  if (order == null) return 0;\n  if (order.total <= 0) return 0;\n  if (!order.isMember) return 0;\n  return order.total * 0.9;\n}\n```\n\nThe guard clause version removes nesting entirely: each line either exits early for an invalid case or falls through toward the function's real purpose. This keeps the 'happy path' (the main success case) unindented and easy to find, while edge cases are handled individually and explicitly near the top, rather than being spread across several levels of braces.",
+              "scenario": "A code reviewer asks a developer to simplify a function with four levels of nested if statements before merging, since it's difficult to tell which branch actually produces the return value.",
+              "commonMistakes": "Converting nested ifs to guard clauses but inverting a condition incorrectly, silently changing the function's behavior. Leaving an `else` after a guard clause's `return`, which is unnecessary and reintroduces nesting.",
+              "followUps": "Is there a performance difference between nested ifs and guard clauses, or is it purely about readability?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How many levels of nested loops or conditionals is 'too many', and what techniques reduce nesting depth?",
+              "answer": "There's no strict universal number, but most style guides and experienced reviewers treat three or more levels of nesting as a signal to reconsider the structure, since each level multiplies the number of states a reader must track simultaneously.\n\nCommon techniques to reduce nesting:\n\n1. **Guard clauses / early returns** — handle disqualifying or edge cases immediately instead of wrapping the rest of the function in an `if`.\n2. **Extracting a nested block into its own function** — a named function hides its internal nesting behind a descriptive name, so the caller only sees one line.\n3. **Using `continue` in a loop** instead of wrapping the loop body in an `if`.\n4. **Combining conditions** with `&&`/`||` instead of nesting separate `if`s, when the combined condition is still easy to read.\n\n```js\n// Before: nested\nfor (const item of items) {\n  if (item.inStock) {\n    if (item.price < budget) {\n      results.push(item);\n    }\n  }\n}\n\n// After: flattened with continue\nfor (const item of items) {\n  if (!item.inStock) continue;\n  if (item.price >= budget) continue;\n  results.push(item);\n}\n```",
+              "scenario": "A function that filters a product list grows to five nested if statements over several months of small additions, and a new contributor struggles to add one more condition correctly.",
+              "commonMistakes": "Reducing visual nesting (fewer braces) without actually reducing logical complexity, or extracting a function with a vague name that hides, rather than clarifies, what it checks.",
+              "followUps": "How would you extract a deeply nested validation block into a separate, well-named helper function?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "In a function with multiple early returns, how do you ensure all exit paths are correct and consistent, especially when the function has side effects or needs cleanup?",
+              "answer": "Multiple early returns are a great readability tool, but they introduce more exit points that each need to behave correctly, which matters most when a function does more than just compute and return a value.\n\nKey practices:\n\n1. **Keep side effects before any state-dependent early return consistent.** If a function acquires a resource, increments a counter, or logs something before a guard clause, make sure every return path still leaves that state correct — don't let an early return skip required cleanup silently.\n2. **Use `try/finally` for guaranteed cleanup** when a resource must always be released, regardless of which `return` statement is hit; `finally` runs on every exit path, including early returns and thrown errors.\n3. **Keep guard clauses near the top, pure checks** — ideally they should only inspect input and return a simple, predictable result, without triggering further side effects themselves, so reviewers can trust that 'if it didn't return early here, these conditions all hold from this point on.'\n\n```js\nfunction withResource(id) {\n  const handle = acquire(id);\n  try {\n    if (!handle.isValid) return null;   // early return\n    if (handle.isLocked) return undefined; // another early return\n    return handle.read();\n  } finally {\n    handle.release(); // always runs, on every return path above\n  }\n}\n```\n\nThis pattern keeps the benefits of early returns (a flat, readable happy path) while guaranteeing that cleanup logic can't be accidentally bypassed by any of the exits.",
+              "scenario": "A function that opens a file, validates its contents with several early-return guard clauses, and closes the file was found to leak open file handles whenever validation failed partway through.",
+              "commonMistakes": "Placing cleanup code only at the bottom of a function, assuming every path reaches it, when early returns actually skip past it. Forgetting that a thrown error also bypasses code placed after it unless `finally` is used.",
+              "followUps": "How does a try/finally block behave if both the try block and the finally block contain a return statement?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Functions & Scope",
+      "slug": "functions-and-scope",
+      "topics": [
+        {
+          "title": "Defining Functions and Parameters",
+          "slug": "defining-functions-and-parameters",
+          "summary": "Package reusable logic into functions and control what information they receive as parameters.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Function Declarations and Expressions",
+              "slug": "function-declarations-and-expressions",
+              "contentMarkdown": "## Why functions exist\n\nA function is a named, reusable block of code that performs a task. Instead of copying the same logic everywhere it's needed, you define it once and *call* it by name wherever it's needed, which keeps code shorter and easier to maintain — fixing a bug means fixing it in one place.\n\n```js\nfunction greet(name) {\n  console.log(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\");\ngreet(\"Bob\");\n```\n\nThis is called a **function declaration**. It defines a function named `greet` that takes one parameter, `name`.\n\n## Function expressions and arrow functions\n\nA function can also be stored in a variable, as a **function expression**:\n\n```js\nconst greet = function (name) {\n  console.log(\"Hello, \" + name + \"!\");\n};\n```\n\nModern JavaScript also offers **arrow functions**, a shorter syntax, especially handy for small functions:\n\n```js\nconst greet = (name) => {\n  console.log(\"Hello, \" + name + \"!\");\n};\n\nconst square = x => x * x; // single expression: implicit return, no braces needed\nconsole.log(square(4)); // 16\n```\n\nAll three styles define a callable function; the choice between them is mostly a matter of style and a few technical differences (such as how `this` behaves), which become more relevant once you work with objects and classes.",
+              "codeExamples": [
+                {
+                  "description": "A basic function declaration with one parameter",
+                  "code": "function greet(name) {\n  console.log(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\");\ngreet(\"Bob\");",
+                  "expectedOutput": "Hello, Alice!\nHello, Bob!"
+                },
+                {
+                  "description": "A short arrow function with an implicit return",
+                  "code": "const square = x => x * x;\nconsole.log(square(4));",
+                  "expectedOutput": "16"
+                }
+              ]
+            },
+            {
+              "title": "Parameters, Arguments, and Defaults",
+              "slug": "parameters-arguments-and-defaults",
+              "contentMarkdown": "## Parameters vs. arguments\n\nA **parameter** is the named placeholder listed in a function's definition. An **argument** is the actual value passed in when the function is called. People often use the two words interchangeably, but technically parameters belong to the definition, and arguments belong to the call.\n\n```js\nfunction add(a, b) { // a and b are parameters\n  return a + b;\n}\n\nadd(2, 3); // 2 and 3 are arguments\n```\n\n## Default parameter values\n\nYou can give a parameter a default value, used automatically when the caller omits that argument (or passes `undefined`):\n\n```js\nfunction greet(name = \"stranger\") {\n  console.log(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\"); // Hello, Alice!\ngreet();        // Hello, stranger!\n```\n\n## Too many or too few arguments\n\nUnlike some languages, JavaScript does not enforce the number of arguments passed. Missing arguments become `undefined` inside the function (or fall back to their default, if one exists), and extra arguments are simply ignored unless the function explicitly collects them, for example with a 'rest parameter' (`...args`).",
+              "codeExamples": [
+                {
+                  "description": "Calling a function with a default parameter, with and without an argument",
+                  "code": "function greet(name = \"stranger\") {\n  console.log(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\");\ngreet();",
+                  "expectedOutput": "Hello, Alice!\nHello, stranger!"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between a parameter and an argument?",
+              "answer": "A **parameter** is the name used inside a function's definition to refer to a value it expects to receive. An **argument** is the actual value supplied at the point where the function is called.\n\n```js\nfunction multiply(x, y) { // x and y: parameters\n  return x * y;\n}\n\nmultiply(4, 5); // 4 and 5: arguments\n```\n\nHere, `x` and `y` are parameters — placeholders that exist only in the function's definition. `4` and `5` are arguments — concrete values provided at the call site. The distinction is mostly terminology, but precise vocabulary matters in technical discussions and documentation, and many interviewers use it to gauge basic fluency with programming terms.",
+              "scenario": "A code review comment says 'the argument name is unclear,' referring to how a function's definition names one of its inputs.",
+              "commonMistakes": "Using 'argument' and 'parameter' interchangeably in a way that causes confusion in a technical discussion, such as a code review or documentation.",
+              "followUps": "What happens in JavaScript if you call a function with fewer arguments than it has parameters?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What are default parameter values, and when are they used instead of the supplied argument?",
+              "answer": "A default parameter value is specified in the function definition using `= value` after the parameter name. It is used whenever the corresponding argument is **omitted entirely** or explicitly passed as `undefined` — but not for any other falsy value like `0`, `\"\"`, or `null`.\n\n```js\nfunction setVolume(level = 50) {\n  console.log(\"Volume:\", level);\n}\n\nsetVolume();        // Volume: 50 (omitted entirely)\nsetVolume(undefined); // Volume: 50 (explicitly undefined)\nsetVolume(0);        // Volume: 0 (0 is a real, valid argument)\nsetVolume(null);     // Volume: null (null is also a real, valid argument)\n```\n\nThis is a frequent source of confusion: beginners sometimes expect `0` or `null` to also trigger the default, since both can feel like 'no value', but JavaScript only substitutes the default for `undefined`.",
+              "scenario": "A function `setVolume(level = 50)` is called with `setVolume(0)` to explicitly mute audio, but a teammate is surprised when the default of 50 is not applied.",
+              "commonMistakes": "Expecting default parameters to trigger for any falsy argument (0, '', null) rather than only for undefined or a missing argument.",
+              "followUps": "How would you write a default that should apply to 0 as well as undefined, if that behavior were actually desired?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a 'rest parameter', and how does it let a function accept an arbitrary number of arguments?",
+              "answer": "A rest parameter, written as `...name` as the last parameter in a function's parameter list, collects any remaining arguments passed to the function into a real array. This lets a function accept a variable number of inputs beyond its fixed, named parameters.\n\n```js\nfunction sum(...numbers) {\n  let total = 0;\n  for (const n of numbers) {\n    total += n;\n  }\n  return total;\n}\n\nconsole.log(sum(1, 2, 3));    // 6\nconsole.log(sum(10, 20));    // 30\nconsole.log(sum());          // 0\n```\n\nA rest parameter can be combined with regular named parameters, as long as it comes last:\n\n```js\nfunction describe(name, ...traits) {\n  console.log(name + \": \" + traits.join(\", \"));\n}\n\ndescribe(\"Alice\", \"curious\", \"kind\"); // Alice: curious, kind\n```\n\nRest parameters are the modern replacement for the older, array-like `arguments` object, because they produce a real array (with methods like `.map` and `.reduce` available) and because arrow functions don't have their own `arguments` object at all.",
+              "scenario": "A logging utility function needs to accept any number of values to print together, similar to how `console.log` itself accepts a variable number of arguments.",
+              "commonMistakes": "Placing a rest parameter before other named parameters (a syntax error). Confusing rest parameters (gathering arguments into an array) with the spread operator (expanding an array into individual arguments), which use the same `...` syntax for opposite purposes.",
+              "followUps": "How does the spread operator (...) differ from a rest parameter, even though they use the same syntax?"
+            }
+          ]
+        },
+        {
+          "title": "Return Values",
+          "slug": "return-values",
+          "summary": "Understand how functions send results back to their caller, and what happens when they don't.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "The return Statement",
+              "slug": "the-return-statement",
+              "contentMarkdown": "## Sending a result back\n\nThe `return` statement ends a function's execution immediately and sends a value back to wherever the function was called. The calling code can then use that value, for example by storing it in a variable or passing it into another expression.\n\n```js\nfunction add(a, b) {\n  return a + b;\n}\n\nlet result = add(2, 3);\nconsole.log(result); // 5\nconsole.log(add(10, 20) + 1); // 31 — the returned value is used directly\n```\n\nAny code written *after* a `return` statement inside the same block will never run, because the function has already exited.\n\n```js\nfunction example() {\n  return \"done\";\n  console.log(\"this never runs\");\n}\n```\n\n## Functions without a return value\n\nIf a function has no `return` statement, or uses `return` with no value, it implicitly returns `undefined`.\n\n```js\nfunction logMessage(msg) {\n  console.log(msg);\n  // no return statement\n}\n\nlet outcome = logMessage(\"hi\");\nconsole.log(outcome); // undefined\n```\n\nThis distinction matters: a function meant purely for a side effect (like printing) is fine without a return value, but a function meant to compute something must explicitly `return` it, or callers will silently receive `undefined`.",
+              "codeExamples": [
+                {
+                  "description": "Using a function's return value in further computation",
+                  "code": "function add(a, b) {\n  return a + b;\n}\n\nlet result = add(2, 3);\nconsole.log(result);\nconsole.log(add(10, 20) + 1);",
+                  "expectedOutput": "5\n31"
+                },
+                {
+                  "description": "A function with no return statement implicitly returns undefined",
+                  "code": "function logMessage(msg) {\n  console.log(msg);\n}\n\nlet outcome = logMessage(\"hi\");\nconsole.log(outcome);",
+                  "expectedOutput": "hi\nundefined"
+                }
+              ]
+            },
+            {
+              "title": "Returning Multiple Values and Early Exits",
+              "slug": "returning-multiple-values-and-early-exits",
+              "contentMarkdown": "## Returning more than one value\n\nA function can only return a single value directly, but that value can be an array or an object, which effectively lets you return multiple pieces of data bundled together.\n\n```js\nfunction minMax(numbers) {\n  return {\n    min: Math.min(...numbers),\n    max: Math.max(...numbers)\n  };\n}\n\nlet result = minMax([4, 1, 9, 3]);\nconsole.log(result.min, result.max); // 1 9\n```\n\nUsing an object (rather than an array) is often clearer for multiple return values, because each piece of data gets a descriptive name (`min`, `max`) instead of being identified only by its position.\n\n## return as an early exit\n\n`return` can also appear in the middle of a function to exit as soon as an answer is known, which avoids unnecessary extra work and reduces nesting (see guard clauses, covered under Control Flow).\n\n```js\nfunction describeNumber(n) {\n  if (n === 0) return \"zero\";\n  if (n < 0) return \"negative\";\n  return \"positive\";\n}\n\nconsole.log(describeNumber(-5));\nconsole.log(describeNumber(0));\nconsole.log(describeNumber(8));\n```",
+              "codeExamples": [
+                {
+                  "description": "Returning multiple values bundled in an object",
+                  "code": "function minMax(numbers) {\n  return {\n    min: Math.min(...numbers),\n    max: Math.max(...numbers)\n  };\n}\n\nlet result = minMax([4, 1, 9, 3]);\nconsole.log(result.min, result.max);",
+                  "expectedOutput": "1 9"
+                },
+                {
+                  "description": "Using multiple return statements as early exits",
+                  "code": "function describeNumber(n) {\n  if (n === 0) return \"zero\";\n  if (n < 0) return \"negative\";\n  return \"positive\";\n}\n\nconsole.log(describeNumber(-5));\nconsole.log(describeNumber(0));\nconsole.log(describeNumber(8));",
+                  "expectedOutput": "negative\nzero\npositive"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What value does a function return if it has no explicit `return` statement?",
+              "answer": "A function with no `return` statement — or one that uses a bare `return;` with no value — implicitly returns `undefined`. This is true even if the function performs useful work like printing output or modifying external data; the *return value* and the function's *side effects* are two separate things.\n\n```js\nfunction printSum(a, b) {\n  console.log(a + b); // side effect: printing\n  // no return statement\n}\n\nlet result = printSum(2, 3); // prints 5\nconsole.log(result); // undefined — nothing was returned\n```\n\nThis distinction trips up beginners who assume that because a function 'does something useful,' calling it must also hand back a meaningful value. In reality, whether a function returns something depends entirely on whether it contains an explicit `return value;`.",
+              "scenario": "A developer writes `let total = logAndSum(5, 10)` expecting `total` to hold `15`, but the helper function only prints the sum rather than returning it, so `total` ends up `undefined`.",
+              "commonMistakes": "Assuming any function that 'produces' useful behavior (like printing) must also return something usable. Forgetting a `return` keyword while otherwise writing the correct computation.",
+              "followUps": "What is the difference between a function's return value and its side effects?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "How can a function return more than one value?",
+              "answer": "JavaScript functions can only directly return a single value, but that single value can itself be a container — most commonly an array or an object — holding several related pieces of data.\n\n```js\n// Returning an array (values identified by position)\nfunction divide(a, b) {\n  return [Math.floor(a / b), a % b]; // [quotient, remainder]\n}\nconst [quotient, remainder] = divide(17, 5);\nconsole.log(quotient, remainder); // 3 2\n\n// Returning an object (values identified by name)\nfunction divideNamed(a, b) {\n  return { quotient: Math.floor(a / b), remainder: a % b };\n}\nconst result = divideNamed(17, 5);\nconsole.log(result.quotient, result.remainder); // 3 2\n```\n\nReturning an object is generally preferred when the values have distinct meanings, since each one is labeled by name at the call site, which is more self-documenting and resistant to mistakes than relying on position alone, like accidentally swapping which array index means what.",
+              "scenario": "A validation function needs to report both whether input is valid and, if not, a human-readable reason, which naturally maps to an object with `{ valid, reason }` fields rather than a single boolean.",
+              "commonMistakes": "Returning an array of unrelated values and later misremembering which index holds which piece of data. Mutating and returning the same object reference from multiple calls, accidentally sharing state between callers.",
+              "followUps": "How would you use array destructuring or object destructuring to unpack a function's returned value?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between a function's return value and a side effect, and why does that distinction matter for writing predictable code?",
+              "answer": "A **return value** is the data a function explicitly hands back to its caller via `return`. A **side effect** is any change a function makes to something outside itself — modifying a global variable, mutating an object passed in as an argument, writing to a file, printing to the console, or making a network request.\n\nA function can have a return value with no side effects, side effects with no meaningful return value, both, or neither:\n\n```js\nfunction pureAdd(a, b) {\n  return a + b; // return value, no side effect\n}\n\nlet log = [];\nfunction recordAndAdd(a, b) {\n  log.push(`${a}+${b}`); // side effect: mutates external array\n  return a + b;          // also has a return value\n}\n```\n\nFunctions that rely only on their inputs and produce a return value without touching anything else are called **pure functions**. They are easier to test (same input always gives the same output), easier to reason about (no hidden external effects to track), and safer to reuse or run in parallel. Functions with side effects are often still necessary — printing output or saving to a database are inherently side effects — but isolating them from your core computation logic generally makes a codebase more predictable and easier to maintain.",
+              "scenario": "A code reviewer flags a 'calculation' function that both returns a total and silently writes that total into a shared global variable, making it hard to reuse the function safely in a different part of the codebase.",
+              "commonMistakes": "Mixing significant side effects into functions that look like pure calculations, making them harder to test or reuse safely. Assuming a function has no side effects just because it returns a value.",
+              "followUps": "What is a 'pure function', and what practical benefits does writing pure functions provide?"
+            }
+          ]
+        },
+        {
+          "title": "Variable Scope and Closures",
+          "slug": "variable-scope-and-closures",
+          "summary": "Understand where a variable is visible in your code, and how functions can 'remember' variables from where they were created.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Block, Function, and Global Scope",
+              "slug": "block-function-and-global-scope",
+              "contentMarkdown": "## What 'scope' means\n\nScope determines where in your code a variable can be seen and used. JavaScript has three main kinds relevant to everyday code: **global scope**, **function scope**, and **block scope**.\n\nA variable declared outside any function or block lives in **global scope** and can be accessed from anywhere in the program. This is convenient but risky in large programs, since any part of the code could accidentally overwrite it.\n\n```js\nlet appName = \"CodeAtlas\"; // global scope\n\nfunction printName() {\n  console.log(appName); // visible here too\n}\nprintName();\n```\n\nA variable declared with `let` or `const` inside a block (`{ }`, such as an `if` or `for`) is only visible within that block — this is **block scope**.\n\n```js\nif (true) {\n  let secret = 42;\n  console.log(secret); // 42, visible here\n}\nconsole.log(typeof secret); // \"undefined\" — not visible out here\n```\n\nA variable declared inside a function (with any keyword) is only visible inside that function — **function scope**. Each call to the function gets its own fresh set of local variables, independent of other calls.\n\n```js\nfunction makeCounter() {\n  let count = 0; // local to this function call\n  count++;\n  return count;\n}\nconsole.log(makeCounter()); // 1\nconsole.log(makeCounter()); // 1 again — a brand new count each call\n```",
+              "codeExamples": [
+                {
+                  "description": "A block-scoped variable is not visible outside its block",
+                  "code": "if (true) {\n  let secret = 42;\n  console.log(secret);\n}\nconsole.log(typeof secret);",
+                  "expectedOutput": "42\nundefined"
+                },
+                {
+                  "description": "Each function call gets independent local variables",
+                  "code": "function makeCounter() {\n  let count = 0;\n  count++;\n  return count;\n}\nconsole.log(makeCounter());\nconsole.log(makeCounter());",
+                  "expectedOutput": "1\n1"
+                }
+              ]
+            },
+            {
+              "title": "Closures: Functions That Remember",
+              "slug": "closures-functions-that-remember",
+              "contentMarkdown": "## What a closure is\n\nA **closure** happens when a function is defined inside another function and keeps access to the outer function's variables, even after the outer function has finished running. The inner function 'closes over' those variables, remembering them rather than losing them.\n\n```js\nfunction makeCounter() {\n  let count = 0; // this variable is 'enclosed'\n  return function () {\n    count++;\n    return count;\n  };\n}\n\nconst counter = makeCounter(); // makeCounter has already finished running\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2\nconsole.log(counter()); // 3\n```\n\nEven though `makeCounter()` has already returned, the inner function returned from it still has access to `count`, and keeps updating the *same* `count` across calls, because it's the same closure. A fresh call to `makeCounter()` would create an entirely separate `count`, independent of the first:\n\n```js\nconst counterA = makeCounter();\nconst counterB = makeCounter();\nconsole.log(counterA()); // 1\nconsole.log(counterA()); // 2\nconsole.log(counterB()); // 1 — independent from counterA's count\n```\n\n## Why closures are useful\n\nClosures let you create private state — data that can only be changed through a controlled interface (like the returned function above), rather than being directly exposed and modified from outside. This is a foundational building block used throughout JavaScript, including in patterns for data privacy and in callback-based code like event handlers and timers.",
+              "codeExamples": [
+                {
+                  "description": "A closure that remembers a count across multiple calls",
+                  "code": "function makeCounter() {\n  let count = 0;\n  return function () {\n    count++;\n    return count;\n  };\n}\n\nconst counter = makeCounter();\nconsole.log(counter());\nconsole.log(counter());\nconsole.log(counter());",
+                  "expectedOutput": "1\n2\n3"
+                },
+                {
+                  "description": "Two independently created closures keep separate state",
+                  "code": "function makeCounter() {\n  let count = 0;\n  return function () {\n    count++;\n    return count;\n  };\n}\n\nconst counterA = makeCounter();\nconst counterB = makeCounter();\nconsole.log(counterA());\nconsole.log(counterA());\nconsole.log(counterB());",
+                  "expectedOutput": "1\n2\n1"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a closure, in simple conceptual terms, and why is it useful?",
+              "answer": "A closure is formed when a function is defined inside another function and keeps access to the outer function's local variables, even after the outer function has already finished executing. Instead of those variables disappearing once the outer function returns, the inner function keeps a live reference to them.\n\n```js\nfunction createGreeter(greeting) {\n  return function (name) {\n    console.log(`${greeting}, ${name}!`);\n  };\n}\n\nconst greetHello = createGreeter(\"Hello\");\nconst greetHi = createGreeter(\"Hi\");\n\ngreetHello(\"Alice\"); // Hello, Alice!\ngreetHi(\"Bob\");      // Hi, Bob!\n```\n\nHere, `greetHello` and `greetHi` are each a closure over their own separate `greeting` variable, captured from the specific call to `createGreeter` that produced them. Closures are useful because they let you create functions with built-in, private configuration or state (like `greeting`, or a running counter), without needing a class or exposing that state globally.",
+              "scenario": "A UI library wants to create multiple independent button click-counters on a page, each remembering its own click count without any of them interfering with the others.",
+              "commonMistakes": "Believing all closures created from the same outer function automatically share the same variables, when in fact each call to the outer function creates a fresh, independent set.",
+              "followUps": "Can you give a practical real-world example where closures are used, such as in event handlers or memoization?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What's the difference between global scope and local (function/block) scope, and why is minimizing global variables considered good practice?",
+              "answer": "A variable in **global scope** is declared outside any function or block and is accessible from anywhere in the program, for its entire lifetime. A variable in **local scope** (function or block scope) only exists and is only visible within the function or block where it was declared.\n\n```js\nlet total = 0; // global\n\nfunction addToTotal(amount) {\n  let adjusted = amount * 1.1; // local — only exists inside this function call\n  total += adjusted;           // modifies the global variable\n}\n\naddToTotal(100);\nconsole.log(total); // 110\nconsole.log(typeof adjusted); // \"undefined\" — not visible out here\n```\n\nRelying heavily on global variables is discouraged because:\n\n1. **Any part of the program can read or modify them**, making it hard to trace where an unexpected change came from, especially as a codebase grows.\n2. **Name collisions** become more likely — two unrelated parts of a large codebase might accidentally use the same global variable name for different purposes.\n3. **Testing and reasoning become harder**, since a function that depends on or modifies global state can behave differently depending on what else has run before it.\n\nKeeping variables as locally scoped as possible — only as 'wide' as they actually need to be — limits the surface area where bugs can creep in, and makes functions easier to understand and test in isolation.",
+              "scenario": "Two unrelated modules in a large application both declare a global variable named `data`, and one module's code silently corrupts the other's expected value.",
+              "commonMistakes": "Overusing global variables for convenience instead of passing values explicitly as function parameters and return values. Not realizing that `var` at the top level of a script also becomes a global, unlike `let`/`const` used the same way inside a module.",
+              "followUps": "What is the 'global namespace', and how do modules in JavaScript help avoid polluting it?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Why does a loop using `var` for its counter produce surprising results when used inside an asynchronous callback (e.g. `setTimeout`), and how does switching to `let` fix it?",
+              "answer": "This is a classic JavaScript interview question that tests understanding of scope and closures together. Consider this example:\n\n```js\nfor (var i = 1; i <= 3; i++) {\n  setTimeout(function () {\n    console.log(i);\n  }, 0);\n}\n// Prints: 4 4 4 (not 1 2 3, as many beginners expect)\n```\n\nBecause `var` is function-scoped (not block-scoped), there is only **one** shared `i` variable for the entire loop, not a fresh one per iteration. All three callbacks passed to `setTimeout` form closures over that *same* single variable. By the time any of them actually runs (after the loop has already finished, since `setTimeout` schedules its callback for later), `i` has already reached `4` (the value that made the loop condition finally fail), so all three callbacks see `4`.\n\nSwitching the loop variable to `let` fixes this, because `let` is block-scoped: the `for` loop internally creates a **new binding of `i` for each iteration**, so each callback's closure captures its own separate `i`, frozen at the value it had during that specific iteration.\n\n```js\nfor (let i = 1; i <= 3; i++) {\n  setTimeout(function () {\n    console.log(i);\n  }, 0);\n}\n// Prints: 1 2 3, each callback has its own i\n```\n\nBefore `let` existed, developers worked around this by wrapping each iteration in its own function (an IIFE — immediately invoked function expression) to manually create a fresh scope per iteration, capturing the current value of `i` as an argument.",
+              "scenario": "A page generates three buttons in a loop meant to alert their own index number when clicked, but due to `var`, every button alerts the same final index instead of its own.",
+              "commonMistakes": "Not realizing that `var`'s function scope means a traditional for loop shares one single variable across all its iterations. Assuming `let` and `var` behave the same way inside a loop, aside from reassignment rules.",
+              "followUps": "What is an IIFE, and how was it historically used to solve this exact closure-in-a-loop problem before let existed?\nHow would you manually fix the var version without switching to let, using a helper function?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Data Structures",
+      "slug": "data-structures",
+      "topics": [
+        {
+          "title": "Arrays and Lists",
+          "slug": "arrays-and-lists",
+          "summary": "Store and manipulate ordered collections of values using arrays, the most fundamental list-like data structure.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Creating and Accessing Arrays",
+              "slug": "creating-and-accessing-arrays",
+              "contentMarkdown": "## What an array is\n\nAn array is an ordered list of values, stored together under a single variable name. Each value has a numeric position called an **index**, starting at `0` for the first element.\n\n```js\nlet fruits = [\"apple\", \"banana\", \"cherry\"];\nconsole.log(fruits[0]); // \"apple\" — first element\nconsole.log(fruits[2]); // \"cherry\" — third element\nconsole.log(fruits.length); // 3\n```\n\nAccessing an index beyond the array's length returns `undefined` rather than causing an error:\n\n```js\nconsole.log(fruits[10]); // undefined\n```\n\n## Modifying arrays\n\nArrays declared with `const` can still be modified (their contents are mutable) — `const` only prevents the variable from being reassigned to a completely different array.\n\n```js\nconst numbers = [1, 2, 3];\nnumbers.push(4);      // adds to the end: [1, 2, 3, 4]\nnumbers[0] = 100;      // changes an element: [100, 2, 3, 4]\nconsole.log(numbers);\n```\n\nCommon built-in array methods include `push` (add to end), `pop` (remove from end), `shift` (remove from start), `unshift` (add to start), and `includes` (check if a value exists in the array).",
+              "codeExamples": [
+                {
+                  "description": "Creating an array and accessing elements by index",
+                  "code": "let fruits = [\"apple\", \"banana\", \"cherry\"];\nconsole.log(fruits[0]);\nconsole.log(fruits[2]);\nconsole.log(fruits.length);",
+                  "expectedOutput": "apple\ncherry\n3"
+                },
+                {
+                  "description": "Modifying the contents of a const array",
+                  "code": "const numbers = [1, 2, 3];\nnumbers.push(4);\nnumbers[0] = 100;\nconsole.log(numbers);",
+                  "expectedOutput": "[ 100, 2, 3, 4 ]"
+                }
+              ]
+            },
+            {
+              "title": "Iterating and Transforming Arrays",
+              "slug": "iterating-and-transforming-arrays",
+              "contentMarkdown": "## Looping over an array\n\nYou can walk through every element of an array with a `for` loop, a `for...of` loop, or purpose-built array methods designed exactly for this.\n\n```js\nlet numbers = [1, 2, 3, 4];\nfor (const n of numbers) {\n  console.log(n * 2);\n}\n```\n\n## forEach, map, and filter\n\n`forEach` runs a function once for every element, purely for side effects (like printing):\n\n```js\nnumbers.forEach(n => console.log(n));\n```\n\n`map` builds and returns a **new array** by transforming every element with a function, leaving the original array unchanged:\n\n```js\nlet doubled = numbers.map(n => n * 2);\nconsole.log(doubled); // [2, 4, 6, 8]\nconsole.log(numbers); // [1, 2, 3, 4] — unchanged\n```\n\n`filter` builds and returns a new array containing only the elements for which a function returns `true`:\n\n```js\nlet evens = numbers.filter(n => n % 2 === 0);\nconsole.log(evens); // [2, 4]\n```\n\nThese methods are preferred in modern JavaScript over manual loops for transformation tasks, because they clearly express *intent* (transform, filter, or just iterate) and avoid manually managing loop counters and temporary arrays.",
+              "codeExamples": [
+                {
+                  "description": "Using map to transform every element into a new array",
+                  "code": "let numbers = [1, 2, 3, 4];\nlet doubled = numbers.map(n => n * 2);\nconsole.log(doubled);\nconsole.log(numbers);",
+                  "expectedOutput": "[ 2, 4, 6, 8 ]\n[ 1, 2, 3, 4 ]"
+                },
+                {
+                  "description": "Using filter to keep only elements matching a condition",
+                  "code": "let numbers = [1, 2, 3, 4];\nlet evens = numbers.filter(n => n % 2 === 0);\nconsole.log(evens);",
+                  "expectedOutput": "[ 2, 4 ]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "How are elements in an array indexed, and what happens when you access an index that doesn't exist?",
+              "answer": "Array elements are numbered starting from `0`. The first element is at index `0`, the second at index `1`, and so on, up to `length - 1` for the last element.\n\n```js\nlet colors = [\"red\", \"green\", \"blue\"];\nconsole.log(colors[0]); // \"red\"\nconsole.log(colors[2]); // \"blue\"\nconsole.log(colors[colors.length - 1]); // \"blue\" — a safe way to get the last element\n```\n\nAccessing an index that is out of bounds (negative, or greater than or equal to the array's length) does not throw an error — it simply returns `undefined`:\n\n```js\nconsole.log(colors[10]); // undefined\nconsole.log(colors[-1]); // undefined (unlike some other languages, negative indices aren't special)\n```\n\nA frequent beginner mistake is an 'off-by-one' error — using `colors[colors.length]` (one past the end) when meaning to get the last element, instead of the correct `colors[colors.length - 1]`.",
+              "scenario": "A function that displays the 'last item added' to a shopping cart array accidentally uses `cart[cart.length]` instead of `cart[cart.length - 1]`, silently showing 'undefined' in the UI.",
+              "commonMistakes": "Off-by-one errors when computing the last valid index. Expecting an out-of-range access to throw an error, as it does in some other languages, rather than silently returning undefined.",
+              "followUps": "How would you safely get the last element of an array using a built-in method rather than computing the index manually?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `map` and `forEach`, and when should you use each?",
+              "answer": "Both methods run a provided function once for every element of an array, but they differ in purpose and return value:\n\n- **`forEach`** runs the function purely for its side effects (like logging, or pushing into another array) and always returns `undefined`. It is not meant to build a new array.\n- **`map`** runs the function to *transform* each element and collects the results into a brand-new array, which it returns, leaving the original array untouched.\n\n```js\nlet numbers = [1, 2, 3];\n\n// forEach: side effects only, no useful return value\nconst forEachResult = numbers.forEach(n => n * 2);\nconsole.log(forEachResult); // undefined\n\n// map: builds and returns a transformed array\nconst mapResult = numbers.map(n => n * 2);\nconsole.log(mapResult); // [2, 4, 6]\n```\n\nAs a rule of thumb: if you need the *result* of transforming each element as a new array, use `map`. If you just need to do something for each element (like printing, or calling an API) without needing a new collection back, use `forEach`.",
+              "scenario": "A developer calls `const doubled = numbers.forEach(n => n * 2)` expecting an array of doubled numbers, but `doubled` turns out to be `undefined`.",
+              "commonMistakes": "Using forEach when the goal is actually to build a new transformed array, then being confused by an undefined result. Using map purely for side effects and ignoring (or discarding) the new array it builds, which wastes memory for no benefit.",
+              "followUps": "What does filter return, and how is it typically combined with map in a single data-processing pipeline?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Why is using `array.length` as a loop condition inside a standard for loop something to be careful about if the array is being modified inside the loop?",
+              "answer": "A typical `for` loop re-evaluates its condition (including `array.length`) on every iteration. If the loop body adds or removes elements from the array being iterated, `length` changes *while the loop is running*, which can cause elements to be skipped, visited twice, or the loop to run for an unexpected number of iterations.\n\n```js\nlet numbers = [1, 2, 3, 4, 5];\n\n// Removing elements while iterating forward — skips elements!\nfor (let i = 0; i < numbers.length; i++) {\n  if (numbers[i] % 2 === 0) {\n    numbers.splice(i, 1); // removes the current element, shifting everything after it left\n  }\n}\nconsole.log(numbers); // [1, 3, 5] happens to work here, but only by luck of this specific data\n```\n\nIn general, mutating an array's length while iterating forward over it by index is risky and easy to get subtly wrong. Safer approaches include:\n\n1. **Iterate backward** (from the last index to `0`) when removing elements, so shifting doesn't skip anything ahead of the current position.\n2. **Build a new array instead of mutating**, e.g. with `filter`, which sidesteps the problem entirely.\n3. **Cache the original length** in a separate variable before the loop starts, if you specifically want to iterate the original number of elements regardless of later changes.\n\n```js\n// Safer: build a new array instead of mutating during iteration\nlet numbers2 = [1, 2, 3, 4, 5];\nlet odds = numbers2.filter(n => n % 2 !== 0);\nconsole.log(odds); // [1, 3, 5]\n```",
+              "scenario": "A cleanup routine removes expired entries from a list by splicing them out inside a forward for loop, and a bug report shows some expired entries are still occasionally left behind.",
+              "commonMistakes": "Mutating an array (push, pop, splice) while iterating forward over it with a standard index-based loop. Not realizing `array.length` is re-read on every loop iteration rather than captured once at the start.",
+              "followUps": "How would you rewrite the removal loop to iterate backward safely, or alternatively using filter?"
+            }
+          ]
+        },
+        {
+          "title": "Key-Value Maps and Dictionaries",
+          "slug": "key-value-maps-and-dictionaries",
+          "summary": "Store data as labeled key-value pairs instead of ordered positions, using plain objects and the Map class.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Objects as Dictionaries",
+              "slug": "objects-as-dictionaries",
+              "contentMarkdown": "## Looking things up by name instead of position\n\nAn array is great when position matters — \"the third item\". But often you want to look things up by a meaningful *name* instead, like looking up a person's age by their name. This is where key-value structures come in: each value is stored under a unique **key**.\n\nIn JavaScript, the simplest key-value structure is a plain object literal:\n\n```js\nlet ages = {\n  alice: 30,\n  bob: 25,\n  carol: 35\n};\n\nconsole.log(ages[\"alice\"]); // 30\nconsole.log(ages.bob);       // 25 — dot notation works for simple names\n```\n\n## Adding, updating, and removing keys\n\n```js\nages.dave = 40;        // add a new key\nages.alice = 31;       // update an existing key\ndelete ages.bob;       // remove a key entirely\nconsole.log(ages);\n```\n\n## Checking for a key and listing all keys\n\n```js\nconsole.log(\"carol\" in ages); // true\nconsole.log(\"zack\" in ages);  // false\nconsole.log(Object.keys(ages));  // array of all key names\nconsole.log(Object.values(ages)); // array of all values\n```\n\nObjects are the most common way to represent a dictionary-like structure in JavaScript, and are a natural fit whenever you're modeling a single 'thing' with multiple named properties, like a user profile or a product record.",
+              "codeExamples": [
+                {
+                  "description": "Creating an object and looking up values by key",
+                  "code": "let ages = { alice: 30, bob: 25, carol: 35 };\nconsole.log(ages[\"alice\"]);\nconsole.log(ages.bob);",
+                  "expectedOutput": "30\n25"
+                },
+                {
+                  "description": "Checking whether a key exists and listing all keys",
+                  "code": "let ages = { alice: 30, bob: 25, carol: 35 };\nconsole.log(\"carol\" in ages);\nconsole.log(\"zack\" in ages);\nconsole.log(Object.keys(ages));",
+                  "expectedOutput": "true\nfalse\n[ 'alice', 'bob', 'carol' ]"
+                }
+              ]
+            },
+            {
+              "title": "The Map Class",
+              "slug": "the-map-class",
+              "contentMarkdown": "## A dedicated key-value structure\n\nAlongside plain objects, JavaScript provides a built-in `Map` class specifically designed for key-value storage. A `Map` behaves more predictably than a plain object for this purpose in a few important ways.\n\n```js\nlet ages = new Map();\nages.set(\"alice\", 30);\nages.set(\"bob\", 25);\n\nconsole.log(ages.get(\"alice\")); // 30\nconsole.log(ages.has(\"bob\"));   // true\nconsole.log(ages.size);          // 2\n\nages.delete(\"bob\");\nconsole.log(ages.has(\"bob\"));   // false\n```\n\n## Why prefer Map over a plain object sometimes\n\n1. **Any value can be a key** in a `Map` — including numbers, objects, or even functions — whereas plain object keys are always converted to strings.\n2. **`.size`** gives the number of entries directly; a plain object requires `Object.keys(obj).length` instead.\n3. **No accidental collisions** with inherited properties (like `toString` or `constructor`) that exist on every plain object by default.\n4. **Guaranteed iteration order** matching insertion order, and a convenient way to loop over entries directly:\n\n```js\nlet scores = new Map([[\"math\", 90], [\"art\", 85]]);\nfor (const [subject, score] of scores) {\n  console.log(subject + \": \" + score);\n}\n```\n\nIn practice, plain objects remain extremely common for simple, fixed-shape records (like a single user's data), while `Map` is often preferred for more dynamic collections of key-value pairs that grow, shrink, or use non-string keys.",
+              "codeExamples": [
+                {
+                  "description": "Basic Map operations: set, get, has, delete",
+                  "code": "let ages = new Map();\nages.set(\"alice\", 30);\nages.set(\"bob\", 25);\nconsole.log(ages.get(\"alice\"));\nconsole.log(ages.has(\"bob\"));\nconsole.log(ages.size);",
+                  "expectedOutput": "30\ntrue\n2"
+                },
+                {
+                  "description": "Iterating over a Map's entries in insertion order",
+                  "code": "let scores = new Map([[\"math\", 90], [\"art\", 85]]);\nfor (const [subject, score] of scores) {\n  console.log(subject + \": \" + score);\n}",
+                  "expectedOutput": "math: 90\nart: 85"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is a key-value pair, and how do plain JavaScript objects implement this concept?",
+              "answer": "A key-value pair associates a unique label (the **key**) with a piece of data (the **value**), so the data can be looked up directly by its label instead of by position, as in an array. A collection of such pairs is often called a dictionary, a map, or (in JavaScript) an object.\n\n```js\nlet capitals = {\n  france: \"Paris\",\n  japan: \"Tokyo\"\n};\n\nconsole.log(capitals[\"france\"]); // \"Paris\" — looked up by key, not position\nconsole.log(capitals.japan);      // \"Tokyo\" — dot notation also works\n```\n\nEach property name (`france`, `japan`) is a key, and the string after the colon is its associated value. Keys in a plain object are unique — assigning to an existing key overwrites its value rather than creating a duplicate entry.",
+              "scenario": "A configuration file is loaded into a plain object so settings can be looked up by name, such as `config.timeout` or `config[\"retryCount\"]`, instead of remembering a fixed order.",
+              "commonMistakes": "Confusing bracket notation (`obj[\"key\"]`, required when the key is dynamic or not a valid identifier) with dot notation (`obj.key`, only usable with simple, known-in-advance key names).",
+              "followUps": "When must you use bracket notation instead of dot notation to access a property?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What are the key practical differences between a plain object and the built-in `Map` class for storing key-value data?",
+              "answer": "While both can store key-value pairs, they differ in several concrete ways:\n\n1. **Key types** — plain object keys are always coerced to strings (or symbols); `Map` keys can be any value at all, including numbers, booleans, or object references, without conversion.\n2. **Size** — `Map` exposes `.size` directly; a plain object requires `Object.keys(obj).length`.\n3. **Inherited properties** — every plain object inherits properties like `toString` from `Object.prototype`, which can collide with a key you intended to store (e.g., a key literally named `toString`); a `Map` has no such inherited keys to worry about.\n4. **Iteration** — a `Map` is directly iterable with `for...of` in guaranteed insertion order; a plain object needs `Object.keys`/`Object.entries` to iterate, and insertion-order guarantees have historically been less consistent for certain key types.\n\n```js\nlet m = new Map();\nm.set(1, \"one\");    // numeric key, stored as-is\nm.set(\"1\", \"ONE\");  // separate string key \"1\" — not the same as numeric 1\nconsole.log(m.get(1));   // \"one\"\nconsole.log(m.get(\"1\")); // \"ONE\"\nconsole.log(m.size);     // 2 — two distinct keys\n\nlet o = {};\no[1] = \"one\";   // numeric key 1 is converted to the string \"1\"\no[\"1\"] = \"ONE\"; // overwrites the same key, since both became \"1\"\nconsole.log(o);  // { '1': 'ONE' } — only one key\n```\n\nIn short: reach for `Map` when keys aren't guaranteed to be simple strings, when the collection's size needs to be checked often, or when strict insertion-order iteration matters; plain objects remain a fine, lightweight default for simple, string-keyed records.",
+              "scenario": "A caching layer keys entries by arbitrary object references (not strings), which a plain object cannot represent correctly but a Map handles natively.",
+              "commonMistakes": "Assuming a plain object preserves distinct numeric and string keys as separate entries, when in fact both get converted to the same string key. Reaching for Map by default even for simple, fixed-shape records where a plain object reads more naturally.",
+              "followUps": "What is a Set, and how does it relate to Map and arrays?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What is the time complexity of looking up a value by key in a JavaScript object or Map, and why?",
+              "answer": "Looking up a value by key in both a plain object and a `Map` is, on average, an **O(1)** (constant-time) operation — meaning, roughly speaking, the time it takes doesn't grow with the number of entries already stored, unlike searching through an unsorted array element by element, which is **O(n)**.\n\nThis is possible because both are implemented internally using a **hash table** (or a similarly optimized structure): the key is run through a hashing function that computes a numeric location, and the engine jumps almost directly to that location to retrieve the value, instead of checking entries one by one.\n\n```js\n// O(1) average lookup, regardless of how many entries exist\nlet userById = new Map();\nuserById.set(\"u123\", { name: \"Alice\" });\nconsole.log(userById.get(\"u123\")); // fast, even with millions of entries\n\n// O(n) lookup: must check every element in the worst case\nlet users = [{ id: \"u123\", name: \"Alice\" }, /* ...many more... */];\nlet found = users.find(u => u.id === \"u123\");\n```\n\nThis is why converting a large list into a `Map` (or object) keyed by the field you'll search on repeatedly is a common and valuable optimization when a program needs to perform many lookups — it trades a bit of upfront setup cost for dramatically faster repeated access, especially as the data set grows large. Note that in the worst case (many keys producing the same internal 'hash bucket', called a hash collision), lookup could degrade, but JavaScript engines are designed to make this rare in practice.",
+              "scenario": "A reporting script looks up matching user records for thousands of transaction rows using `array.find()` inside a loop, and performance noticeably degrades as the user list grows; switching to a Map keyed by user ID fixes it.",
+              "commonMistakes": "Repeatedly scanning an array with `find`/`filter` inside a loop when a single upfront Map (or object) keyed by the lookup field would make each lookup far faster. Assuming all data structures have the same lookup cost regardless of size.",
+              "followUps": "What does 'Big-O notation' mean in general, and how would you describe the time complexity of array.push versus array.unshift?"
+            }
+          ]
+        },
+        {
+          "title": "Stacks and Queues",
+          "slug": "stacks-and-queues",
+          "summary": "Learn two simple but powerful ordering disciplines for data — last-in-first-out and first-in-first-out — built using arrays.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Stacks: Last In, First Out",
+              "slug": "stacks-last-in-first-out",
+              "contentMarkdown": "## The stack idea\n\nA **stack** is a collection where the most recently added item is always the first one to be removed — this rule is called **LIFO** (Last In, First Out). A real-world analogy is a stack of plates: you place a new plate on top, and you also take plates off the top, never from the middle or bottom.\n\nAn array can implement a stack directly using `push` (add to the end — the 'top' of the stack) and `pop` (remove from the end):\n\n```js\nlet stack = [];\nstack.push(\"a\"); // stack: [a]\nstack.push(\"b\"); // stack: [a, b]\nstack.push(\"c\"); // stack: [a, b, c]\n\nconsole.log(stack.pop()); // \"c\" — the most recently added item comes off first\nconsole.log(stack.pop()); // \"b\"\nconsole.log(stack);       // [\"a\"]\n```\n\n## Where stacks show up\n\nStacks naturally model anything with a 'most recent first' ordering: the undo history in a text editor (undoing always reverses the *last* action first), the back button in a browser, and the call stack that a programming language itself uses internally to keep track of which function called which.",
+              "codeExamples": [
+                {
+                  "description": "Using an array as a stack with push and pop",
+                  "code": "let stack = [];\nstack.push(\"a\");\nstack.push(\"b\");\nstack.push(\"c\");\nconsole.log(stack.pop());\nconsole.log(stack.pop());\nconsole.log(stack);",
+                  "expectedOutput": "c\nb\n[ 'a' ]"
+                }
+              ]
+            },
+            {
+              "title": "Queues: First In, First Out",
+              "slug": "queues-first-in-first-out",
+              "contentMarkdown": "## The queue idea\n\nA **queue** is a collection where the item that has been waiting longest is always the first one removed — this rule is called **FIFO** (First In, First Out). The everyday analogy is a checkout line: whoever joined first gets served first.\n\nAn array can implement a queue using `push` (add to the end) and `shift` (remove from the front):\n\n```js\nlet queue = [];\nqueue.push(\"first\");  // queue: [first]\nqueue.push(\"second\"); // queue: [first, second]\nqueue.push(\"third\");  // queue: [first, second, third]\n\nconsole.log(queue.shift()); // \"first\" — the earliest-added item comes off first\nconsole.log(queue.shift()); // \"second\"\nconsole.log(queue);         // [\"third\"]\n```\n\n## Stack vs. queue, side by side\n\nBoth are built from the same two 'ends' of an array, but differ in *which* end is used for removal:\n\n- **Stack**: add and remove from the *same* end (`push` / `pop`) — LIFO.\n- **Queue**: add at one end, remove from the *other* end (`push` / `shift`) — FIFO.\n\n## A performance note\n\n`shift()` (and `unshift()`) must renumber every remaining element's index after removing (or adding) from the front, making it an O(n) operation on a plain array, slower than `pop()`'s O(1). For very large or performance-critical queues, a more specialized data structure is often used instead, but a plain array is perfectly fine for learning the concept and for everyday small-scale use.",
+              "codeExamples": [
+                {
+                  "description": "Using an array as a queue with push and shift",
+                  "code": "let queue = [];\nqueue.push(\"first\");\nqueue.push(\"second\");\nqueue.push(\"third\");\nconsole.log(queue.shift());\nconsole.log(queue.shift());\nconsole.log(queue);",
+                  "expectedOutput": "first\nsecond\n[ 'third' ]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between a stack and a queue?",
+              "answer": "Both are ordered collections, but they remove elements in opposite orders:\n\n- A **stack** follows LIFO (Last In, First Out): the most recently added element is removed first. Think of a stack of books — you take the top one off first.\n- A **queue** follows FIFO (First In, First Out): the earliest added element is removed first. Think of a line at a store — the first person in line is served first.\n\n```js\n// Stack (LIFO) using push/pop\nlet stack = [];\nstack.push(1);\nstack.push(2);\nconsole.log(stack.pop()); // 2 — last one in, first one out\n\n// Queue (FIFO) using push/shift\nlet queue = [];\nqueue.push(1);\nqueue.push(2);\nconsole.log(queue.shift()); // 1 — first one in, first one out\n```\n\nBoth can be implemented with a plain array; the only difference is which end you remove from.",
+              "scenario": "A print spooler needs jobs printed in the order they were submitted (a queue), while an undo feature needs the most recent action undone first (a stack).",
+              "commonMistakes": "Mixing up which array methods implement which structure — using `shift` for a stack (which would make it FIFO, not LIFO) or `pop` for a queue.",
+              "followUps": "Can you implement a queue so that both adding and removing are O(1), unlike the array-based version using shift?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Can you give a real-world or software example of where a stack is used behind the scenes, beyond a simple 'undo' feature?",
+              "answer": "One of the most important built-in uses of a stack is the **call stack**, which every programming language runtime uses to keep track of function calls. Each time a function is called, a new 'frame' (holding its local variables and where to resume afterward) is pushed onto the call stack; when the function returns, its frame is popped off, and execution resumes exactly where the calling function left off.\n\n```js\nfunction a() {\n  b(); // calling b pushes a new frame onto the call stack\n}\nfunction b() {\n  c(); // calling c pushes another frame\n}\nfunction c() {\n  console.log(\"deepest point\"); // call stack here: a -> b -> c\n}\na();\n```\n\nWhen `c()` finishes, its frame pops off and control returns to `b()`; when `b()` finishes, control returns to `a()`. This LIFO behavior is exactly why recursive functions that never 'bottom out' cause a **'Maximum call stack size exceeded'** error — each recursive call pushes another frame, and without a stopping point, the stack keeps growing until it runs out of space.\n\nOther practical examples include parsing matched brackets or parentheses in code (pushing an open bracket, popping when its matching close bracket appears), and the back-button history in a web browser.",
+              "scenario": "A code editor extension validates that every opening bracket in a file has a matching closing bracket, using a stack to track currently-open brackets as the file is scanned character by character.",
+              "commonMistakes": "Not connecting the abstract 'stack' data structure to the very concrete call stack used by the language runtime itself, which is often the first time the concept becomes tangible.",
+              "followUps": "What causes a 'stack overflow' error, and how does it relate to recursion specifically?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Why is `shift()` considered inefficient for a large array-based queue, and how would a more efficient queue typically be implemented?",
+              "answer": "When `shift()` removes the first element of an array, every remaining element must be moved one position to the left to close the gap and keep indices contiguous starting from `0`. For an array with `n` elements, that's up to `n - 1` elements that need to be shifted internally — making `shift()` an **O(n)** operation, in contrast to `pop()` (removing from the end), which is **O(1)** because no other elements need to move.\n\n```js\nlet queue = [1, 2, 3, 4, 5];\nqueue.shift(); // removes 1, then internally moves 2,3,4,5 one slot left — O(n)\nqueue.pop();   // removes the last element directly — O(1), nothing else moves\n```\n\nFor a queue that needs to handle many additions and removals efficiently at scale, common alternatives include:\n\n1. **A doubly linked list**, where adding/removing from either end is O(1), since no elements need to be renumbered — only a few pointers are updated.\n2. **A 'two-pointer' / circular buffer approach** over a fixed-size array, tracking separate 'front' and 'back' indices instead of physically shifting elements.\n3. **Using two stacks together** (a classic interview exercise) to simulate a queue's FIFO behavior using only O(1)-amortized stack operations.\n\nFor most everyday, moderately sized use cases, a plain array with `shift`/`push` is simple and perfectly adequate; the performance concern becomes significant mainly when a queue grows very large and is modified extremely frequently, such as in a high-throughput task scheduler.",
+              "scenario": "A task scheduler processes tens of thousands of queued jobs per minute using `array.shift()`, and profiling reveals the shifting operation itself, not the actual job logic, is the main performance bottleneck.",
+              "commonMistakes": "Assuming all array operations have the same, constant time cost. Reaching for a more complex specialized queue structure prematurely for small, infrequently-modified lists where a plain array is already fast enough.",
+              "followUps": "How would you implement a queue using two stacks, and what is the amortized time complexity of that approach?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Problem Solving & Algorithms",
+      "slug": "problem-solving-and-algorithms",
+      "topics": [
+        {
+          "title": "Recursion",
+          "slug": "recursion",
+          "summary": "Learn how a function can solve a problem by calling itself on smaller versions of the same problem.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "What Recursion Is",
+              "slug": "what-recursion-is",
+              "contentMarkdown": "## A function that calls itself\n\nRecursion is a technique where a function solves a problem by calling itself on a smaller or simpler version of that same problem, until it reaches a case simple enough to answer directly without further calls.\n\nEvery well-formed recursive function needs two parts:\n\n1. A **base case** — the simplest version of the problem, answered directly, with no further recursive call. This is what stops the recursion.\n2. A **recursive case** — where the function calls itself with a smaller or simpler input, moving it closer to the base case.\n\n```js\nfunction factorial(n) {\n  if (n <= 1) return 1;       // base case\n  return n * factorial(n - 1); // recursive case\n}\n\nconsole.log(factorial(5)); // 5 * 4 * 3 * 2 * 1 = 120\n```\n\nTracing through `factorial(3)`: it calls `factorial(2)`, which calls `factorial(1)`, which hits the base case and returns `1` directly. Then each call multiplies that result by its own `n` as it 'unwinds': `1 -> 2*1=2 -> 3*2=6`.\n\n## Without a base case: infinite recursion\n\nIf a recursive function never reaches its base case, it keeps calling itself forever (in practice, until it runs out of memory for the call stack), producing a **'Maximum call stack size exceeded'** error. This is the recursive equivalent of an infinite loop, and the fix is the same idea: make sure every recursive call moves measurably closer to the base case.",
+              "codeExamples": [
+                {
+                  "description": "A recursive function to compute a factorial",
+                  "code": "function factorial(n) {\n  if (n <= 1) return 1;\n  return n * factorial(n - 1);\n}\n\nconsole.log(factorial(5));\nconsole.log(factorial(1));",
+                  "expectedOutput": "120\n1"
+                }
+              ]
+            },
+            {
+              "title": "Recursion on Lists and Trees of Problems",
+              "slug": "recursion-on-lists",
+              "contentMarkdown": "## Recursion over an array\n\nRecursion is especially natural for problems that can be broken into 'do something with the first element, then recursively handle the rest.'\n\n```js\nfunction sumArray(numbers) {\n  if (numbers.length === 0) return 0; // base case: nothing left to add\n  return numbers[0] + sumArray(numbers.slice(1)); // first + sum of the rest\n}\n\nconsole.log(sumArray([1, 2, 3, 4])); // 10\n```\n\nThis mirrors a loop-based version, but expresses the same idea as 'the sum of a list is its first element plus the sum of everything after it', which some problems (especially ones with a naturally recursive/branching shape, like navigating nested folders or tree structures) express more clearly than an equivalent loop.\n\n## Recursion vs. iteration\n\nAlmost anything written recursively can also be written with a loop, and vice versa. Recursion tends to shine when a problem is naturally defined in terms of smaller versions of itself (like a factorial, or walking a nested/tree-like structure), while loops are often more straightforward — and more memory-efficient, since they don't add new call-stack frames — for simple, flat repetition.\n\n```js\n// Equivalent iterative version of sumArray\nfunction sumArrayLoop(numbers) {\n  let total = 0;\n  for (const n of numbers) {\n    total += n;\n  }\n  return total;\n}\nconsole.log(sumArrayLoop([1, 2, 3, 4])); // 10\n```",
+              "codeExamples": [
+                {
+                  "description": "Recursively summing the elements of an array",
+                  "code": "function sumArray(numbers) {\n  if (numbers.length === 0) return 0;\n  return numbers[0] + sumArray(numbers.slice(1));\n}\n\nconsole.log(sumArray([1, 2, 3, 4]));",
+                  "expectedOutput": "10"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What are the two essential parts every recursive function must have, and what happens if one is missing?",
+              "answer": "Every correct recursive function needs:\n\n1. A **base case**: a condition simple enough to answer directly, without making any further recursive call. This is what eventually stops the recursion.\n2. A **recursive case**: the part where the function calls itself, with an input that is smaller or simpler than before, moving it measurably closer to the base case.\n\n```js\nfunction countDown(n) {\n  if (n <= 0) {       // base case\n    console.log(\"Done!\");\n    return;\n  }\n  console.log(n);\n  countDown(n - 1); // recursive case, moving toward the base case\n}\ncountDown(3); // 3, 2, 1, Done!\n```\n\nIf the base case is missing, or the recursive call doesn't actually move the input closer to it (e.g., calling `countDown(n)` instead of `countDown(n - 1)` by mistake), the function will call itself forever, in practice crashing with a **'Maximum call stack size exceeded'** (stack overflow) error once it exhausts the available call stack space.",
+              "scenario": "A recursive function meant to count down to zero is written with `countDown(n)` instead of `countDown(n - 1)` inside the recursive call, causing it to crash with a stack overflow error when run.",
+              "commonMistakes": "Forgetting the base case entirely. Writing a recursive call that doesn't actually shrink the problem, so the base case is never reached.",
+              "followUps": "What specific error does JavaScript throw when recursion never terminates, and why does it mention the 'call stack'?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How would you solve the classic Fibonacci sequence problem recursively, and what performance issue does the naive recursive solution have?",
+              "answer": "The Fibonacci sequence is defined as: `fib(0) = 0`, `fib(1) = 1`, and `fib(n) = fib(n-1) + fib(n-2)` for `n > 1`. This definition maps directly onto a recursive function:\n\n```js\nfunction fib(n) {\n  if (n <= 1) return n; // base case\n  return fib(n - 1) + fib(n - 2); // recursive case\n}\n\nconsole.log(fib(6)); // 8\n```\n\nThe issue with this direct translation is that it recomputes the same values many times over. `fib(6)` calls `fib(5)` and `fib(4)`; but `fib(5)` *also* calls `fib(4)` (and more) independently, so `fib(4)` ends up being computed from scratch multiple times, and this duplication compounds rapidly as `n` grows. This makes the naive version **O(2^n)** — exponential time — which becomes impractically slow for even moderately large `n` (around 40 or higher).\n\nA common fix is **memoization**: caching each computed result so repeated calls with the same input return instantly instead of recomputing:\n\n```js\nfunction fibMemo(n, cache = new Map()) {\n  if (n <= 1) return n;\n  if (cache.has(n)) return cache.get(n);\n  const result = fibMemo(n - 1, cache) + fibMemo(n - 2, cache);\n  cache.set(n, result);\n  return result;\n}\nconsole.log(fibMemo(6)); // 8, computed far more efficiently for large n\n```\n\nMemoization brings this down to **O(n)** time, since each distinct `fib` value is computed only once.",
+              "scenario": "A function that recursively computes fib(40) directly takes noticeably long to run, while a memoized version of the exact same function returns nearly instantly.",
+              "commonMistakes": "Writing the naive recursive Fibonacci solution and not recognizing it recomputes the same subproblems repeatedly. Assuming memoization changes the *logic* of the function rather than just caching repeated results.",
+              "followUps": "What is the difference between memoization (top-down) and an iterative, bottom-up dynamic programming solution for the same problem?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What is 'tail recursion', and does it help avoid stack overflow errors in JavaScript?",
+              "answer": "A recursive call is in **tail position** when it is the very last operation performed before the function returns — nothing else (like multiplying the result, as in a typical factorial) happens after the recursive call comes back.\n\n```js\n// NOT tail recursive: multiplication happens after the recursive call returns\nfunction factorial(n) {\n  if (n <= 1) return 1;\n  return n * factorial(n - 1); // work remains (the multiplication) after the call\n}\n\n// Tail recursive: the recursive call is the last thing that happens\nfunction factorialTail(n, accumulator = 1) {\n  if (n <= 1) return accumulator;\n  return factorialTail(n - 1, n * accumulator); // nothing left to do after this call returns\n}\nconsole.log(factorialTail(5)); // 120\n```\n\nIn languages that implement **tail call optimization (TCO)**, the runtime can reuse the current function's stack frame for the next call instead of pushing a brand-new one, since there's nothing left to do with the current frame after the call returns. This means tail-recursive functions can, in principle, run indefinitely deep without growing the call stack or risking a stack overflow.\n\nThe important caveat for JavaScript specifically: although TCO is part of the official ECMAScript 2015 (ES6) specification, in practice **most JavaScript engines, including V8 (which powers Node.js and Chrome), have never implemented it**. So writing a function in tail-recursive style in ordinary JavaScript does *not* actually prevent a stack overflow for very deep recursion — the safer, reliable solution for deep recursion in JavaScript today is to convert the function to an iterative loop, or to manage an explicit stack data structure manually.",
+              "scenario": "A developer rewrites a deeply recursive function into tail-recursive style expecting it to now handle very large inputs safely in Node.js, but it still throws a stack overflow error, because V8 does not perform tail call optimization.",
+              "commonMistakes": "Assuming all modern JavaScript engines implement tail call optimization just because it's in the language specification. Believing tail recursion changes a function's asymptotic time complexity (it does not — it only affects stack frame usage, where supported).",
+              "followUps": "How would you convert a deep recursive function into an equivalent iterative version using an explicit stack?"
+            }
+          ]
+        },
+        {
+          "title": "Searching Algorithms",
+          "slug": "searching-algorithms",
+          "summary": "Compare two classic ways to find a value in a list: checking every element versus repeatedly halving a sorted range.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Linear Search",
+              "slug": "linear-search",
+              "contentMarkdown": "## Checking every element in order\n\nLinear search is the simplest possible way to find a value in a collection: start at the first element and check each one in turn until you find a match or run out of elements.\n\n```js\nfunction linearSearch(items, target) {\n  for (let i = 0; i < items.length; i++) {\n    if (items[i] === target) {\n      return i; // found it, return its index\n    }\n  }\n  return -1; // not found anywhere in the list\n}\n\nlet numbers = [4, 2, 9, 7, 5];\nconsole.log(linearSearch(numbers, 7)); // 3\nconsole.log(linearSearch(numbers, 100)); // -1\n```\n\n## Why it's always correct, but not always fast\n\nLinear search works on *any* list, sorted or not, because it makes no assumptions about the order of the data — it simply checks everything. Its downside is speed: in the worst case (the target is the last element, or isn't present at all), it must examine every single element. For a list of `n` elements, that's up to `n` checks, which is described as **O(n)** — linear time, since the work grows proportionally with the size of the list.",
+              "codeExamples": [
+                {
+                  "description": "A linear search that checks each element in order",
+                  "code": "function linearSearch(items, target) {\n  for (let i = 0; i < items.length; i++) {\n    if (items[i] === target) {\n      return i;\n    }\n  }\n  return -1;\n}\n\nlet numbers = [4, 2, 9, 7, 5];\nconsole.log(linearSearch(numbers, 7));\nconsole.log(linearSearch(numbers, 100));",
+                  "expectedOutput": "3\n-1"
+                }
+              ]
+            },
+            {
+              "title": "Binary Search",
+              "slug": "binary-search",
+              "contentMarkdown": "## Halving the search space\n\nBinary search is a much faster technique, but it only works on data that is already **sorted**. Instead of checking every element, it repeatedly looks at the *middle* element of the current range: if the middle element is the target, you're done; if the target is smaller, the answer must be in the left half; if it's larger, the answer must be in the right half. Either way, half of the remaining elements are eliminated with a single check.\n\n```js\nfunction binarySearch(sortedItems, target) {\n  let low = 0;\n  let high = sortedItems.length - 1;\n\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (sortedItems[mid] === target) {\n      return mid; // found it\n    } else if (sortedItems[mid] < target) {\n      low = mid + 1; // search the right half\n    } else {\n      high = mid - 1; // search the left half\n    }\n  }\n  return -1; // not found\n}\n\nlet sorted = [2, 4, 5, 7, 9, 12, 20];\nconsole.log(binarySearch(sorted, 9));  // 4\nconsole.log(binarySearch(sorted, 3));  // -1\n```\n\n## Why binary search is so much faster\n\nBecause each comparison eliminates half of the remaining candidates, binary search only needs about `log2(n)` comparisons in the worst case, rather than up to `n`. For a sorted list of a million elements, linear search might need up to a million checks, while binary search needs only about 20. This is described as **O(log n)** — logarithmic time. The catch is the requirement that the data be sorted first; if it isn't already sorted, you must pay the cost of sorting it before binary search can be used.",
+              "codeExamples": [
+                {
+                  "description": "A binary search over a sorted array",
+                  "code": "function binarySearch(sortedItems, target) {\n  let low = 0;\n  let high = sortedItems.length - 1;\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (sortedItems[mid] === target) {\n      return mid;\n    } else if (sortedItems[mid] < target) {\n      low = mid + 1;\n    } else {\n      high = mid - 1;\n    }\n  }\n  return -1;\n}\n\nlet sorted = [2, 4, 5, 7, 9, 12, 20];\nconsole.log(binarySearch(sorted, 9));\nconsole.log(binarySearch(sorted, 3));",
+                  "expectedOutput": "4\n-1"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the key requirement for using binary search, and what happens if that requirement isn't met?",
+              "answer": "Binary search requires the data to already be **sorted** (in ascending or descending order, consistently). Its entire logic depends on being able to conclude 'everything to the left of the middle is smaller, everything to the right is larger' at each step, which is only guaranteed to be true if the collection is sorted.\n\n```js\nlet unsorted = [9, 2, 7, 4, 5];\n// binarySearch(unsorted, 4) could easily give a wrong answer (or -1), \n// because the 'go left for smaller, right for larger' logic assumes order\n\nlet sorted = [2, 4, 5, 7, 9];\n// binarySearch(sorted, 4) works correctly, because the array is actually sorted\n```\n\nIf you run binary search on unsorted data, it doesn't necessarily throw an error — it can simply return an incorrect result (either the wrong index, or `-1` for a value that is actually present), because the assumption its logic relies on no longer holds. If the data isn't already sorted and will only be searched once, the cost of sorting it first (commonly **O(n log n)**) usually outweighs the benefit of binary search's speed over a single simple linear search (**O(n)**); sorting pays off when the same sorted data will be searched many times.",
+              "scenario": "A developer applies a binary search helper function to a freshly loaded, unsorted list of records and gets inconsistent, sometimes wrong, search results.",
+              "commonMistakes": "Running binary search on data that was never actually sorted, or that is sorted by a different field than the one being searched. Assuming binary search always throws a clear error on misuse, rather than silently returning a wrong answer.",
+              "followUps": "If you need to search a list only once, is it still worth sorting it first just to use binary search?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Compare the time complexity of linear search and binary search, and explain in plain terms why binary search is faster.",
+              "answer": "**Linear search** is **O(n)**: in the worst case, it must examine every one of the `n` elements once, so the amount of work grows directly in proportion to the size of the list.\n\n**Binary search** is **O(log n)**: each comparison eliminates half of the remaining candidates, so the amount of work grows much more slowly as the list gets bigger — doubling the list size only adds *one* extra comparison in the worst case, rather than doubling the number of comparisons needed.\n\nA concrete comparison helps build intuition:\n\n| List size (n) | Linear search (worst case) | Binary search (worst case) |\n|---|---|---|\n| 10 | 10 | ~4 |\n| 1,000 | 1,000 | ~10 |\n| 1,000,000 | 1,000,000 | ~20 |\n\nThe underlying reason is that linear search gains no information from checking one element about where any other element might be, so it must potentially check all of them. Binary search, by contrast, uses the sorted order to rule out *half* of the remaining elements with every single comparison, so the search space shrinks exponentially fast (1,000,000 -> 500,000 -> 250,000 -> ... down to 1 in only about 20 steps).",
+              "scenario": "A lookup feature over a sorted list of a million product SKUs needs to respond instantly; switching from a naive linear scan to binary search reduces worst-case comparisons from a million to about twenty.",
+              "commonMistakes": "Assuming 'O(log n) is only a little better than O(n)' without appreciating how dramatically the two curves diverge as input size grows large. Confusing O(log n) with O(n) when reasoning about scaling behavior.",
+              "followUps": "What does the 'n' in Big-O notation actually represent, and why is the base of the logarithm (base 2, base 10, etc.) usually not mentioned in Big-O analysis?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "How would you implement binary search recursively instead of iteratively, and are there any trade-offs to doing so?",
+              "answer": "A recursive binary search follows the exact same logic as the iterative version, but instead of a `while` loop updating `low`/`high`, each 'halving' step becomes a recursive call on a smaller sub-range:\n\n```js\nfunction binarySearchRecursive(sortedItems, target, low = 0, high = sortedItems.length - 1) {\n  if (low > high) return -1; // base case: search space is empty, not found\n\n  let mid = Math.floor((low + high) / 2);\n  if (sortedItems[mid] === target) {\n    return mid; // base case: found it\n  } else if (sortedItems[mid] < target) {\n    return binarySearchRecursive(sortedItems, target, mid + 1, high); // search right half\n  } else {\n    return binarySearchRecursive(sortedItems, target, low, mid - 1); // search left half\n  }\n}\n\nlet sorted = [2, 4, 5, 7, 9, 12, 20];\nconsole.log(binarySearchRecursive(sorted, 12)); // 5\n```\n\nBoth versions have the same **O(log n)** time complexity, since the number of halving steps is identical either way. The trade-offs are more about implementation details than speed:\n\n- The recursive version is arguably more directly readable as 'search the left half, or search the right half.'\n- The recursive version uses **O(log n)** additional space on the call stack (one frame per recursive call), whereas the iterative version uses only a small constant amount of extra memory (a few variables), making iterative binary search slightly more memory-efficient, though the difference is negligible for reasonably sized inputs.\n- In JavaScript specifically, since tail call optimization is not implemented by mainstream engines, extremely large inputs could theoretically risk deeper recursion, though in practice `log n` stays very small even for huge lists (around 30 for a billion elements), so this is rarely a real concern for binary search specifically.",
+              "scenario": "An interviewer asks a candidate to implement binary search both iteratively and recursively, then explain whether the two versions differ in efficiency.",
+              "commonMistakes": "Forgetting the base case (`low > high`) in the recursive version, causing infinite recursion or incorrect results. Assuming the recursive version is asymptotically slower than the iterative one, when the real difference is in space usage (call stack), not time complexity.",
+              "followUps": "What is the space complexity difference between the iterative and recursive versions, expressed in Big-O terms?"
+            }
+          ]
+        },
+        {
+          "title": "Sorting and Big-O Intuition",
+          "slug": "sorting-and-big-o-intuition",
+          "summary": "Learn bubble sort as a teaching example of a sorting algorithm, and build an intuition for measuring algorithm efficiency with Big-O notation.",
+          "difficulty": "Advanced",
+          "lessons": [
+            {
+              "title": "Bubble Sort",
+              "slug": "bubble-sort",
+              "contentMarkdown": "## The idea behind bubble sort\n\nBubble sort repeatedly steps through a list, comparing each pair of neighboring elements and swapping them if they're in the wrong order. After each full pass through the list, the largest unsorted element 'bubbles up' to its correct position at the end, much like a bubble rising to the surface.\n\n```js\nfunction bubbleSort(arr) {\n  let n = arr.length;\n  for (let i = 0; i < n - 1; i++) {\n    for (let j = 0; j < n - 1 - i; j++) {\n      if (arr[j] > arr[j + 1]) {\n        // swap arr[j] and arr[j + 1]\n        let temp = arr[j];\n        arr[j] = arr[j + 1];\n        arr[j + 1] = temp;\n      }\n    }\n  }\n  return arr;\n}\n\nconsole.log(bubbleSort([5, 2, 9, 1, 5, 6]));\n```\n\nThe outer loop controls how many passes are made; the inner loop does the actual comparing and swapping. The `n - 1 - i` upper bound on the inner loop is an optimization: after `i` passes, the last `i` elements are already guaranteed to be in their final sorted position, so there's no need to re-check them.\n\n## Why bubble sort is mainly a teaching tool\n\nBubble sort is simple to understand and implement, which makes it an excellent first sorting algorithm to learn, but it is **not** efficient for large lists. As covered in the next lesson, its worst-case and average-case time complexity is **O(n²)**, meaning the work needed grows roughly with the *square* of the list size — doubling the list size roughly quadruples the work. Real-world code almost always uses a built-in, far more efficient sort (like JavaScript's `Array.prototype.sort()`, which uses an algorithm closer to O(n log n)) rather than hand-rolled bubble sort.",
+              "codeExamples": [
+                {
+                  "description": "Sorting an array of numbers in ascending order using bubble sort",
+                  "code": "function bubbleSort(arr) {\n  let n = arr.length;\n  for (let i = 0; i < n - 1; i++) {\n    for (let j = 0; j < n - 1 - i; j++) {\n      if (arr[j] > arr[j + 1]) {\n        let temp = arr[j];\n        arr[j] = arr[j + 1];\n        arr[j + 1] = temp;\n      }\n    }\n  }\n  return arr;\n}\n\nconsole.log(bubbleSort([5, 2, 9, 1, 5, 6]));",
+                  "expectedOutput": "[ 1, 2, 5, 5, 6, 9 ]"
+                }
+              ]
+            },
+            {
+              "title": "Big-O Intuition",
+              "slug": "big-o-intuition",
+              "contentMarkdown": "## What Big-O notation describes\n\nBig-O notation is a way of describing how the running time (or memory usage) of an algorithm grows as the size of its input, usually called `n`, grows larger. It deliberately ignores constant factors and smaller terms, focusing only on the dominant growth pattern — the behavior that matters most as `n` gets very large.\n\nSome common Big-O categories, from fastest-growing work to slowest:\n\n- **O(1)** — constant time: the work doesn't depend on `n` at all, e.g. accessing `array[0]`.\n- **O(log n)** — logarithmic time: the work grows very slowly as `n` grows, e.g. binary search.\n- **O(n)** — linear time: the work grows directly proportional to `n`, e.g. linear search, or a single loop over an array.\n- **O(n log n)** — 'linearithmic' time: common in efficient sorting algorithms like merge sort.\n- **O(n²)** — quadratic time: the work grows with the square of `n`, common in algorithms with a loop nested inside another loop over the same data, like bubble sort.\n\n## Counting operations in bubble sort\n\nIn bubble sort, for a list of `n` elements, the outer loop runs roughly `n` times, and for each of those, the inner loop also runs roughly `n` times in the worst case — giving roughly `n * n = n²` comparisons overall. This is why bubble sort is described as **O(n²)**.\n\n```js\n// Roughly n outer iterations x roughly n inner iterations = O(n^2) total work\nfor (let i = 0; i < n - 1; i++) {      // ~n times\n  for (let j = 0; j < n - 1 - i; j++) { // ~n times, for each outer iteration\n    // constant amount of work per comparison\n  }\n}\n```\n\n## Why this matters in practice\n\nFor small `n`, the difference between O(n) and O(n²) might be unnoticeable. But as `n` grows into the thousands or millions, an O(n²) algorithm can become dramatically, sometimes unusably, slower than an O(n log n) or O(n) alternative solving the exact same problem. Understanding Big-O helps you predict, *before running any code*, whether an approach will scale to the size of data your program actually needs to handle.",
+              "codeExamples": [
+                {
+                  "description": "Comparing growth: O(n) vs O(n^2) operation counts for increasing input sizes",
+                  "code": "function countLinear(n) {\n  return n;\n}\n\nfunction countQuadratic(n) {\n  return n * n;\n}\n\nfor (const n of [10, 100, 1000]) {\n  console.log(`n=${n}: linear=${countLinear(n)}, quadratic=${countQuadratic(n)}`);\n}",
+                  "expectedOutput": "n=10: linear=10, quadratic=100\nn=100: linear=100, quadratic=10000\nn=1000: linear=1000, quadratic=1000000"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "Walk through how bubble sort would sort the array [5, 1, 4, 2] in ascending order.",
+              "answer": "Bubble sort repeatedly compares adjacent pairs and swaps them if they're out of order, making multiple passes until no swaps are needed. Tracing through `[5, 1, 4, 2]`:\n\n**Pass 1:**\n- Compare 5, 1 -> out of order, swap -> `[1, 5, 4, 2]`\n- Compare 5, 4 -> out of order, swap -> `[1, 4, 5, 2]`\n- Compare 5, 2 -> out of order, swap -> `[1, 4, 2, 5]`\n(5 has now 'bubbled up' to its correct final position at the end.)\n\n**Pass 2:**\n- Compare 1, 4 -> already in order, no swap\n- Compare 4, 2 -> out of order, swap -> `[1, 2, 4, 5]`\n(4 is now in its correct position.)\n\n**Pass 3:**\n- Compare 1, 2 -> already in order, no swap\n(No swaps occurred in this pass, so the array is fully sorted: `[1, 2, 4, 5]`.)\n\n```js\nfunction bubbleSort(arr) {\n  let n = arr.length;\n  for (let i = 0; i < n - 1; i++) {\n    for (let j = 0; j < n - 1 - i; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]; // swap using destructuring\n      }\n    }\n  }\n  return arr;\n}\nconsole.log(bubbleSort([5, 1, 4, 2])); // [1, 2, 4, 5]\n```",
+              "scenario": "An interviewer asks a candidate to manually trace bubble sort on a small array to confirm they understand the mechanics, not just the code syntax.",
+              "commonMistakes": "Swapping elements in the wrong order inside the comparison (e.g., checking `<` instead of `>`, which would sort descending instead of ascending). Losing track of which elements have already 'settled' into their final position after each pass.",
+              "followUps": "How could you optimize bubble sort to stop early if the array becomes sorted before all planned passes finish?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the time complexity of bubble sort in the best, average, and worst cases, and does its implementation typically differ between them?",
+              "answer": "A plain, unoptimized bubble sort is **O(n²)** in the worst case (input sorted in reverse order, requiring the maximum number of swaps) and also **O(n²)** in the average case (random order).\n\nHowever, with a simple but important optimization — tracking whether *any* swap occurred during a pass, and stopping early if not — bubble sort's **best case** (the input is already sorted) improves to **O(n)**, since it only needs a single pass to confirm no swaps are needed.\n\n```js\nfunction bubbleSortOptimized(arr) {\n  let n = arr.length;\n  for (let i = 0; i < n - 1; i++) {\n    let swapped = false;\n    for (let j = 0; j < n - 1 - i; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];\n        swapped = true;\n      }\n    }\n    if (!swapped) break; // already sorted — stop early\n  }\n  return arr;\n}\n```\n\nWithout this early-exit check, even an already-sorted array would still run through every planned pass doing no useful work, making the naive version O(n²) regardless of input order. This distinction — that an algorithm's complexity can differ across best, average, and worst cases, and that implementation details like an early exit can change which case applies — is a common, deeper follow-up in interviews about sorting.",
+              "scenario": "A log-processing script resorts an already-sorted (or nearly sorted) list every few seconds; adding the 'no swaps' early exit to bubble sort turns a wasted O(n²) pass into a near-instant O(n) check.",
+              "commonMistakes": "Stating bubble sort is always O(n²) without qualifying best/average/worst case. Forgetting that the early-exit optimization requires explicitly tracking whether any swap happened, not just checking the array afterward.",
+              "followUps": "How does bubble sort's efficiency compare to a more advanced algorithm like merge sort or quicksort, both in complexity and in typical real-world performance?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What does it mean for a sorting algorithm to be 'stable', and why might that matter in a real application?",
+              "answer": "A sorting algorithm is **stable** if it preserves the relative order of elements that are considered equal under the comparison being used. In other words, if two elements have the same sort key, a stable sort guarantees they stay in the same relative order they started in; an unstable sort makes no such guarantee and might reorder them.\n\nBubble sort, as typically implemented (only swapping when one element is *strictly greater than* its neighbor, never when they're equal), is a stable sorting algorithm, which is a nice side benefit of its simplicity — though its poor O(n²) performance is still why it's rarely used in real systems.\n\nThis matters in real applications whenever you sort by one property but want to preserve meaningful ordering from a previous sort on another property. For example:\n\n```js\nlet orders = [\n  { customer: \"Alice\", date: \"2024-01-02\" },\n  { customer: \"Bob\",   date: \"2024-01-01\" },\n  { customer: \"Alice\", date: \"2024-01-01\" }\n];\n\n// First, sort by date (chronological order)\norders.sort((a, b) => a.date.localeCompare(b.date));\n\n// Then, stably sort by customer name\n// A STABLE sort here keeps each customer's orders in the date order\n// established by the previous sort; an unstable sort might shuffle them.\norders.sort((a, b) => a.customer.localeCompare(b.customer));\n```\n\nIf the second sort were unstable, Alice's two orders could end up in the wrong relative order relative to each other, even though the final list is still correctly sorted by customer name overall. As a practical note, the ECMAScript specification has required `Array.prototype.sort()` to be stable since ES2019, so modern JavaScript engines guarantee stability for the built-in sort method.",
+              "scenario": "A table of orders is first sorted by date, then re-sorted by customer name for grouped display, and the product owner wants each customer's orders to still appear in date order within their group.",
+              "commonMistakes": "Assuming all sorting algorithms are automatically stable. Not realizing that sorting by a second key can silently destroy ordering established by a prior sort if the algorithm used isn't stable.",
+              "followUps": "Is JavaScript's built-in Array.prototype.sort() guaranteed to be stable, and has that always been true?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Good Practices",
+      "slug": "good-practices",
+      "topics": [
+        {
+          "title": "Naming and Readability",
+          "slug": "naming-and-readability",
+          "summary": "Write code that communicates its intent clearly through good names and consistent, readable structure.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Choosing Good Variable and Function Names",
+              "slug": "choosing-good-variable-and-function-names",
+              "contentMarkdown": "## Code is read far more often than it is written\n\nOnce code is written, it is usually read many more times than it was written — by other developers, by your future self, and during debugging sessions months later. Clear naming is one of the cheapest, highest-impact ways to make that reading easier.\n\n```js\n// Unclear: what do x, y, and z actually represent?\nfunction calc(x, y, z) {\n  return x * y * (1 - z);\n}\n\n// Clear: the purpose of each value is obvious from its name\nfunction calculateDiscountedTotal(price, quantity, discountRate) {\n  return price * quantity * (1 - discountRate);\n}\n```\n\nBoth functions behave identically, but the second one tells you what it does and what each parameter means, without needing comments or guesswork.\n\n## General naming guidelines\n\n- **Variables**: use nouns that describe the data, e.g. `userList`, `totalPrice`, not `data1`, `temp`.\n- **Functions**: use verbs (or verb phrases) that describe the action, e.g. `calculateTotal`, `sendEmail`, `isValidEmail` for something returning a boolean.\n- **Booleans**: prefix with `is`, `has`, or `can` so their meaning as a yes/no value is obvious, e.g. `isActive`, `hasPermission`.\n- **Avoid abbreviations** that aren't immediately obvious (`usr`, `calc`, `tmp`) in favor of full words, unless the abbreviation is extremely well known in context (like `id` or `url`).\n- **Be consistent** with a single naming style (commonly `camelCase` in JavaScript) throughout a codebase.",
+              "codeExamples": [
+                {
+                  "description": "Comparing an unclear function signature with a clear, descriptive one",
+                  "code": "function calculateDiscountedTotal(price, quantity, discountRate) {\n  return price * quantity * (1 - discountRate);\n}\n\nconsole.log(calculateDiscountedTotal(10, 3, 0.1));",
+                  "expectedOutput": "27"
+                }
+              ]
+            },
+            {
+              "title": "Consistent Formatting and Small Functions",
+              "slug": "consistent-formatting-and-small-functions",
+              "contentMarkdown": "## Consistent formatting reduces mental overhead\n\nBeyond naming, consistent indentation, spacing, and bracket placement help a reader's eyes track the structure of code at a glance, without consciously parsing every character. Most teams adopt an automatic code formatter (like Prettier for JavaScript) so this consistency doesn't depend on manual discipline or personal preference, and style arguments in code review are avoided entirely.\n\n```js\n// Inconsistent spacing and indentation make structure harder to scan\nfunction total(items){let sum=0;\nfor(let i=0;i<items.length;i++){sum+=items[i];}\nreturn sum;}\n\n// Consistent formatting — structure is immediately visible\nfunction total(items) {\n  let sum = 0;\n  for (let i = 0; i < items.length; i++) {\n    sum += items[i];\n  }\n  return sum;\n}\n```\n\n## Keep functions small and focused\n\nA function that does one clearly-named thing is easier to understand, test, and reuse than one that handles many unrelated responsibilities at once. A useful guideline: if you struggle to summarize what a function does in a single short sentence without using the word 'and' multiple times, it may be doing too much and could be split into smaller, separately named functions.\n\n```js\n// Doing too much at once\nfunction processOrder(order) {\n  // validates, calculates total, saves to database, and sends an email...\n}\n\n// Split into smaller, single-purpose functions\nfunction validateOrder(order) { /* ... */ }\nfunction calculateOrderTotal(order) { /* ... */ }\nfunction saveOrder(order) { /* ... */ }\nfunction sendOrderConfirmation(order) { /* ... */ }\n```",
+              "codeExamples": [
+                {
+                  "description": "A small, single-purpose function with consistent formatting",
+                  "code": "function total(items) {\n  let sum = 0;\n  for (let i = 0; i < items.length; i++) {\n    sum += items[i];\n  }\n  return sum;\n}\n\nconsole.log(total([10, 20, 30]));",
+                  "expectedOutput": "60"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "Why is naming considered one of the most important parts of writing readable code, even though it has no effect on how the program runs?",
+              "answer": "A variable or function's name has zero effect on the program's runtime behavior — `let x = 5` and `let userAge = 5` run identically. Naming matters entirely for **communication**: it tells the next person reading the code (often the original author, returning weeks or months later) what a piece of data represents or what an action does, without them needing to trace through logic to figure it out.\n\n```js\n// Requires tracing the logic to guess what 'x' represents\nif (x > 3) {\n  sendAlert();\n}\n\n// Self-explanatory — no guessing required\nif (failedLoginAttempts > 3) {\n  sendAlert();\n}\n```\n\nCode is read far more often than it's written — during debugging, during code review, when extending a feature, or when onboarding a new team member. Good names turn code into something closer to documentation, reducing the time and risk involved in every one of those activities, while poor names force constant re-derivation of intent that was only ever clear to the original author, and often not for long even then.",
+              "scenario": "A new developer joins a project and spends an entire afternoon figuring out what a function named `proc2()` with parameters `a`, `b`, `c` actually does, time that clear naming would have saved entirely.",
+              "commonMistakes": "Treating naming as a cosmetic afterthought rather than a core part of software design. Using short, cryptic names to save typing, forgetting that code is read far more often than it is typed.",
+              "followUps": "What naming convention differences exist between variables, functions, classes, and constants in typical JavaScript style guides?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is a sign that a function is doing 'too much', and why is splitting it into smaller functions usually beneficial?",
+              "answer": "A common warning sign is difficulty describing what a function does in a single, simple sentence without joining several distinct actions with 'and' — e.g., 'this function validates the order **and** calculates the total **and** saves it **and** sends an email.' Each 'and' often represents a separate responsibility that could be its own function.\n\n```js\n// One function, many responsibilities\nfunction handleSignup(formData) {\n  // validate formData...\n  // hash the password...\n  // save the user to the database...\n  // send a welcome email...\n}\n\n// Split by responsibility\nfunction validateSignupData(formData) { /* ... */ }\nfunction hashPassword(password) { /* ... */ }\nfunction saveUser(user) { /* ... */ }\nfunction sendWelcomeEmail(user) { /* ... */ }\n```\n\nSplitting a large function into smaller, well-named pieces provides several concrete benefits:\n\n1. **Easier testing** — each small function can be tested independently, in isolation from the others.\n2. **Easier reuse** — a focused `hashPassword` function can be reused wherever passwords need hashing, rather than being buried inside a much larger function.\n3. **Easier debugging** — when something goes wrong, a stack trace pointing at `sendWelcomeEmail` narrows the problem down immediately, compared to a generic `handleSignup` that could be failing for any of several unrelated reasons.\n4. **Easier review** — a reviewer can understand and verify one small, clearly-named function much faster than one large function mixing several concerns together.",
+              "scenario": "A single `handleSignup` function grows over many months to include validation, password hashing, database saving, and email sending, and a bug in the email step becomes hard to isolate without touching unrelated logic.",
+              "commonMistakes": "Continuing to add new behavior to an existing large function instead of extracting new, separate functions as responsibilities grow. Splitting functions purely by arbitrary length rather than by distinct responsibility.",
+              "followUps": "What is the 'single responsibility principle', and how does it relate to function size?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "When are code comments genuinely helpful, and when can they be a sign that the code itself should be rewritten instead?",
+              "answer": "Comments are most valuable when they explain **why** something is done a certain way — information that cannot be inferred just by reading the code itself, such as a business rule, a workaround for a specific bug in a dependency, or a non-obvious trade-off that was deliberately chosen.\n\n```js\n// We retry up to 3 times because the payment gateway occasionally\n// times out under load, per incident INC-4521.\nfunction chargeCardWithRetry(card, amount) {\n  // ...\n}\n```\n\nComments are *less* valuable, and can actually be a warning sign, when they merely restate **what** the code already clearly says, or when they exist specifically to compensate for unclear code that could instead be rewritten to be self-explanatory:\n\n```js\n// Bad: comment just repeats what the code already says\nlet total = price * quantity; // multiply price by quantity\n\n// Bad: comment compensates for a poor name instead of fixing it\nlet d = 5; // d is the number of days until expiry\n\n// Better: the name alone communicates the same information, no comment needed\nlet daysUntilExpiry = 5;\n```\n\nA useful litmus test: if renaming a variable or extracting a small function would make an explanatory comment unnecessary, prefer doing that over leaving the comment in place — comments can drift out of sync with the code over time (since nothing forces them to be updated when the code changes), whereas a good name embedded directly in the code cannot silently become stale the same way.",
+              "scenario": "A code review flags a block of five unclear variable names each followed by a clarifying comment, suggesting the variables themselves be renamed instead of relying on comments to explain them.",
+              "commonMistakes": "Writing comments that restate the obvious instead of explaining non-obvious reasoning. Leaving outdated comments in place after the code they describe has changed, misleading future readers.",
+              "followUps": "How do comments explaining 'why' differ in value from comments explaining 'what', and can you give an example of each?"
+            }
+          ]
+        },
+        {
+          "title": "Debugging Basics",
+          "slug": "debugging-basics",
+          "summary": "Learn systematic techniques for finding and fixing bugs, including reading error messages and using console logging effectively.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Reading Error Messages",
+              "slug": "reading-error-messages",
+              "contentMarkdown": "## Error messages are clues, not obstacles\n\nWhen a program crashes, JavaScript prints an error message describing what went wrong, along with a **stack trace** — a list of which function called which, showing the path execution took to reach the error. Learning to read these carefully, rather than skipping past them, is one of the fastest ways to fix a bug.\n\nA typical error has three important parts:\n\n1. **The error type**, such as `TypeError`, `ReferenceError`, or `SyntaxError` — a hint about the *category* of mistake.\n2. **The error message**, a short description of specifically what went wrong.\n3. **The stack trace**, showing the file, line number, and chain of function calls that led to the error.\n\n```js\nfunction getFirstLetter(word) {\n  return word.charAt(0);\n}\n\ngetFirstLetter(undefined);\n// TypeError: Cannot read properties of undefined (reading 'charAt')\n//     at getFirstLetter (...)\n```\n\nThis error tells you exactly what happened: somewhere, code tried to call `.charAt` on a value that turned out to be `undefined`. Combined with the line number from the stack trace, you can go directly to the problem instead of guessing.\n\n## Common error types\n\n- **`TypeError`** — an operation was attempted on a value of the wrong type, e.g. calling a method that doesn't exist on that value, or on `null`/`undefined`.\n- **`ReferenceError`** — code referred to a variable that doesn't exist (often a typo, or using a variable before it's declared).\n- **`SyntaxError`** — the code itself is not valid JavaScript (a missing bracket, an unterminated string), and the program cannot even start running.",
+              "codeExamples": [
+                {
+                  "description": "Catching and inspecting an error's name and message",
+                  "code": "function getFirstLetter(word) {\n  return word.charAt(0);\n}\n\ntry {\n  getFirstLetter(undefined);\n} catch (error) {\n  console.log(error.name);\n  console.log(error.message);\n}",
+                  "expectedOutput": "TypeError\nCannot read properties of undefined (reading 'charAt')"
+                }
+              ]
+            },
+            {
+              "title": "Debugging with console.log and a Systematic Process",
+              "slug": "debugging-with-console-log",
+              "contentMarkdown": "## console.log as a debugging tool\n\nThe simplest and most widely used debugging technique is inserting `console.log()` calls at key points in your code to inspect the actual values of variables as the program runs, rather than guessing what they might be.\n\n```js\nfunction calculateTotal(items) {\n  console.log(\"items received:\", items); // inspect the input\n  let total = 0;\n  for (const item of items) {\n    console.log(\"adding:\", item.price); // inspect each step\n    total += item.price;\n  }\n  console.log(\"final total:\", total); // inspect the result\n  return total;\n}\n\ncalculateTotal([{ price: 10 }, { price: 25 }]);\n```\n\nLabeling each logged value (as shown above) makes output far easier to interpret than logging bare values, especially once several `console.log` calls are active at once.\n\n## A systematic approach to debugging\n\nRather than randomly changing code and hoping it fixes the bug, a more reliable process is:\n\n1. **Reproduce the bug reliably** — find the smallest, most consistent way to trigger it.\n2. **Read the error message and stack trace carefully**, if one exists.\n3. **Form a hypothesis** about what might be causing it, based on the evidence so far.\n4. **Test the hypothesis** — add logging, or use a debugger, to check whether a specific variable has the value you expect at a specific point.\n5. **Narrow down the location** — bisect the code (checking values earlier and later in execution) until you find the exact line where behavior diverges from expectation.\n6. **Fix the root cause**, not just the symptom, and verify the fix actually resolves the original reproduction steps.\n\nMost code editors and browsers also provide a dedicated **debugger**, which lets you pause execution at a specific line (a 'breakpoint') and inspect every variable's current value directly, without needing to add and remove `console.log` statements by hand — a more powerful tool once you're comfortable with the basics.",
+              "codeExamples": [
+                {
+                  "description": "Using labeled console.log statements to trace a function's execution",
+                  "code": "function calculateTotal(items) {\n  let total = 0;\n  for (const item of items) {\n    console.log(\"adding:\", item.price);\n    total += item.price;\n  }\n  console.log(\"final total:\", total);\n  return total;\n}\n\ncalculateTotal([{ price: 10 }, { price: 25 }]);",
+                  "expectedOutput": "adding: 10\nadding: 25\nfinal total: 35"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What are the three main pieces of information in a typical JavaScript error, and how does each help you debug?",
+              "answer": "A typical thrown error gives you:\n\n1. **The error type** (e.g. `TypeError`, `ReferenceError`, `SyntaxError`) — narrows down the *category* of mistake before you've even read the details.\n2. **The error message** — a specific, human-readable description of what exactly went wrong, e.g. 'Cannot read properties of undefined (reading \\'name\\')'.\n3. **The stack trace** — the sequence of function calls that led to the error, including file names and line numbers, showing you exactly where to look and how execution got there.\n\n```js\nfunction getUserName(user) {\n  return user.name; // throws if user is undefined\n}\nfunction displayGreeting(user) {\n  console.log(\"Hello, \" + getUserName(user));\n}\ndisplayGreeting(undefined);\n// TypeError: Cannot read properties of undefined (reading 'name')\n//     at getUserName (...)\n//     at displayGreeting (...)\n```\n\nReading bottom-to-top (or top-to-bottom, depending on the tool) through the stack trace shows that `displayGreeting` called `getUserName`, which is where the actual failure happened — pinpointing exactly which line to investigate first, rather than needing to search the whole program.",
+              "scenario": "A developer sees a wall of red error text in the console and, instead of reading it, immediately starts guessing at random code changes, wasting significant time that reading the stack trace would have saved.",
+              "commonMistakes": "Skipping past error messages without reading them carefully, especially the first line (often the most specific) and the top of the stack trace (often the most relevant location). Only looking at the error type without reading the specific message.",
+              "followUps": "What's the difference between a TypeError and a ReferenceError, and can you give an example of code that triggers each?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a systematic approach to debugging an issue, rather than making random changes and hoping the bug goes away?",
+              "answer": "A reliable debugging process generally follows these steps:\n\n1. **Reproduce the bug consistently** — find the smallest, most reliable set of steps or inputs that trigger it every time. A bug you can't reliably reproduce is very hard to confirm you've actually fixed.\n2. **Gather evidence** — read any error message and stack trace fully, and check logs for context around when the problem occurred.\n3. **Form a specific, testable hypothesis** about the cause, based on the evidence (e.g., 'I think `user` is undefined at this point because the API call failed silently').\n4. **Test the hypothesis directly** — add a `console.log` or a breakpoint at the suspected location to check whether the value really is what you expect; don't just assume.\n5. **Narrow the search** — if the hypothesis was wrong, use what you learned to narrow down where the actual divergence from expected behavior happens, checking earlier or later points in execution as needed (a form of binary search applied to debugging).\n6. **Fix the root cause**, not just a surface symptom — e.g., fixing why `user` became undefined in the first place, rather than just adding a check that silently hides the symptom without addressing why it happened.\n7. **Verify the fix** against the original reproduction steps, and ideally add a test so the same bug can't silently reappear later.\n\n```js\n// A quick but shallow 'fix' that masks the symptom\nfunction getUserName(user) {\n  if (!user) return \"Unknown\"; // hides the problem instead of explaining it\n  return user.name;\n}\n```\n\nThis structured approach is far more reliable than trial-and-error changes, especially for bugs that only occur under specific, hard-to-guess conditions.",
+              "scenario": "A production bug only occurs for a small subset of users; rather than guessing, the team reproduces it with a specific account, adds targeted logging around the suspected area, and confirms the exact line where behavior diverges before writing a fix.",
+              "commonMistakes": "Changing multiple things at once when testing a hypothesis, making it unclear which change (if any) actually fixed the issue. Fixing a symptom (e.g., suppressing an error) without understanding or addressing its root cause, which often lets the underlying bug resurface elsewhere later.",
+              "followUps": "What is the difference between fixing a bug's root cause versus just suppressing its symptom, and why does that distinction matter long-term?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What is the difference between using console.log statements and using an interactive debugger with breakpoints, and when is each more appropriate?",
+              "answer": "**`console.log` debugging** involves manually inserting print statements at chosen points in the code to inspect values as the program runs, then reading the resulting output after execution. It's quick to set up, requires no special tooling beyond the console itself, and works well for simple, linear bugs or quick sanity checks.\n\n**An interactive debugger** (available in browser dev tools, Node.js's built-in inspector, and most code editors) lets you set a **breakpoint** on a specific line, which pauses execution entirely when that line is reached. At that point, you can inspect every variable's *actual current value* in the surrounding scope, step through the code one line at a time, and even step directly into or over function calls, all without having had to guess in advance exactly what to log.\n\n```js\nfunction processOrder(order) {\n  let total = calculateTotal(order.items); // set a breakpoint on this line\n  // with a debugger, you could pause here and inspect 'order' and 'total'\n  // directly, in their exact current state, without adding any console.log\n  return applyDiscount(total, order.discountCode);\n}\n```\n\n`console.log` tends to be faster for simple, well-understood bugs where you already have a good guess about what to check. A debugger becomes much more valuable for complex bugs involving many variables, deeply nested logic, asynchronous code, or situations where you genuinely don't know in advance which value is wrong — since you can explore the actual program state interactively instead of needing to predict every value worth checking ahead of time, and re-running the whole program each time you want to check one more thing.\n\nIn practice, experienced developers use both, switching between them depending on how well-understood the suspected cause of a bug already is.",
+              "scenario": "A deeply nested function involving several intermediate calculations produces a wrong final result; rather than adding a dozen console.log statements one at a time, a developer sets a single breakpoint and steps through the logic interactively to see exactly where the value goes wrong.",
+              "commonMistakes": "Relying exclusively on console.log for complex, multi-variable bugs where a debugger's step-through and live inspection would be far faster. Never learning the debugger tooling available in one's own editor or browser, missing a significant productivity tool.",
+              "followUps": "What is a 'conditional breakpoint', and how is it useful when a bug only occurs on a specific iteration of a loop or under a specific condition?"
+            }
+          ]
+        },
+        {
+          "title": "Version Control Concepts",
+          "slug": "version-control-concepts",
+          "summary": "Understand what version control systems like Git are, why every professional team uses one, and the core concepts behind them.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "What Is Version Control and Why It Matters",
+              "slug": "what-is-version-control-and-why-it-matters",
+              "contentMarkdown": "## The problem version control solves\n\nImagine writing a document and saving copies named `report.docx`, `report_v2.docx`, `report_v2_final.docx`, `report_v2_final_ACTUAL.docx`. This ad-hoc approach breaks down quickly: it's hard to know what changed between versions, hard to combine work from two people editing the same file, and easy to lose track of which copy is truly the latest.\n\nA **version control system (VCS)** solves this problem for code (and other files) by automatically tracking every change made over time, who made it, and why — without needing manually renamed copies. **Git** is by far the most widely used version control system today, and is the one virtually every modern software team relies on.\n\n## What Git conceptually tracks\n\nAt its core, Git keeps a history of **snapshots** of a project. Each saved snapshot is called a **commit**, and includes:\n\n- The exact state of every tracked file at that point in time.\n- A message describing what changed and why (ideally short but meaningful, like 'Fix off-by-one error in pagination').\n- Who made the change and when.\n- A link back to the previous commit, forming a connected history, like a chain, that can be walked backward to see how the project evolved.\n\nBecause every commit records a complete, identifiable snapshot, a team can always answer questions like 'what did this file look like last Tuesday?' or 'which exact change introduced this bug?' — something that's extremely difficult to do reliably with manually named file copies or no history at all.\n\n## Why teams rely on it\n\nVersion control gives teams: a safety net (mistakes can be undone by reverting to an earlier snapshot), a clear history (useful for understanding *why* code looks the way it does), and a foundation for **collaboration** — multiple people can work on the same project independently, and the system provides structured ways to combine (merge) everyone's changes back together.",
+              "codeExamples": [
+                {
+                  "description": "A conceptual model of a commit history, represented as plain JavaScript objects (not real Git commands)",
+                  "code": "const commits = [\n  { id: \"a1\", message: \"Initial project setup\", author: \"Alice\" },\n  { id: \"b2\", message: \"Add login page\", author: \"Bob\" },\n  { id: \"c3\", message: \"Fix off-by-one error in pagination\", author: \"Alice\" }\n];\n\nfor (const commit of commits) {\n  console.log(`${commit.id}: ${commit.message} (${commit.author})`);\n}",
+                  "expectedOutput": "a1: Initial project setup (Alice)\nb2: Add login page (Bob)\nc3: Fix off-by-one error in pagination (Alice)"
+                }
+              ]
+            },
+            {
+              "title": "Branches, Merging, and Collaboration",
+              "slug": "branches-merging-and-collaboration",
+              "contentMarkdown": "## Branches: working on changes in isolation\n\nA **branch** is an independent line of development within the same project — essentially, a separate space to make changes without affecting the main, stable version of the code until those changes are ready. Developers typically create a new branch for each feature or bug fix they're working on.\n\nThe main, stable branch is conventionally named `main` (or historically, `master`). A developer might create a branch called `add-user-profile` to build a new feature, make several commits on it, and only bring those changes into `main` once the feature is complete and reviewed.\n\n## Merging: combining work back together\n\n**Merging** takes the changes made on one branch and integrates them into another (typically, back into `main`). If two branches changed completely different parts of the code, Git can usually combine them automatically. If both branches changed the *same* lines of the *same* file in different ways, Git cannot decide which version is correct on its own — this is called a **merge conflict**, and a person must manually review and decide how to reconcile the two versions.\n\n## Pull requests and code review\n\nOn platforms like GitHub, GitLab, and Bitbucket, a **pull request** (sometimes called a 'merge request') is a proposal to merge one branch's changes into another. It gives teammates a structured place to review the proposed changes, leave comments, request adjustments, and approve the work before it's merged — this review step is a core part of how professional teams maintain code quality and catch mistakes before they reach the main codebase.\n\n## Why this collaboration model matters\n\nWithout branches, every developer would need to edit the same shared codebase directly and simultaneously, making it very easy for unfinished or broken work to disrupt everyone else. Branches let each person (or each feature) develop independently and safely, while merging and code review provide a controlled, visible way to bring that work together once it's ready.",
+              "codeExamples": [
+                {
+                  "description": "A conceptual model of two branches diverging from a shared starting point and then merging back together",
+                  "code": "const mainBranch = [\"setup\", \"add-header\"];\nconst featureBranch = [...mainBranch, \"add-login-form\", \"add-validation\"];\n\n// Simulating a merge: combine unique commits from the feature branch into main\nconst merged = [...new Set([...mainBranch, ...featureBranch])];\nconsole.log(merged);",
+                  "expectedOutput": "[ 'setup', 'add-header', 'add-login-form', 'add-validation' ]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What problem does version control solve, and why is manually naming files like 'report_final_v2.docx' not a good substitute?",
+              "answer": "Version control systematically tracks every change made to a project's files over time — what changed, who changed it, when, and why — without relying on humans to manually rename or duplicate files to represent different versions.\n\nManually-named copies like `report_v2.docx` or `app_backup_final.js` break down for several concrete reasons:\n\n1. **No record of what specifically changed** between versions — you'd have to manually compare two entire files line by line to find differences.\n2. **No safe way to combine work** from two people editing the same project at the same time — manual copies can't be automatically merged.\n3. **Ambiguity about which copy is truly current**, especially once there are several similarly-named files (`_final`, `_final2`, `_REALLY_final`).\n4. **No easy way to undo** a specific change without undoing everything made since, since there's no structured history to roll back to a precise prior point.\n\nA version control system like Git solves all of these: it records a full, labeled history of every change as a sequence of commits, lets multiple people work independently and merge their changes back together in a controlled way, and lets anyone revert to any exact prior state with confidence — none of which manual file copies can reliably provide.",
+              "scenario": "Two team members both email each other updated copies of the same file named `script_final.js`, and neither is sure afterward which version contains the latest fix, or whether either version lost the other's changes.",
+              "commonMistakes": "Believing manual backups or renamed file copies are an adequate substitute for real version control, especially once more than one person is involved. Not realizing version control also tracks *why* a change was made, via commit messages, not just *what* changed.",
+              "followUps": "What is a commit, and what information does it typically store?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is a 'branch' in version control, and why do teams use them instead of everyone editing the same shared codebase directly?",
+              "answer": "A branch is an independent line of development that starts from a shared point in a project's history, allowing changes to be made in isolation without immediately affecting the main, stable version of the code (often called `main`).\n\nWithout branches, every developer would need to make changes directly on the one shared codebase at the same time. This causes real problems: half-finished or experimental work could break things for everyone else using that same codebase, and it becomes much harder to review a specific set of changes in isolation before they're considered final.\n\nWith branches, a developer can:\n\n1. Create a new branch dedicated to one feature or fix (e.g. `fix-login-bug`).\n2. Make and commit changes freely on that branch, without disturbing `main` or anyone else's work.\n3. Get those changes reviewed (often via a pull request).\n4. Merge the branch into `main` only once the work is complete and approved.\n\nThis gives teams a safe way for multiple people (or multiple features) to progress in parallel, each in their own isolated space, while keeping the main, shared version of the project stable and reliable at all times.",
+              "scenario": "Three developers are simultaneously building three unrelated features; each works on their own branch, so none of their in-progress, possibly broken code affects the others or the stable main branch.",
+              "commonMistakes": "Assuming branches are only useful for large teams, when even solo developers benefit from isolating experimental or risky changes from a known-stable main branch. Not understanding that a branch starts as an exact copy of the point it diverged from, not an empty project.",
+              "followUps": "What is a 'merge conflict', and why does it happen?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a merge conflict, why does it happen, and how is it generally resolved?",
+              "answer": "A merge conflict happens when version control tries to combine changes from two different branches, and both branches modified the **same part of the same file** in different, incompatible ways. The system can automatically combine changes that touch different files, or even different, non-overlapping parts of the same file, but it has no way to automatically decide which of two conflicting edits to the same lines is 'correct' — that requires human judgment.\n\nA simplified example: imagine a file containing a single line, `const taxRate = 0.05;`. On one branch, a developer changes it to `const taxRate = 0.07;`. On another branch (started from the same original point), a different developer changes it to `const taxRate = 0.08;`. When these two branches are merged, Git cannot know which value should win, since both are legitimate edits to the exact same line — it flags this as a conflict and pauses the merge, asking a person to resolve it.\n\nResolving a merge conflict typically involves:\n\n1. **Identifying the conflicting section**, which version control tools mark clearly inside the affected file (showing both competing versions side by side).\n2. **Deciding the correct final content** — keeping one side, keeping the other, or combining them into something new entirely (e.g., maybe the real intended value was `0.075`, discovered by talking to the other developer).\n3. **Marking the conflict as resolved** and completing the merge, which then becomes a new commit recording how the conflict was settled.\n\nMerge conflicts are a completely normal, expected part of collaborative development, not a sign that something has gone catastrophically wrong — they simply mean two people happened to touch the same exact lines, and a person needs to make the final call on how to combine that work.",
+              "scenario": "Two developers both edit the same configuration line on separate branches with different values; when their branches are merged, the tool flags a conflict and a team lead manually decides the correct final value after a quick conversation.",
+              "commonMistakes": "Panicking or assuming a merge conflict means lost work, when in fact both versions remain fully visible and recoverable until a resolution is explicitly chosen. Resolving a conflict by blindly picking one side without actually understanding what each change was meant to accomplish.",
+              "followUps": "How does a pull request / merge request help prevent conflicts from being merged into the main branch unnoticed?"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

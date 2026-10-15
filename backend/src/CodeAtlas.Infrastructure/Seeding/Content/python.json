@@ -1,0 +1,1243 @@
+{
+  "languageCode": "python",
+  "categories": [
+    {
+      "name": "Basics",
+      "slug": "basics",
+      "topics": [
+        {
+          "title": "Variables and Data Types",
+          "slug": "variables-and-data-types",
+          "summary": "Learn how Python variables work and explore the core built-in data types.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Declaring Variables",
+              "slug": "declaring-variables",
+              "contentMarkdown": "\n## Declaring Variables\n\nPython variables are names bound to objects in memory. Unlike statically typed\nlanguages, you do not declare a type up front — Python figures out the type of\nthe object you assign, and a variable can be rebound to a different type of\nobject later.\n\n```python\nage = 25\nname = \"Alice\"\nis_student = True\n```\n\n### Naming rules\n\n- Names may contain letters, digits, and underscores, but cannot start with a digit.\n- Names are case-sensitive (`age` and `Age` are different variables).\n- By convention, use `snake_case` for variables and functions (PEP 8).\n- Avoid Python keywords (`class`, `for`, `import`, etc.) as variable names.\n\n### Multiple assignment\n\nPython lets you assign several variables in one line, which is handy for\nunpacking or initializing related values together.\n\n```python\nx, y, z = 1, 2, 3\na = b = c = 0\n```\n\n### Dynamic typing\n\nBecause a variable is just a label pointing at an object, you can rebind it to\na value of a completely different type:\n\n```python\nvalue = 10        # value is an int\nvalue = \"ten\"     # now value is a str\n```\n\nThis flexibility is powerful but also means you should use descriptive names\nand, in larger codebases, type hints (covered later) to keep code readable.\n",
+              "codeExamples": [
+                {
+                  "description": "Basic variable assignment and printing",
+                  "code": "name = \"Alice\"\nage = 25\nprint(name, age)",
+                  "expectedOutput": "Alice 25"
+                },
+                {
+                  "description": "Multiple assignment and unpacking",
+                  "code": "x, y, z = 1, 2, 3\nprint(x + y + z)",
+                  "expectedOutput": "6"
+                }
+              ]
+            },
+            {
+              "title": "Core Data Types",
+              "slug": "core-data-types",
+              "contentMarkdown": "\n## Core Data Types\n\nPython has several built-in data types that cover the vast majority of\nday-to-day programming needs.\n\n| Type    | Example         | Description                          |\n|---------|-----------------|---------------------------------------|\n| `int`   | `42`            | Whole numbers, arbitrary precision    |\n| `float` | `3.14`          | Decimal numbers                        |\n| `str`   | `\"hello\"`       | Immutable sequence of characters       |\n| `bool`  | `True`/`False`  | Logical values                         |\n| `None`  | `None`          | Represents \"no value\"                  |\n\n### Checking types\n\nYou can inspect an object's type with the built-in `type()` function, and\ncheck membership of a type with `isinstance()`.\n\n```python\nvalue = 3.14\nprint(type(value))          # <class 'float'>\nprint(isinstance(value, float))  # True\n```\n\n### Type conversion\n\nPython provides built-in functions to convert between types explicitly, which\nis often necessary when combining numbers with strings or parsing user input.\n\n```python\nage_text = \"30\"\nage_number = int(age_text)\nprint(age_number + 1)\n```\n\n### Truthiness and `None`\n\nEvery object has an implicit boolean value: `0`, `0.0`, `\"\"`, `[]`, `{}`, and\n`None` are all considered \"falsy\", while most other values are \"truthy\". This\nunderlies how `if` statements evaluate conditions in Python.\n",
+              "codeExamples": [
+                {
+                  "description": "Checking types with type() and isinstance()",
+                  "code": "value = 3.14\nprint(type(value).__name__)\nprint(isinstance(value, float))",
+                  "expectedOutput": "float\nTrue"
+                },
+                {
+                  "description": "Converting between types",
+                  "code": "age_text = \"30\"\nage_number = int(age_text)\nprint(age_number + 1)\nprint(str(age_number) + \" years\")",
+                  "expectedOutput": "31\n30 years"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between a mutable and an immutable data type in Python? Give two examples of each.",
+              "answer": "In Python, **mutability** describes whether an object's internal state can be\nchanged after it is created.\n\n- **Immutable** objects cannot be changed in place; any \"modification\" actually\n  creates a new object. Examples: `int`, `float`, `str`, `tuple`, `bool`.\n- **Mutable** objects can be changed in place without creating a new object.\n  Examples: `list`, `dict`, `set`.\n\n```python\ns = \"hello\"\ns += \" world\"   # creates a brand-new string object; s now points to it\n\nlst = [1, 2, 3]\nlst.append(4)   # modifies the SAME list object in place\n```\n\nThis distinction matters for function arguments, default parameter values, and\nusing objects as dictionary keys (only immutable, hashable types can be keys).",
+              "scenario": "A teammate passes a list into a function expecting it to stay unchanged, but the function appends to it and the caller is surprised by the side effect.",
+              "commonMistakes": "Assuming strings can be modified in place, or using a mutable default argument like `def f(x=[])`, which is shared across calls.",
+              "followUps": "Why can't you use a list as a dictionary key?\nWhat does `id()` tell you about mutability?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does Python's dynamic typing mean, and how is it different from static typing?",
+              "answer": "Python is **dynamically typed**, meaning the type of a variable is determined\nat runtime based on the object currently assigned to it, and a single variable\nname can be rebound to objects of different types over its lifetime.\n\n```python\nvalue = 10      # value refers to an int\nvalue = \"ten\"   # value now refers to a str — no error\n```\n\nIn a **statically typed** language (like C# or Java), you declare a variable's\ntype once, and the compiler enforces that it only ever holds values of that\ntype, catching type mismatches before the program runs.\n\nPython still performs type checking — just at runtime rather than compile\ntime — which is why it's often described as \"dynamically, strongly typed\":\nyou can't silently add a string to an integer (`\"2\" + 2` raises a\n`TypeError`), but the variable itself isn't locked to one type.",
+              "scenario": null,
+              "commonMistakes": "Confusing 'dynamically typed' with 'weakly typed' — Python actually enforces type rules strictly at runtime, it just defers the check until execution.",
+              "followUps": "What are type hints and do they make Python statically typed?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between `is` and `==` in Python, and when should each be used?",
+              "answer": "`==` compares **values** for equality by calling the object's `__eq__` method,\nwhile `is` compares **identity** — whether two names refer to the exact same\nobject in memory.\n\n```python\na = [1, 2, 3]\nb = [1, 2, 3]\nprint(a == b)   # True  -> same contents\nprint(a is b)   # False -> different list objects\n\nc = a\nprint(a is c)   # True  -> same object\n```\n\nUse `==` for almost all everyday value comparisons (numbers, strings, lists).\nUse `is` specifically for identity checks, most commonly `x is None` (the\nidiomatic way to check for `None`, since `None` is a singleton), or when you\ngenuinely need to know whether two references point to the same object.\n\nA subtlety: small integers (-5 to 256) and some short strings are cached by\nCPython, so `is` may return `True` for equal small ints even without an\nexplicit shared reference — this is an implementation detail you should never\nrely on.",
+              "scenario": "Code review flags `if x == None:` and suggests `if x is None:` instead.",
+              "commonMistakes": "Using `is` to compare strings or numbers for equality, which can appear to work by accident due to CPython's interning/caching.",
+              "followUps": "Why is `is None` preferred over `== None`?"
+            }
+          ]
+        },
+        {
+          "title": "Operators and Expressions",
+          "slug": "operators-and-expressions",
+          "summary": "Understand arithmetic, comparison, and logical operators and how Python evaluates expressions.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Arithmetic and Comparison Operators",
+              "slug": "arithmetic-and-comparison-operators",
+              "contentMarkdown": "\n## Arithmetic Operators\n\nPython supports the standard arithmetic operators, plus a few extras that are\nparticularly convenient.\n\n| Operator | Meaning           | Example   | Result |\n|----------|-------------------|-----------|--------|\n| `+`      | Addition          | `5 + 2`   | `7`    |\n| `-`      | Subtraction       | `5 - 2`   | `3`    |\n| `*`      | Multiplication    | `5 * 2`   | `10`   |\n| `/`      | True division     | `5 / 2`   | `2.5`  |\n| `//`     | Floor division    | `5 // 2`  | `2`    |\n| `%`      | Modulus           | `5 % 2`   | `1`    |\n| `**`     | Exponentiation    | `5 ** 2`  | `25`   |\n\nNotice that `/` always returns a `float`, while `//` performs floor (integer)\ndivision and returns an `int` when both operands are `int`.\n\n```python\nprint(7 / 2)    # 3.5\nprint(7 // 2)   # 3\nprint(7 % 2)    # 1\n```\n\n## Comparison Operators\n\nComparison operators return a boolean (`True`/`False`) and are used heavily in\n`if` statements and loops: `==`, `!=`, `<`, `>`, `<=`, `>=`.\n\n```python\nprint(10 > 5)     # True\nprint(10 == \"10\") # False (different types, no implicit conversion)\n```\n\nPython also supports **chained comparisons**, which read naturally and are\nevaluated as a single expression:\n\n```python\nx = 5\nprint(1 < x < 10)  # True, equivalent to (1 < x) and (x < 10)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Arithmetic operators including floor division and modulus",
+                  "code": "print(7 / 2)\nprint(7 // 2)\nprint(7 % 2)\nprint(2 ** 5)",
+                  "expectedOutput": "3.5\n3\n1\n32"
+                },
+                {
+                  "description": "Chained comparisons",
+                  "code": "x = 5\nprint(1 < x < 10)\nprint(10 < x < 20)",
+                  "expectedOutput": "True\nFalse"
+                }
+              ]
+            },
+            {
+              "title": "Logical Operators and Precedence",
+              "slug": "logical-operators-and-precedence",
+              "contentMarkdown": "\n## Logical Operators\n\nPython uses the words `and`, `or`, and `not` rather than symbols like `&&` or\n`||` (those symbols exist but are bitwise operators with different meaning).\n\n```python\nis_adult = True\nhas_ticket = False\nprint(is_adult and has_ticket)  # False\nprint(is_adult or has_ticket)   # True\nprint(not is_adult)             # False\n```\n\n### Short-circuit evaluation\n\n`and` and `or` short-circuit: `and` stops at the first falsy value, `or` stops\nat the first truthy value, and that value (not just `True`/`False`) is\nreturned.\n\n```python\nresult = \"\" or \"default\"\nprint(result)   # \"default\", because \"\" is falsy\n```\n\n## Operator Precedence\n\nWhen an expression mixes multiple operators, Python follows a well-defined\nprecedence order (highest to lowest, simplified):\n\n1. `**` (exponentiation)\n2. `*`, `/`, `//`, `%`\n3. `+`, `-`\n4. comparisons (`==`, `<`, etc.)\n5. `not`\n6. `and`\n7. `or`\n\nWhen in doubt, use parentheses — they cost nothing and make intent explicit.\n\n```python\nresult = 2 + 3 * 4       # 14, not 20\nresult2 = (2 + 3) * 4    # 20\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Short-circuit evaluation with or",
+                  "code": "result = \"\" or \"default\"\nprint(result)",
+                  "expectedOutput": "default"
+                },
+                {
+                  "description": "Operator precedence with and without parentheses",
+                  "code": "result = 2 + 3 * 4\nresult2 = (2 + 3) * 4\nprint(result)\nprint(result2)",
+                  "expectedOutput": "14\n20"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `/` and `//` in Python?",
+              "answer": "`/` is **true division**: it always returns a `float`, regardless of whether\nthe operands divide evenly.\n\n`//` is **floor division**: it divides and then rounds *down* (toward negative\ninfinity) to the nearest whole number, returning an `int` when both operands\nare `int`, or a `float` if either operand is a `float`.\n\n```python\nprint(7 / 2)     # 3.5  (float)\nprint(7 // 2)    # 3    (int)\nprint(-7 // 2)   # -4   (rounds toward negative infinity, not toward zero!)\n```\n\nThe `-7 // 2 == -4` result trips a lot of people up — they expect `-3`, which\nis what languages that truncate toward zero would give.",
+              "scenario": null,
+              "commonMistakes": "Expecting floor division on negative numbers to truncate toward zero instead of rounding down.",
+              "followUps": "How would you implement 'round half to even' (banker's rounding) in Python?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "Explain short-circuit evaluation in Python with `and` / `or`, and give a practical use case.",
+              "answer": "Python's `and`/`or` operators **short-circuit**: they stop evaluating as soon\nas the result is determined, and they return the actual operand value that\ndecided the result rather than a plain boolean.\n\n- `a and b`: if `a` is falsy, returns `a` immediately without evaluating `b`.\n  Otherwise returns `b`.\n- `a or b`: if `a` is truthy, returns `a` immediately without evaluating `b`.\n  Otherwise returns `b`.\n\nA very common practical use is providing a default value:\n\n```python\nusername = input_name or \"Guest\"\n```\n\nShort-circuiting is also used to avoid errors — e.g. checking that an object\nexists before accessing an attribute on it:\n\n```python\nuser = None\nif user and user.is_active:\n    print(\"active\")\n```\n\nHere, `user.is_active` is never evaluated when `user` is `None`, avoiding an\n`AttributeError`.",
+              "scenario": "A function parameter `name` might be an empty string, and you want to fall back to a default without writing an explicit if/else.",
+              "commonMistakes": "Thinking `and`/`or` always return `True`/`False` rather than one of the actual operands.",
+              "followUps": "How does this differ from the ternary conditional expression `x if cond else y`?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Why does `0.1 + 0.2 == 0.3` evaluate to `False` in Python, and how should you compare floats for equality?",
+              "answer": "Floating-point numbers are stored in binary (IEEE 754 double precision), and\nmany decimal fractions — including `0.1` and `0.2` — cannot be represented\nexactly in binary. The small representation errors accumulate, so\n`0.1 + 0.2` actually equals `0.30000000000000004`, not exactly `0.3`.\n\n```python\nprint(0.1 + 0.2)          # 0.30000000000000004\nprint(0.1 + 0.2 == 0.3)   # False\n```\n\nTo compare floats safely, check whether the difference is within a small\ntolerance, rather than checking for exact equality. The standard library\nprovides `math.isclose()` for this:\n\n```python\nimport math\nprint(math.isclose(0.1 + 0.2, 0.3))   # True\n```\n\nFor cases needing exact decimal arithmetic (e.g. financial calculations), use\nthe `decimal.Decimal` type instead of `float`.",
+              "scenario": "A test asserts `total == 19.99` after summing floating point prices and fails intermittently due to rounding error.",
+              "commonMistakes": "Comparing floats directly with `==` instead of using a tolerance, or assuming `round()` fixes the underlying binary representation issue.",
+              "followUps": "When would you use the `decimal` module instead of `float`?"
+            }
+          ]
+        },
+        {
+          "title": "Input, Output & f-strings",
+          "slug": "input-output-fstrings",
+          "summary": "Read user input, print output, and format strings cleanly with f-strings.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Reading Input and Printing Output",
+              "slug": "reading-input-and-printing-output",
+              "contentMarkdown": "\n## The `print()` Function\n\n`print()` writes text to standard output. It accepts multiple arguments\nseparated by commas, which are joined by a space (`sep=\" \"` by default) and\nfollowed by a newline (`end=\"\\n\"` by default) — both of which you can\ncustomize.\n\n```python\nprint(\"Hello\", \"World\")             # Hello World\nprint(\"Hello\", \"World\", sep=\"-\")    # Hello-World\nprint(\"No newline\", end=\"\")         # suppresses the trailing newline\n```\n\n## The `input()` Function\n\n`input()` pauses the program, displays an optional prompt, and reads a line of\ntext typed by the user. It **always returns a string**, so you must convert\nit with `int()`, `float()`, etc. if you need a number.\n\n```python\nname = input(\"Enter your name: \")\nage = int(input(\"Enter your age: \"))\n```\n\nBecause `input()` requires an interactive terminal, this lesson's examples use\nhard-coded values rather than live input so they behave the same everywhere\nthey run.\n\n```python\nraw_age = \"25\"               # simulates what input() would return\nage = int(raw_age)\nprint(f\"Next year you'll be {age + 1}\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "print() with custom sep and end arguments",
+                  "code": "print(\"Hello\", \"World\", sep=\"-\")\nprint(\"No newline, \", end=\"\")\nprint(\"continued on same line\")",
+                  "expectedOutput": "Hello-World\nNo newline, continued on same line"
+                },
+                {
+                  "description": "Simulating input() and converting to int",
+                  "code": "raw_age = \"25\"\nage = int(raw_age)\nprint(f\"Next year you\\'ll be {age + 1}\")",
+                  "expectedOutput": "Next year you'll be 26"
+                }
+              ]
+            },
+            {
+              "title": "Formatting Strings with f-strings",
+              "slug": "formatting-strings-with-f-strings",
+              "contentMarkdown": "\n## f-strings\n\nIntroduced in Python 3.6, **f-strings** (formatted string literals) are the\nmodern, preferred way to build strings that embed expressions. Prefix the\nstring with `f` and place expressions inside `{}`.\n\n```python\nname = \"Alice\"\nage = 25\nprint(f\"{name} is {age} years old\")\n```\n\n### Format specifiers\n\nYou can control formatting with a `:` followed by a format spec, similar to\n`str.format()`.\n\n```python\npi = 3.14159265\nprint(f\"{pi:.2f}\")        # 2 decimal places -> 3.14\nprint(f\"{1234567:,}\")     # thousands separator -> 1,234,567\nprint(f\"{42:05d}\")        # zero-padded width 5 -> 00042\n```\n\n### Debugging with `=`\n\nA handy feature for quick debugging is the self-documenting `=` specifier,\nwhich prints both the expression text and its value:\n\n```python\nx = 10\nprint(f\"{x=}\")    # x=10\n```\n\n### Expressions inside f-strings\n\nAny valid Python expression can go inside the braces, including function\ncalls and arithmetic:\n\n```python\nitems = [\"apple\", \"banana\"]\nprint(f\"You have {len(items)} items: {', '.join(items)}\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "f-string format specifiers for decimals, commas, and zero-padding",
+                  "code": "pi = 3.14159265\nprint(f\"{pi:.2f}\")\nprint(f\"{1234567:,}\")\nprint(f\"{42:05d}\")",
+                  "expectedOutput": "3.14\n1,234,567\n00042"
+                },
+                {
+                  "description": "Expressions and the self-documenting = specifier inside f-strings",
+                  "code": "x = 10\nprint(f\"{x=}\")\nitems = [\"apple\", \"banana\"]\nprint(f\"You have {len(items)} items: {', '.join(items)}\")",
+                  "expectedOutput": "x=10\nYou have 2 items: apple, banana"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What type does `input()` return, and why does `input('Enter age: ') + 1` raise an error?",
+              "answer": "`input()` **always returns a `str`**, even if the user types digits. So\n`input(\"Enter age: \")` might return the string `\"25\"`, not the integer `25`.\n\nAdding `1` to that string raises a `TypeError`:\n\n```python\nage = input(\"Enter age: \")   # e.g. \"25\", a str\nage + 1                      # TypeError: can only concatenate str (not \"int\") to str\n```\n\nTo fix it, explicitly convert the result with `int()` (or `float()` for\ndecimal input):\n\n```python\nage = int(input(\"Enter age: \"))\nprint(age + 1)\n```\n\nIt's good practice to validate/convert input defensively, e.g. with a\n`try/except ValueError`, since a user could type non-numeric text.",
+              "scenario": "A beginner's command-line calculator crashes with a TypeError the first time a user enters a number.",
+              "commonMistakes": "Forgetting that input() output is always a string, or converting with int() without handling non-numeric input.",
+              "followUps": "How would you handle a user typing non-numeric text for int()?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "How do f-strings differ from the older `%` formatting and `str.format()` methods?",
+              "answer": "All three are ways to build formatted strings, but f-strings (Python 3.6+)\nare the modern recommended choice:\n\n```python\nname, age = \"Alice\", 25\n\nold_percent = \"%s is %d years old\" % (name, age)\nold_format  = \"{} is {} years old\".format(name, age)\nfstring     = f\"{name} is {age} years old\"\n```\n\nKey differences:\n- **Readability**: f-strings embed the variable directly where it's used,\n  rather than requiring positional matching with placeholders elsewhere.\n- **Performance**: f-strings are evaluated at parse time into efficient\n  bytecode and are generally faster than both alternatives.\n- **Expressiveness**: f-strings can contain arbitrary expressions\n  (`f\"{a + b}\"`, `f\"{obj.method()}\"`), not just simple variable substitution.\n- `%` formatting is the oldest style, inherited from C, and is now considered\n  legacy for new code (though still seen in logging calls and older codebases).\n\nFor nearly all new code, f-strings are preferred unless you need a format\nstring to be defined separately from the data (e.g., loaded from a\nconfiguration/translation file), where `str.format()` is still useful.",
+              "scenario": null,
+              "commonMistakes": "Mixing up the order of arguments in %-formatting, which fails silently in confusing ways with wrong types.",
+              "followUps": "Can f-strings be used for multi-line strings or templates loaded from a file?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How would you format a float to always show two decimal places and a thousands separator, e.g. 1234.5 -> '1,234.50'?",
+              "answer": "You combine the comma (`,`) thousands-separator specifier with a fixed\ndecimal-precision specifier (`.2f`) inside an f-string's format spec, placed\nafter the `:`.\n\n```python\nvalue = 1234.5\nformatted = f\"{value:,.2f}\"\nprint(formatted)   # 1,234.50\n```\n\nThe format spec mini-language reads as `{value:[grouping][.precision][type]}`.\nHere `,` requests thousands grouping, `.2` requests two digits after the\ndecimal point, and `f` requests fixed-point notation.\n\nThe same spec works with `format()` and `str.format()`:\n\n```python\nprint(format(1234.5, \",.2f\"))         # 1,234.50\nprint(\"{:,.2f}\".format(1234.5))       # 1,234.50\n```\n\nThis is commonly used for displaying currency or large numeric values in\nreports and dashboards.",
+              "scenario": "A finance dashboard needs to display order totals like $12,345.60 instead of raw floats like 12345.6.",
+              "commonMistakes": "Forgetting the comma goes before the precision (`.2f,` is invalid — grouping must come first).",
+              "followUps": "How would you add a currency symbol and handle negative values in parentheses, e.g. accounting format?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Control Flow & Functions",
+      "slug": "control-flow-functions",
+      "topics": [
+        {
+          "title": "Conditionals",
+          "slug": "conditionals",
+          "summary": "Control program flow with if/elif/else, ternary expressions, and structural pattern matching.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "if / elif / else Statements",
+              "slug": "if-elif-else-statements",
+              "contentMarkdown": "\n## The `if` Statement\n\nPython uses indentation (not braces) to define code blocks. An `if` statement\nexecutes a block only when its condition is truthy.\n\n```python\nage = 20\nif age >= 18:\n    print(\"Adult\")\n```\n\n### Adding `elif` and `else`\n\n`elif` (\"else if\") lets you check additional conditions in sequence, and\n`else` provides a fallback when none of the conditions match. Python evaluates\nbranches top-to-bottom and stops at the first match.\n\n```python\nscore = 75\nif score >= 90:\n    grade = \"A\"\nelif score >= 80:\n    grade = \"B\"\nelif score >= 70:\n    grade = \"C\"\nelse:\n    grade = \"F\"\nprint(grade)\n```\n\n### Nested and combined conditions\n\nConditions can be combined with `and`/`or`, and `if` statements can be nested,\nthough deeply nested conditionals usually hint that a function extraction or a\ndifferent structure (like a dictionary lookup) could make the code clearer.\n\n```python\nis_member = True\ntotal = 120\nif is_member and total > 100:\n    print(\"Eligible for discount\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "if/elif/else grading logic",
+                  "code": "score = 75\nif score >= 90:\n    grade = \"A\"\nelif score >= 80:\n    grade = \"B\"\nelif score >= 70:\n    grade = \"C\"\nelse:\n    grade = \"F\"\nprint(grade)",
+                  "expectedOutput": "C"
+                },
+                {
+                  "description": "Combining conditions with and/or",
+                  "code": "is_member = True\ntotal = 120\nif is_member and total > 100:\n    print(\"Eligible for discount\")\nelse:\n    print(\"Not eligible\")",
+                  "expectedOutput": "Eligible for discount"
+                }
+              ]
+            },
+            {
+              "title": "Ternary Expressions and match-case",
+              "slug": "ternary-expressions-and-match-case",
+              "contentMarkdown": "\n## Ternary (Conditional) Expressions\n\nPython supports a one-line conditional expression: `value_if_true if condition\nelse value_if_false`. It's useful for simple assignments, but should be\navoided when the logic gets complex (prefer a full `if` statement then).\n\n```python\nage = 15\nstatus = \"Adult\" if age >= 18 else \"Minor\"\nprint(status)\n```\n\n## Structural Pattern Matching (`match`/`case`)\n\nPython 3.10 introduced `match`/`case`, a more powerful alternative to long\n`if/elif` chains, especially useful for matching against structures (tuples,\nlists, class patterns), not just single values.\n\n```python\ndef describe(command):\n    match command:\n        case \"start\":\n            return \"Starting...\"\n        case \"stop\":\n            return \"Stopping...\"\n        case _:\n            return \"Unknown command\"\n\nprint(describe(\"start\"))\nprint(describe(\"pause\"))\n```\n\nThe `_` wildcard case acts as the default, similar to `else`. `match` can also\ndestructure sequences:\n\n```python\npoint = (0, 5)\nmatch point:\n    case (0, 0):\n        print(\"Origin\")\n    case (0, y):\n        print(f\"On the y-axis at {y}\")\n    case (x, 0):\n        print(f\"On the x-axis at {x}\")\n    case (x, y):\n        print(f\"Point at ({x}, {y})\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Ternary conditional expression",
+                  "code": "age = 15\nstatus = \"Adult\" if age >= 18 else \"Minor\"\nprint(status)",
+                  "expectedOutput": "Minor"
+                },
+                {
+                  "description": "match/case with wildcard and structural destructuring",
+                  "code": "def describe(command):\n    match command:\n        case \"start\":\n            return \"Starting...\"\n        case \"stop\":\n            return \"Stopping...\"\n        case _:\n            return \"Unknown command\"\n\nprint(describe(\"start\"))\nprint(describe(\"pause\"))\n\npoint = (0, 5)\nmatch point:\n    case (0, 0):\n        print(\"Origin\")\n    case (0, y):\n        print(f\"On the y-axis at {y}\")\n    case (x, 0):\n        print(f\"On the x-axis at {x}\")\n    case (x, y):\n        print(f\"Point at ({x}, {y})\")",
+                  "expectedOutput": "Starting...\nUnknown command\nOn the y-axis at 5"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "How does Python determine code blocks for if/else statements without curly braces?",
+              "answer": "Python uses **indentation** (whitespace at the start of a line) to delimit\nblocks of code, rather than braces `{}` as in languages like C# or JavaScript.\nA colon `:` ends the header line (`if`, `elif`, `else`, `for`, `def`, etc.),\nand every statement in the block that follows must be indented consistently —\nby convention, 4 spaces per level.\n\n```python\nif True:\n    print(\"inside the if block\")\n    print(\"still inside\")\nprint(\"outside the if block\")\n```\n\nMixing tabs and spaces, or inconsistent indentation levels within the same\nblock, raises an `IndentationError`. Most editors and linters (and PEP 8) are\nconfigured to use 4 spaces and never tabs, precisely to avoid this class of\nbug. This design choice forces consistently readable code across the entire\nPython ecosystem.",
+              "scenario": null,
+              "commonMistakes": "Mixing tabs and spaces in the same file, which can look identical in some editors but causes an IndentationError or TabError.",
+              "followUps": "What happens if you indent inconsistently within the same block?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What advantages does Python's `match`/`case` (structural pattern matching) offer over a long `if/elif` chain?",
+              "answer": "`match`/`case` (added in Python 3.10) offers several advantages for certain\nproblems:\n\n1. **Destructuring**: it can match and simultaneously unpack the *shape* of\n   data (tuples, lists, objects), not just compare a single value.\n\n```python\nmatch point:\n    case (0, 0):\n        print(\"Origin\")\n    case (x, 0):\n        print(f\"On x-axis at {x}\")\n    case (x, y):\n        print(f\"Point ({x}, {y})\")\n```\n\n2. **Guard clauses**: each `case` can add an `if` condition for extra\n   filtering (`case (x, y) if x == y:`).\n3. **Class pattern matching**: it can match instances of a class and extract\n   their attributes in one step (`case Point(x=0, y=y):`).\n4. **Readability for many branches**: dispatching over many discrete values\n   (like a simple command parser) often reads more clearly as a `match` than\n   as a long `if/elif/elif/...` chain.\n\nIt is **not** a strict replacement for `if/elif` — for simple boolean logic or\nrange checks (`if x > 10`), a regular `if` statement remains clearer. `match`\nshines specifically when you're branching on the *structure* or *identity* of\ndata.",
+              "scenario": "A function needs to handle different shapes of parsed JSON/command data (e.g., tuples like ('move', x, y) vs ('stop',)) cleanly.",
+              "commonMistakes": "Treating `case` patterns as assignments that always match (forgetting that bare names in a case pattern act as capture variables, which can silently match anything) — e.g. `case x:` matches everything and binds x, unlike a literal.",
+              "followUps": "How do guard clauses work in a match statement?\nHow would you match against an exact class and its attributes?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is a ternary (conditional) expression in Python, and when should you avoid using one?",
+              "answer": "A ternary expression lets you choose between two values in a single line:\n\n```python\nage = 15\nstatus = \"Adult\" if age >= 18 else \"Minor\"\n```\n\nThis reads as: evaluate `\"Adult\"` if the condition is true, otherwise evaluate\n`\"Minor\"`. It is an *expression* (it produces a value you can assign or pass\naround), unlike a full `if` statement block.\n\nYou should avoid it when:\n- **The logic is more than a simple binary choice** — nesting ternaries\n  (`a if c1 else b if c2 else c`) becomes hard to read quickly.\n- **Either branch has side effects or is a multi-statement action** — a\n  ternary is meant for picking a *value*, not for executing a sequence of\n  statements.\n- **Readability suffers** — if a teammate has to pause to parse it, a\n  standard `if/else` block is clearer, even though it takes more lines.\n\nAs a rule of thumb: a ternary is great for short, simple value selection; a\nfull `if/elif/else` is better for anything with multiple branches or actions.",
+              "scenario": null,
+              "commonMistakes": "Nesting multiple ternaries on one line, producing code that's hard to read and debug.",
+              "followUps": "How would you rewrite a deeply nested ternary as a standard if/elif chain?"
+            }
+          ]
+        },
+        {
+          "title": "Loops",
+          "slug": "loops",
+          "summary": "Iterate with for and while loops, range(), enumerate(), and loop control statements.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "for Loops, range() and while Loops",
+              "slug": "for-loops-range-and-while-loops",
+              "contentMarkdown": "\n## `for` Loops\n\nA `for` loop in Python iterates over the items of any **iterable** (a list,\nstring, tuple, dictionary, range, etc.) directly — there's no manual index\nbookkeeping like in C-style `for (int i = 0; ...)` loops.\n\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfor fruit in fruits:\n    print(fruit)\n```\n\n### `range()`\n\nWhen you need to loop a specific number of times, `range()` generates a\nsequence of numbers lazily (without building a full list in memory).\n\n```python\nfor i in range(5):          # 0, 1, 2, 3, 4\n    print(i)\n\nfor i in range(2, 10, 2):   # start, stop, step -> 2, 4, 6, 8\n    print(i)\n```\n\n## `while` Loops\n\nA `while` loop repeats as long as its condition remains truthy. It's suited to\nsituations where the number of iterations isn't known in advance.\n\n```python\ncount = 0\nwhile count < 3:\n    print(f\"count is {count}\")\n    count += 1\n```\n\nBe careful to update the loop variable (or otherwise change the condition)\ninside the loop body — forgetting to do so causes an infinite loop.\n",
+              "codeExamples": [
+                {
+                  "description": "for loop over a list and range() with start/stop/step",
+                  "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\nfor fruit in fruits:\n    print(fruit)\n\nfor i in range(2, 10, 2):\n    print(i)",
+                  "expectedOutput": "apple\nbanana\ncherry\n2\n4\n6\n8"
+                },
+                {
+                  "description": "while loop with a counter",
+                  "code": "count = 0\nwhile count < 3:\n    print(f\"count is {count}\")\n    count += 1",
+                  "expectedOutput": "count is 0\ncount is 1\ncount is 2"
+                }
+              ]
+            },
+            {
+              "title": "enumerate(), zip(), and Loop Control",
+              "slug": "enumerate-zip-and-loop-control",
+              "contentMarkdown": "\n## `enumerate()`\n\nWhen you need both the index and the value while looping, use `enumerate()`\ninstead of manually tracking an index variable.\n\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfor index, fruit in enumerate(fruits):\n    print(index, fruit)\n\n# start the counter at 1\nfor index, fruit in enumerate(fruits, start=1):\n    print(index, fruit)\n```\n\n## `zip()`\n\n`zip()` lets you iterate over two or more iterables in parallel, pairing up\ncorresponding elements. It stops at the shortest iterable.\n\n```python\nnames = [\"Alice\", \"Bob\"]\nscores = [85, 92]\nfor name, score in zip(names, scores):\n    print(f\"{name}: {score}\")\n```\n\n## Loop Control: `break` and `continue`\n\n- `break` exits the loop immediately.\n- `continue` skips the rest of the current iteration and moves to the next.\n\n```python\nfor number in range(10):\n    if number == 5:\n        break\n    if number % 2 == 0:\n        continue\n    print(number)\n```\n\n### The `else` clause on loops\n\nA lesser-known feature: `for` and `while` loops can have an `else` clause,\nwhich runs only if the loop completes **without** hitting a `break`. It's\nhandy for \"search\" patterns.\n\n```python\nfor n in range(2, 10):\n    if n == 7:\n        print(\"found it\")\n        break\nelse:\n    print(\"not found\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "enumerate() with default and custom start index",
+                  "code": "fruits = [\"apple\", \"banana\"]\nfor index, fruit in enumerate(fruits, start=1):\n    print(index, fruit)",
+                  "expectedOutput": "1 apple\n2 banana"
+                },
+                {
+                  "description": "zip() to iterate two lists in parallel, plus break/continue",
+                  "code": "names = [\"Alice\", \"Bob\"]\nscores = [85, 92]\nfor name, score in zip(names, scores):\n    print(f\"{name}: {score}\")\n\nfor number in range(10):\n    if number == 5:\n        break\n    if number % 2 == 0:\n        continue\n    print(number)",
+                  "expectedOutput": "Alice: 85\nBob: 92\n1\n3"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `break` and `continue` in a loop?",
+              "answer": "`break` **terminates the entire loop immediately**, skipping any remaining\niterations, and execution jumps to the first statement after the loop.\n\n`continue` **skips only the rest of the current iteration** — execution jumps\nback to the loop's condition/next item, and the loop continues normally.\n\n```python\nfor n in range(5):\n    if n == 3:\n        break\n    print(n)\n# prints: 0 1 2   (stops entirely at 3)\n\nfor n in range(5):\n    if n == 3:\n        continue\n    print(n)\n# prints: 0 1 2 4   (skips only 3, keeps looping)\n```\n\nA common mnemonic: `break` \"breaks out\" of the loop structure; `continue`\n\"continues on\" to the next lap.",
+              "scenario": null,
+              "commonMistakes": "Using break when continue was intended (or vice versa), silently skipping remaining valid iterations.",
+              "followUps": "What does the `else` clause on a for loop do, and when does it execute?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How does `enumerate()` improve on manually tracking an index with a counter variable in a for loop?",
+              "answer": "Without `enumerate()`, getting both index and value typically requires either\na manual counter or indexing via `range(len(...))`:\n\n```python\n# Manual and error-prone\ni = 0\nfor fruit in fruits:\n    print(i, fruit)\n    i += 1\n\n# Or indexing — loses direct access to the item without another lookup\nfor i in range(len(fruits)):\n    print(i, fruits[i])\n```\n\n`enumerate()` wraps an iterable and yields `(index, value)` tuples directly,\nwhich is more concise, less error-prone (no risk of forgetting to increment\nthe counter), and more \"Pythonic\":\n\n```python\nfor i, fruit in enumerate(fruits):\n    print(i, fruit)\n\n# with a custom starting index, e.g. for 1-based display numbering\nfor i, fruit in enumerate(fruits, start=1):\n    print(i, fruit)\n```\n\nIt also works lazily on any iterable (not just lists), so it's memory\nefficient even over large or streaming data sources.",
+              "scenario": "Displaying a numbered list to a user (e.g. '1. Apple', '2. Banana') from a plain list of items.",
+              "commonMistakes": "Forgetting the `start` parameter exists and manually adding 1 to the index inside the loop body instead.",
+              "followUps": "How would you use enumerate() together with zip()?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Explain what the `else` clause on a `for` or `while` loop does, and give an example where it's genuinely useful.",
+              "answer": "A loop's `else` block executes only if the loop finishes **normally** —\nmeaning it ran to completion without ever hitting a `break` statement. If the\nloop is exited via `break`, the `else` block is skipped entirely.\n\nThis is most useful for \"search and report\" patterns, replacing a manual\n\"found\" flag variable:\n\n```python\ndef is_prime(n):\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            print(f\"{n} is divisible by {i}\")\n            break\n    else:\n        print(f\"{n} is prime\")\n    return\n\nis_prime(7)\nis_prime(8)\n```\n\nWithout the loop `else`, you'd typically need an extra boolean flag:\n\n```python\nfound_divisor = False\nfor i in range(2, int(n ** 0.5) + 1):\n    if n % i == 0:\n        found_divisor = True\n        break\nif not found_divisor:\n    print(f\"{n} is prime\")\n```\n\nThe loop-`else` form avoids that extra bookkeeping variable, though many\ndevelopers find it unintuitive at first because \"else\" here means \"no break\"\nrather than \"the condition was false\".",
+              "scenario": "Searching a list for a value and needing to run fallback logic specifically when the value was never found.",
+              "commonMistakes": "Assuming the else block runs whenever the loop condition becomes false (as in an if/else) rather than specifically when no break occurred.",
+              "followUps": "How would you rewrite a loop-else pattern without using else, for a team unfamiliar with the construct?"
+            }
+          ]
+        },
+        {
+          "title": "Functions & Arguments",
+          "slug": "functions-arguments",
+          "summary": "Define reusable functions and master default, keyword, *args, and **kwargs parameters.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Defining Functions and Return Values",
+              "slug": "defining-functions-and-return-values",
+              "contentMarkdown": "\n## Defining a Function\n\nFunctions are defined with `def`, followed by a name, a parenthesized\nparameter list, and a colon. The body is indented, and `return` sends a value\nback to the caller (if there is no `return`, the function returns `None`).\n\n```python\ndef greet(name):\n    return f\"Hello, {name}!\"\n\nmessage = greet(\"Alice\")\nprint(message)\n```\n\n### Multiple return values\n\nA function can \"return multiple values\" by returning a tuple — Python's\nautomatic unpacking makes this feel natural on the receiving end.\n\n```python\ndef min_max(numbers):\n    return min(numbers), max(numbers)\n\nlowest, highest = min_max([4, 1, 7, 3])\nprint(lowest, highest)\n```\n\n### Docstrings\n\nA string literal right after the `def` line documents what the function does\nand is accessible via `help()` or `function.__doc__`:\n\n```python\ndef add(a, b):\n    \"\"\"Return the sum of a and b.\"\"\"\n    return a + b\n```\n\n### Type hints\n\nModern Python code often annotates parameter and return types for clarity and\ntooling support (this is optional and not enforced at runtime):\n\n```python\ndef add(a: int, b: int) -> int:\n    return a + b\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Function with a return value",
+                  "code": "def greet(name):\n    return f\"Hello, {name}!\"\n\nprint(greet(\"Alice\"))",
+                  "expectedOutput": "Hello, Alice!"
+                },
+                {
+                  "description": "Returning multiple values via tuple unpacking",
+                  "code": "def min_max(numbers):\n    return min(numbers), max(numbers)\n\nlowest, highest = min_max([4, 1, 7, 3])\nprint(lowest, highest)",
+                  "expectedOutput": "1 7"
+                }
+              ]
+            },
+            {
+              "title": "Default, Keyword, *args and **kwargs",
+              "slug": "default-keyword-args-and-kwargs",
+              "contentMarkdown": "\n## Default Argument Values\n\nParameters can have default values, making them optional for the caller.\n\n```python\ndef greet(name, greeting=\"Hello\"):\n    return f\"{greeting}, {name}!\"\n\nprint(greet(\"Alice\"))\nprint(greet(\"Bob\", greeting=\"Hi\"))\n```\n\n**Warning**: never use a mutable object (like `[]` or `{}`) as a default\nvalue — it is created once, when the function is defined, and shared across\n*all* calls, leading to surprising bugs.\n\n```python\ndef append_item(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n```\n\n## Keyword Arguments\n\nCallers can pass arguments by name rather than position, which improves\nreadability and lets you skip earlier optional parameters.\n\n```python\ndef describe(name, age, city=\"Unknown\"):\n    return f\"{name}, {age}, from {city}\"\n\nprint(describe(name=\"Alice\", city=\"Paris\", age=30))\n```\n\n## `*args` and `**kwargs`\n\n`*args` collects any number of extra positional arguments into a tuple.\n`**kwargs` collects any number of extra keyword arguments into a dict. These\nare used to write flexible functions that accept a variable number of inputs.\n\n```python\ndef total(*args):\n    return sum(args)\n\ndef describe_person(**kwargs):\n    return \", \".join(f\"{k}={v}\" for k, v in kwargs.items())\n\nprint(total(1, 2, 3, 4))\nprint(describe_person(name=\"Alice\", age=30))\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Default arguments and overriding with a keyword argument",
+                  "code": "def greet(name, greeting=\"Hello\"):\n    return f\"{greeting}, {name}!\"\n\nprint(greet(\"Alice\"))\nprint(greet(\"Bob\", greeting=\"Hi\"))",
+                  "expectedOutput": "Hello, Alice!\nHi, Bob!"
+                },
+                {
+                  "description": "*args and **kwargs for variable-length arguments",
+                  "code": "def total(*args):\n    return sum(args)\n\ndef describe_person(**kwargs):\n    return \", \".join(f\"{k}={v}\" for k, v in kwargs.items())\n\nprint(total(1, 2, 3, 4))\nprint(describe_person(name=\"Alice\", age=30))",
+                  "expectedOutput": "10\nname=Alice, age=30"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "Why is using a mutable default argument (like `def f(items=[])`) considered a bug-prone anti-pattern in Python?",
+              "answer": "Default argument values are evaluated **once**, at function definition time\n— not on every call. If that default is a mutable object like a list or dict,\nevery call that doesn't supply its own argument shares and mutates the *same*\nobject, causing state to leak between unrelated calls.\n\n```python\ndef append_item(item, items=[]):\n    items.append(item)\n    return items\n\nprint(append_item(\"a\"))   # ['a']\nprint(append_item(\"b\"))   # ['a', 'b']  <- unexpectedly retains 'a' from before!\n```\n\nThe fix is to use `None` as the default sentinel and create a new mutable\nobject inside the function body when needed:\n\n```python\ndef append_item(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n\nprint(append_item(\"a\"))   # ['a']\nprint(append_item(\"b\"))   # ['b']\n```\n\nThis is one of the most common \"gotchas\" raised in Python interviews because\nit silently produces wrong results rather than throwing an error.",
+              "scenario": "A caching function accumulates unrelated results across calls because its default dict argument is being reused.",
+              "commonMistakes": "Not realizing default values are computed once at def-time rather than fresh on every call.",
+              "followUps": "Does the same issue occur with default values that are tuples or strings? Why or why not?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between `*args` and `**kwargs`, and in what order must they appear in a function signature?",
+              "answer": "`*args` collects extra **positional** arguments into a `tuple`.\n`**kwargs` collects extra **keyword** arguments into a `dict`.\n\n```python\ndef example(a, b, *args, **kwargs):\n    print(a, b)\n    print(args)\n    print(kwargs)\n\nexample(1, 2, 3, 4, x=10, y=20)\n# 1 2\n# (3, 4)\n# {'x': 10, 'y': 20}\n```\n\nThe required ordering in a function signature is:\n\n1. Standard positional parameters (`a, b`)\n2. `*args` (variable positional)\n3. Keyword-only parameters (if any)\n4. `**kwargs` (variable keyword) — always last\n\nPython enforces this order; defining `**kwargs` before `*args` is a\n`SyntaxError`. The names `args`/`kwargs` are just convention — only the `*`\nand `**` prefixes matter.\n\nA common use case is writing decorators or wrapper functions that need to\nforward arbitrary arguments to another function without knowing its exact\nsignature in advance.",
+              "scenario": "Writing a decorator (or a logging wrapper) that must transparently forward any arguments to the wrapped function.",
+              "commonMistakes": "Assuming *args and **kwargs must literally be named 'args' and 'kwargs' — only the * and ** matter, the names are conventional.",
+              "followUps": "How would you unpack an existing list and dict into a function call using * and **?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What value does a Python function return if it has no explicit `return` statement?",
+              "answer": "A function with no `return` statement — or a bare `return` with no value —\nimplicitly returns `None`.\n\n```python\ndef greet(name):\n    print(f\"Hello, {name}\")\n    # no return statement\n\nresult = greet(\"Alice\")\nprint(result)   # None\n```\n\nThis is a common source of bugs when a function is assumed to return a useful\nvalue but was only written to print or perform a side effect. It's worth\nexplicitly returning `None` when that's the intended behavior, since it\nsignals to readers that the omission is deliberate, and using a linter/type\nchecker can catch accidental misuse of the return value downstream.",
+              "scenario": "A function that's meant to compute and return a total is called, but the caller forgot to add a return statement, so later code gets None and crashes.",
+              "commonMistakes": "Assuming print() inside a function means the function 'returns' that printed value to the caller.",
+              "followUps": "How does this interact with type hints like `-> None`?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Data Structures",
+      "slug": "data-structures",
+      "topics": [
+        {
+          "title": "Lists and Tuples",
+          "slug": "lists-and-tuples",
+          "summary": "Store ordered collections of data with Python's mutable lists and immutable tuples.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Working with Lists",
+              "slug": "working-with-lists",
+              "contentMarkdown": "\n## Lists\n\nA `list` is an ordered, mutable collection that can hold items of any type\n(even mixed types, though that's uncommon in practice).\n\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[0])     # indexing\nprint(fruits[-1])    # negative indexing -> last item\nprint(fruits[1:3])   # slicing\n```\n\n### Common list methods\n\n```python\nfruits = [\"apple\", \"banana\"]\nfruits.append(\"cherry\")       # add to end\nfruits.insert(0, \"mango\")     # insert at index\nfruits.remove(\"banana\")       # remove by value\npopped = fruits.pop()         # remove & return last item\nprint(fruits)\nprint(popped)\n```\n\n### Sorting\n\n`sorted()` returns a new sorted list; `list.sort()` sorts in place.\n\n```python\nnumbers = [3, 1, 4, 1, 5, 9]\nprint(sorted(numbers))                  # new list, original untouched\nprint(sorted(numbers, reverse=True))\n\nnumbers.sort()        # sorts the original list in place, returns None\nprint(numbers)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Indexing, slicing, and common list methods",
+                  "code": "fruits = [\"apple\", \"banana\"]\nfruits.append(\"cherry\")\nfruits.insert(0, \"mango\")\nfruits.remove(\"banana\")\nprint(fruits)\nprint(fruits[1:])",
+                  "expectedOutput": "['mango', 'apple', 'cherry']\n['apple', 'cherry']"
+                },
+                {
+                  "description": "sorted() vs list.sort()",
+                  "code": "numbers = [3, 1, 4, 1, 5, 9]\nprint(sorted(numbers, reverse=True))\nnumbers.sort()\nprint(numbers)",
+                  "expectedOutput": "[9, 5, 4, 3, 1, 1]\n[1, 1, 3, 4, 5, 9]"
+                }
+              ]
+            },
+            {
+              "title": "Tuples and Immutability",
+              "slug": "tuples-and-immutability",
+              "contentMarkdown": "\n## Tuples\n\nA `tuple` is an ordered collection just like a list, but **immutable** — once\ncreated, its contents cannot be changed. Tuples are written with parentheses\n(the parentheses are actually optional; the comma is what makes it a tuple).\n\n```python\npoint = (3, 4)\nsingle = (5,)     # note the trailing comma — without it, (5) is just an int\nprint(point[0], point[1])\n```\n\n### Why use a tuple instead of a list?\n\n- **Immutability as a guarantee**: if data shouldn't change (e.g. a\n  coordinate, an RGB color), a tuple communicates and enforces that intent.\n- **Hashability**: tuples of hashable items can be used as dictionary keys or\n  set members; lists cannot.\n- **Slight performance edge**: tuples have a smaller memory footprint and are\n  marginally faster to create than lists.\n\n```python\nlocations = {}\nlocations[(40.7128, -74.0060)] = \"New York\"\nprint(locations[(40.7128, -74.0060)])\n```\n\n### Unpacking\n\nTuples (and any iterable) support unpacking into multiple variables in one\nstatement — this is widely used for returning multiple values from functions.\n\n```python\npoint = (3, 4)\nx, y = point\nprint(f\"x={x}, y={y}\")\n\nfirst, *rest = (1, 2, 3, 4)\nprint(first, rest)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Tuple creation, indexing, and use as a dict key",
+                  "code": "point = (3, 4)\nprint(point[0], point[1])\nlocations = {}\nlocations[(40.7128, -74.0060)] = \"New York\"\nprint(locations[(40.7128, -74.0060)])",
+                  "expectedOutput": "3 4\nNew York"
+                },
+                {
+                  "description": "Tuple unpacking including starred expressions",
+                  "code": "point = (3, 4)\nx, y = point\nprint(f\"x={x}, y={y}\")\n\nfirst, *rest = (1, 2, 3, 4)\nprint(first, rest)",
+                  "expectedOutput": "x=3, y=4\n1 [2, 3, 4]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the main difference between a list and a tuple in Python, and when would you choose one over the other?",
+              "answer": "Both are ordered collections, but:\n\n- **`list`** is **mutable**: you can add, remove, or modify items after\n  creation (`append`, `remove`, item assignment, etc.).\n- **`tuple`** is **immutable**: once created, its items cannot be changed,\n  added, or removed.\n\n```python\nmy_list = [1, 2, 3]\nmy_list[0] = 99          # fine\nmy_list.append(4)        # fine\n\nmy_tuple = (1, 2, 3)\nmy_tuple[0] = 99          # TypeError: 'tuple' object does not support item assignment\n```\n\nUse a **tuple** when the data represents a fixed, related group of values\nthat shouldn't change (coordinates, RGB values, a database record row), or\nwhen you need a hashable collection to use as a dictionary key or set member.\n\nUse a **list** when you need a collection that will grow, shrink, or be\nreordered over its lifetime (a shopping cart, a queue of tasks, results\ncollected in a loop).",
+              "scenario": null,
+              "commonMistakes": "Trying to use a list as a dictionary key and getting a TypeError, instead of using a tuple.",
+              "followUps": "Why are tuples generally faster to create than lists?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Explain how Python list slicing works, including negative indices and step values. What does `my_list[::-1]` do?",
+              "answer": "Slicing uses the syntax `sequence[start:stop:step]`, where all three parts\nare optional.\n\n- `start` (default `0`): the index to begin at (inclusive).\n- `stop` (default: end of sequence): the index to end before (exclusive).\n- `step` (default `1`): how many items to advance each time; a negative step\n  moves backward.\n\n```python\nnums = [0, 1, 2, 3, 4, 5]\nprint(nums[1:4])     # [1, 2, 3]       -> indices 1,2,3\nprint(nums[:3])      # [0, 1, 2]       -> start defaults to 0\nprint(nums[3:])      # [3, 4, 5]       -> stop defaults to end\nprint(nums[-2:])     # [4, 5]          -> last two items\nprint(nums[::2])     # [0, 2, 4]       -> every second item\nprint(nums[::-1])    # [5, 4, 3, 2, 1, 0]  -> reversed copy\n```\n\n`my_list[::-1]` is a very common idiom to **reverse a sequence**: step `-1`\nwalks from the end to the start, and omitting `start`/`stop` means \"the whole\nsequence\". Importantly, slicing always returns a **new list** (a shallow\ncopy) rather than a view into the original, unlike slicing in NumPy arrays.",
+              "scenario": "Reversing a string or list for a palindrome check, or taking the last N items of a log for display.",
+              "commonMistakes": "Confusing slicing's exclusive 'stop' index with an inclusive one, leading to off-by-one errors.",
+              "followUps": "How is slicing a NumPy array different from slicing a plain Python list?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What does it mean for a tuple to be 'immutable but not necessarily its contents'? Give an example where a tuple's value appears to change.",
+              "answer": "A tuple itself is immutable — you cannot reassign, add, or remove its\n*elements* (the references it holds). However, if one of those elements is\nitself a **mutable** object (like a list), that nested object can still be\nmodified in place, even though the tuple's own structure never changes.\n\n```python\nt = (1, 2, [3, 4])\nt[2].append(5)\nprint(t)            # (1, 2, [3, 4, 5])\n\n# This still fails, because it reassigns a tuple slot:\n# t[2] = [9, 9]     -> TypeError\n```\n\nSo \"immutable\" for a tuple specifically means its sequence of *references*\nis frozen — you can never point slot `2` at a different object — but if that\nreferenced object is mutable, its internal state can still change. This also\nexplains why a tuple containing a list is **not hashable** (and so cannot be\nused as a dictionary key), while a tuple containing only immutable items (like\nnumbers and strings) is hashable.",
+              "scenario": "A function receives a tuple assumed to be fully 'safe' to pass around, but a nested list inside it gets mutated by another part of the code.",
+              "commonMistakes": "Assuming a tuple guarantees deep immutability of everything it contains, rather than just its own top-level structure.",
+              "followUps": "Why does `hash((1, 2, [3, 4]))` raise a TypeError?"
+            }
+          ]
+        },
+        {
+          "title": "Dictionaries and Sets",
+          "slug": "dictionaries-and-sets",
+          "summary": "Store key-value pairs with dictionaries and unique unordered collections with sets.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Dictionaries",
+              "slug": "dictionaries",
+              "contentMarkdown": "\n## Dictionaries\n\nA `dict` stores key-value pairs. Since Python 3.7, dictionaries preserve\n**insertion order**. Keys must be hashable (strings, numbers, tuples of\nhashable items); values can be anything.\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nprint(person[\"name\"])\nperson[\"city\"] = \"Paris\"        # add a new key\nperson[\"age\"] = 31              # update an existing key\nprint(person)\n```\n\n### Safe access with `.get()`\n\nAccessing a missing key with `[]` raises a `KeyError`. `.get()` returns `None`\n(or a custom default) instead.\n\n```python\nperson = {\"name\": \"Alice\"}\nprint(person.get(\"age\"))           # None, no error\nprint(person.get(\"age\", 0))        # 0, custom default\n```\n\n### Iterating\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nfor key, value in person.items():\n    print(key, value)\n\nprint(list(person.keys()))\nprint(list(person.values()))\n```\n\n### Removing keys\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\ndel person[\"age\"]\nremoved = person.pop(\"name\")\nprint(person, removed)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Creating, updating, and safely accessing dict values",
+                  "code": "person = {\"name\": \"Alice\", \"age\": 30}\nperson[\"city\"] = \"Paris\"\nprint(person)\nprint(person.get(\"country\", \"Unknown\"))",
+                  "expectedOutput": "{'name': 'Alice', 'age': 30, 'city': 'Paris'}\nUnknown"
+                },
+                {
+                  "description": "Iterating over keys, values, and items",
+                  "code": "person = {\"name\": \"Alice\", \"age\": 30}\nfor key, value in person.items():\n    print(key, value)",
+                  "expectedOutput": "name Alice\nage 30"
+                }
+              ]
+            },
+            {
+              "title": "Sets and Set Operations",
+              "slug": "sets-and-set-operations",
+              "contentMarkdown": "\n## Sets\n\nA `set` is an unordered collection of **unique, hashable** items. Sets are\nideal for membership testing and eliminating duplicates efficiently.\n\n```python\nnumbers = {1, 2, 2, 3, 3, 3}\nprint(numbers)           # {1, 2, 3} -- duplicates removed automatically\n\nunique_letters = set(\"mississippi\")\nprint(unique_letters)\n```\n\n### Membership testing\n\nChecking `in` on a set is on average O(1) (constant time), much faster than\nchecking `in` on a list for large collections.\n\n```python\nallowed = {\"admin\", \"editor\", \"viewer\"}\nprint(\"admin\" in allowed)\nprint(\"guest\" in allowed)\n```\n\n### Set operations\n\nSets support classic mathematical set operations:\n\n```python\na = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a | b)   # union\nprint(a & b)   # intersection\nprint(a - b)   # difference (in a but not b)\nprint(a ^ b)   # symmetric difference (in a or b, not both)\n```\n\n### Removing duplicates while preserving a list\n\nA common idiom converts a list to a set and back when you need unique values\nbut still want a list:\n\n```python\nitems = [1, 2, 2, 3, 1]\nunique_items = list(dict.fromkeys(items))   # preserves original order\nprint(unique_items)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Set deduplication and membership testing",
+                  "code": "numbers = {1, 2, 2, 3, 3, 3}\nprint(numbers)\nallowed = {\"admin\", \"editor\"}\nprint(\"admin\" in allowed)\nprint(\"guest\" in allowed)",
+                  "expectedOutput": "{1, 2, 3}\nTrue\nFalse"
+                },
+                {
+                  "description": "Set operations: union, intersection, difference",
+                  "code": "a = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a | b)\nprint(a & b)\nprint(a - b)",
+                  "expectedOutput": "{1, 2, 3, 4, 5, 6}\n{3, 4}\n{1, 2}"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What happens if you access a dictionary key that doesn't exist, and how can you avoid an error?",
+              "answer": "Accessing a missing key with square-bracket syntax raises a `KeyError`:\n\n```python\nperson = {\"name\": \"Alice\"}\nprint(person[\"age\"])   # KeyError: 'age'\n```\n\nTo avoid the error, use one of these approaches:\n\n1. **`.get(key, default)`** — returns `default` (or `None` if omitted)\n   instead of raising:\n\n```python\nprint(person.get(\"age\"))        # None\nprint(person.get(\"age\", 0))     # 0\n```\n\n2. **Check membership first** with `in`:\n\n```python\nif \"age\" in person:\n    print(person[\"age\"])\n```\n\n3. **`try`/`except KeyError`** when you want to handle the missing case as an\n   exceptional branch rather than a routine check.\n\n4. **`collections.defaultdict`** when you want missing keys to automatically\n   get a default value (e.g. an empty list) the first time they're accessed.\n\n`.get()` is generally the most idiomatic choice for simple \"fetch or default\"\nlogic.",
+              "scenario": "Reading an optional field from a parsed JSON payload (e.g. a user's middle name) that might not always be present.",
+              "commonMistakes": "Using `person['age']` everywhere out of habit and letting a KeyError crash the program instead of handling an expected missing field.",
+              "followUps": "How does `collections.defaultdict` differ from using `.get()` everywhere?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Why must dictionary keys (and set elements) be hashable, and what types can't be used as dict keys?",
+              "answer": "Python dictionaries (and sets) are implemented as **hash tables**. To find\nor insert an item efficiently (on average O(1)), Python computes a hash of the\nkey via `hash(key)` and uses that hash to locate the right \"bucket\" instantly,\nrather than scanning every item.\n\nFor this to work correctly, a key's hash **must never change** over its\nlifetime — otherwise the dictionary couldn't reliably find it again later.\nThat's why only **immutable** types are hashable by default: `str`, `int`,\n`float`, `bool`, and `tuple` (as long as everything inside the tuple is\nitself hashable).\n\n**Mutable** types — `list`, `dict`, `set` — are **unhashable** and raise a\n`TypeError` if used as a key, because their contents (and thus their hash)\ncould change after insertion, corrupting the hash table's internal structure.\n\n```python\nd = {}\nd[(1, 2)] = \"ok\"            # fine, tuple is hashable\nd[[1, 2]] = \"fails\"         # TypeError: unhashable type: 'list'\n```\n\nCustom objects are hashable by default (using their `id()`), but if a class\ndefines `__eq__` without also defining `__hash__`, Python sets `__hash__` to\n`None`, making instances unhashable — a subtlety worth knowing when\noverriding equality.",
+              "scenario": null,
+              "commonMistakes": "Trying to use a list (e.g. a list of tags) directly as a dictionary key instead of converting it to a tuple first.",
+              "followUps": "Why does overriding __eq__ on a class set __hash__ to None unless you also define __hash__?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "How would you efficiently find the common elements between two large lists, and why is converting to sets usually the better approach?",
+              "answer": "The naive approach — nested loops checking every element of one list against\nevery element of the other — is O(n × m), which becomes very slow as both\nlists grow:\n\n```python\n# O(n * m) - slow for large lists\ncommon = [x for x in list_a if x in list_b]\n```\n\nConverting both lists to **sets** and using the `&` (intersection) operator\nis dramatically faster, because set membership testing is O(1) on average\n(backed by a hash table) rather than O(n) for list membership:\n\n```python\nset_a = set(list_a)\nset_b = set(list_b)\ncommon = set_a & set_b       # O(n + m) overall\nprint(sorted(common))\n```\n\nThis reduces the overall complexity to roughly O(n + m) — building both sets\nis linear, and the intersection itself is proportional to the size of the\nsmaller set.\n\nTrade-offs to mention in an interview: converting to a set **discards\nduplicates** and **loses original ordering**, and requires all elements to be\nhashable. If duplicate counts or original order matter, you'd combine this\napproach with `collections.Counter` or re-sort/re-filter the result against\nthe original list afterward.",
+              "scenario": "Comparing two large user ID lists (e.g. from two different data exports) to find users present in both, where lists can have tens of thousands of entries.",
+              "commonMistakes": "Using nested list comprehensions / loops for large-scale membership checks instead of converting to sets, causing poor performance at scale.",
+              "followUps": "How would collections.Counter help if you needed to also know how many times each common element appeared?"
+            }
+          ]
+        },
+        {
+          "title": "List & Dict Comprehensions",
+          "slug": "comprehensions",
+          "summary": "Write concise, readable transformations of iterables using comprehension syntax.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "List Comprehensions",
+              "slug": "list-comprehensions",
+              "contentMarkdown": "\n## List Comprehensions\n\nA list comprehension builds a new list by applying an expression to every\nitem of an iterable, optionally filtering with a condition. It's a more\nconcise and often faster alternative to a manual `for` loop with `.append()`.\n\n```python\nsquares = [x ** 2 for x in range(6)]\nprint(squares)\n```\n\nThe general form is `[expression for item in iterable if condition]`.\n\n```python\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nevens = [n for n in numbers if n % 2 == 0]\nprint(evens)\n```\n\n### Equivalent manual loop\n\n```python\nsquares = []\nfor x in range(6):\n    squares.append(x ** 2)\n```\n\nThe comprehension form is preferred when the transformation is simple enough\nto read in one line; for complex logic with multiple statements, a regular\nloop (or a helper function) remains clearer.\n\n### Nested comprehensions\n\nComprehensions can be nested to flatten or build matrices, though readability\nshould guide how far you push this.\n\n```python\nmatrix = [[1, 2], [3, 4], [5, 6]]\nflattened = [num for row in matrix for num in row]\nprint(flattened)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Basic list comprehension with transformation and filter",
+                  "code": "squares = [x ** 2 for x in range(6)]\nprint(squares)\nevens = [n for n in range(1, 11) if n % 2 == 0]\nprint(evens)",
+                  "expectedOutput": "[0, 1, 4, 9, 16, 25]\n[2, 4, 6, 8, 10]"
+                },
+                {
+                  "description": "Nested comprehension to flatten a matrix",
+                  "code": "matrix = [[1, 2], [3, 4], [5, 6]]\nflattened = [num for row in matrix for num in row]\nprint(flattened)",
+                  "expectedOutput": "[1, 2, 3, 4, 5, 6]"
+                }
+              ]
+            },
+            {
+              "title": "Dict and Set Comprehensions",
+              "slug": "dict-and-set-comprehensions",
+              "contentMarkdown": "\n## Dict Comprehensions\n\nThe same comprehension syntax works for dictionaries, using `{key: value for\nitem in iterable}`.\n\n```python\nnames = [\"Alice\", \"Bob\", \"Charlie\"]\nname_lengths = {name: len(name) for name in names}\nprint(name_lengths)\n```\n\n### Filtering and transforming existing dicts\n\nA very common pattern is building a new dictionary from an existing one, with\na condition or a transformed value:\n\n```python\nprices = {\"apple\": 1.5, \"banana\": 0.5, \"cherry\": 3.0}\ndiscounted = {item: round(price * 0.9, 2) for item, price in prices.items()}\nprint(discounted)\n\nexpensive = {item: price for item, price in prices.items() if price > 1}\nprint(expensive)\n```\n\n## Set Comprehensions\n\nSet comprehensions use `{expression for item in iterable}` (no colon) and\nautomatically deduplicate results.\n\n```python\nwords = [\"apple\", \"banana\", \"cherry\", \"avocado\"]\nfirst_letters = {word[0] for word in words}\nprint(first_letters)\n```\n\n### When to prefer a comprehension vs. a loop\n\nComprehensions are great for straightforward map/filter transformations that\nfit on one or two lines. If you need multiple statements, error handling, or\nside effects per item, a regular loop is clearer and easier to debug.\n",
+              "codeExamples": [
+                {
+                  "description": "Dict comprehension to transform and filter prices",
+                  "code": "prices = {\"apple\": 1.5, \"banana\": 0.5, \"cherry\": 3.0}\ndiscounted = {item: round(price * 0.9, 2) for item, price in prices.items()}\nprint(discounted)",
+                  "expectedOutput": "{'apple': 1.35, 'banana': 0.45, 'cherry': 2.7}"
+                },
+                {
+                  "description": "Set comprehension for unique first letters",
+                  "code": "words = [\"apple\", \"banana\", \"cherry\", \"avocado\"]\nfirst_letters = {word[0] for word in words}\nprint(sorted(first_letters))",
+                  "expectedOutput": "['a', 'b', 'c']"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the syntax of a list comprehension, and how would you rewrite `[x*2 for x in range(5) if x % 2 == 0]` as a regular for loop?",
+              "answer": "The general syntax is:\n\n```python\n[expression for item in iterable if condition]\n```\n\nIt reads as: for each `item` in `iterable`, if `condition` is true, evaluate\n`expression` and collect the results into a new list.\n\n`[x*2 for x in range(5) if x % 2 == 0]` means: for each `x` from 0 to 4, keep\nit only if it's even, then double it.\n\nAs an equivalent regular loop:\n\n```python\nresult = []\nfor x in range(5):\n    if x % 2 == 0:\n        result.append(x * 2)\nprint(result)   # [0, 4, 8]\n```\n\nBoth produce `[0, 4, 8]`. The comprehension is more concise and, because the\nlooping and appending happen in optimized C code internally, it's often\nsomewhat faster than the equivalent explicit loop with repeated `.append()`\ncalls.",
+              "scenario": null,
+              "commonMistakes": "Putting the if/else ternary and the filtering `if` in the wrong position — a filter `if` goes at the end with no `else`, while a conditional expression goes right after the output expression (e.g. `[x if x>0 else 0 for x in nums]`).",
+              "followUps": "How would you write a comprehension with both a conditional expression AND a filter, e.g. doubling even numbers and leaving odd ones unchanged, but only for numbers over 10?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the performance and readability trade-off between a list comprehension and using `map()`/`filter()` with lambdas?",
+              "answer": "All three approaches can achieve the same result. For example, doubling the\neven numbers in a list:\n\n```python\nnumbers = [1, 2, 3, 4, 5, 6]\n\n# List comprehension\nresult1 = [n * 2 for n in numbers if n % 2 == 0]\n\n# map/filter with lambdas\nresult2 = list(map(lambda n: n * 2, filter(lambda n: n % 2 == 0, numbers)))\n```\n\n**Performance**: both are comparable in speed, since both are implemented\nwith efficient C-level loops internally; comprehensions are sometimes\nmarginally faster because they avoid the overhead of calling a lambda\nfunction for every element.\n\n**Readability**: list comprehensions are generally considered more\n\"Pythonic\" and readable for this kind of transform-and-filter logic, because\nthe whole operation reads left-to-right in one expression, whereas chained\n`map(lambda ..., filter(lambda ..., ...))` nests function calls that must be\nread from the inside out.\n\n`map()`/`filter()` remain useful when you already have a **named function**\n(not a lambda) to apply, since `map(str.upper, words)` can be clearer than\n`[word.upper() for word in words]` is debatable — this is partly a matter of\nteam style convention, with most modern Python style guides (and PEP 8 tone)\nfavoring comprehensions for clarity.",
+              "scenario": "A code review discussion over whether to replace a chain of map/filter/lambda calls with a single list comprehension for readability.",
+              "commonMistakes": "Overusing deeply nested comprehensions that become harder to read than the loop they replaced — comprehensions should simplify, not obscure.",
+              "followUps": "When would a generator expression be preferable to a list comprehension here?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "You have a dictionary of word frequencies. Write a dict comprehension to create a new dictionary with only the words that appear more than once, and explain the time complexity.",
+              "answer": "Given a frequency dictionary, filtering with a dict comprehension is\nstraightforward and reads in one pass over the items:\n\n```python\nword_counts = {\"the\": 5, \"cat\": 1, \"sat\": 2, \"on\": 1, \"mat\": 3}\n\nrepeated = {word: count for word, count in word_counts.items() if count > 1}\nprint(repeated)\n# {'the': 5, 'sat': 2, 'mat': 3}\n```\n\n**Time complexity**: this is O(n), where n is the number of key-value pairs\nin `word_counts`. The comprehension iterates over `.items()` exactly once,\nperforms an O(1) comparison and (conditionally) an O(1) insertion into the\nnew dict for each pair. There's no nested iteration, so it scales linearly\nwith the size of the input dictionary.\n\n**Space complexity**: O(k), where k is the number of entries that pass the\nfilter (at most n, in the worst case where every word repeats).\n\nThis pattern — filter-then-collect into a new dict — is extremely common for\ntasks like removing stopwords, filtering out low-frequency results, or\npruning stale cache entries, and the comprehension form communicates that\nintent far more directly than a manual loop with an if-append would.",
+              "scenario": "Building a 'trending topics' feature that only surfaces words/tags mentioned more than once in a batch of documents.",
+              "commonMistakes": "Forgetting to iterate with `.items()` and instead iterating over just the dict's keys, losing access to the count without an extra lookup.",
+              "followUps": "How would you sort the resulting dict by count descending, since dicts preserve insertion order but aren't automatically sorted by value?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Object-Oriented Python",
+      "slug": "object-oriented-python",
+      "topics": [
+        {
+          "title": "Classes and Objects",
+          "slug": "classes-and-objects",
+          "summary": "Model real-world entities with classes, instances, and attributes.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Defining Classes and Creating Objects",
+              "slug": "defining-classes-and-creating-objects",
+              "contentMarkdown": "\n## Defining a Class\n\nA class is a blueprint for creating objects. `__init__` is the constructor,\ncalled automatically when you create a new instance; `self` refers to the\ninstance itself and must be the first parameter of every instance method.\n\n```python\nclass Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        return f\"{self.name} says Woof!\"\n\nmy_dog = Dog(\"Rex\", \"Labrador\")\nprint(my_dog.bark())\n```\n\n### Creating multiple instances\n\nEach object created from a class has its own independent copy of the instance\nattributes set in `__init__`.\n\n```python\ndog1 = Dog(\"Rex\", \"Labrador\")\ndog2 = Dog(\"Bella\", \"Poodle\")\nprint(dog1.name, dog2.name)\n```\n\n### Methods\n\nA regular method automatically receives the instance as its first argument\n(`self`), giving it access to that instance's attributes and other methods.\n\n```python\nclass Rectangle:\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\nrect = Rectangle(4, 5)\nprint(rect.area())\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Defining a class with __init__ and a method",
+                  "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        return f\"{self.name} says Woof!\"\n\nmy_dog = Dog(\"Rex\", \"Labrador\")\nprint(my_dog.bark())",
+                  "expectedOutput": "Rex says Woof!"
+                },
+                {
+                  "description": "Creating multiple independent instances",
+                  "code": "class Rectangle:\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\nrect1 = Rectangle(4, 5)\nrect2 = Rectangle(2, 3)\nprint(rect1.area(), rect2.area())",
+                  "expectedOutput": "20 6"
+                }
+              ]
+            },
+            {
+              "title": "Instance vs Class Attributes",
+              "slug": "instance-vs-class-attributes",
+              "contentMarkdown": "\n## Instance Attributes\n\nInstance attributes are set per-object, usually inside `__init__` via\n`self.attribute = value`. Each instance has its own independent copy.\n\n```python\nclass Car:\n    def __init__(self, make, model):\n        self.make = make\n        self.model = model\n\ncar1 = Car(\"Toyota\", \"Corolla\")\ncar2 = Car(\"Honda\", \"Civic\")\nprint(car1.make, car2.make)\n```\n\n## Class Attributes\n\nA class attribute is defined directly in the class body (not inside a\nmethod) and is **shared by all instances** unless an instance explicitly\noverrides it with its own instance attribute of the same name.\n\n```python\nclass Car:\n    wheels = 4   # class attribute, shared by every Car instance\n\n    def __init__(self, make):\n        self.make = make\n\ncar1 = Car(\"Toyota\")\ncar2 = Car(\"Honda\")\nprint(car1.wheels, car2.wheels)   # both 4, from the class\n\nCar.wheels = 6                    # changing it on the class affects all instances\nprint(car1.wheels, car2.wheels)\n```\n\n### A common pitfall\n\nAssigning to `self.attribute = value` on an instance creates a **new\ninstance attribute** that shadows the class attribute for that instance only\n— it does not modify the shared class attribute.\n\n```python\ncar1.wheels = 3   # creates an instance attribute just for car1\nprint(car1.wheels, car2.wheels, Car.wheels)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Class attribute shared across instances until overridden",
+                  "code": "class Car:\n    wheels = 4\n\n    def __init__(self, make):\n        self.make = make\n\ncar1 = Car(\"Toyota\")\ncar2 = Car(\"Honda\")\nprint(car1.wheels, car2.wheels)\nCar.wheels = 6\nprint(car1.wheels, car2.wheels)",
+                  "expectedOutput": "4 4\n6 6"
+                },
+                {
+                  "description": "Instance attribute shadowing a class attribute",
+                  "code": "class Car:\n    wheels = 4\n\n    def __init__(self, make):\n        self.make = make\n\ncar1 = Car(\"Toyota\")\ncar2 = Car(\"Honda\")\ncar1.wheels = 3\nprint(car1.wheels, car2.wheels, Car.wheels)",
+                  "expectedOutput": "3 4 4"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is `self` in a Python class method, and why must it be the first parameter?",
+              "answer": "`self` refers to the **specific instance** on which a method is being\ncalled. When you call `my_dog.bark()`, Python automatically passes `my_dog`\nas the first argument to `bark`, which is why the method definition needs an\nexplicit parameter to receive it — conventionally named `self`.\n\n```python\nclass Dog:\n    def bark(self):\n        return f\"{self.name} says Woof!\"\n\nmy_dog = Dog()\nmy_dog.name = \"Rex\"\nmy_dog.bark()   # Python translates this call to Dog.bark(my_dog)\n```\n\n`self` is how a method accesses that particular instance's attributes\n(`self.name`) and calls other methods on the same instance\n(`self.other_method()`). It's not a reserved keyword — you could technically\nname it anything — but `self` is the universal convention, and deviating\nfrom it would confuse every other Python developer reading your code.\n\nNote that `self` is **not** passed explicitly by the caller; Python's method\nlookup mechanism binds it automatically from the object before the dot.",
+              "scenario": null,
+              "commonMistakes": "Forgetting to include self as the first parameter when defining an instance method, causing a TypeError about the wrong number of arguments when it's called.",
+              "followUps": "What happens if you call `Dog.bark(my_dog)` directly instead of `my_dog.bark()`?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between a class attribute and an instance attribute, and what's a common bug related to mutable class attributes?",
+              "answer": "A **class attribute** is defined in the class body and shared by all\ninstances (until an instance shadows it). An **instance attribute** is set\nper-object, typically inside `__init__` via `self.x = value`.\n\n```python\nclass Dog:\n    tricks = []    # class attribute -- DANGER if mutable!\n\n    def __init__(self, name):\n        self.name = name   # instance attribute\n\n    def add_trick(self, trick):\n        self.tricks.append(trick)   # mutates the SHARED list!\n\nd1 = Dog(\"Rex\")\nd2 = Dog(\"Bella\")\nd1.add_trick(\"sit\")\nprint(d2.tricks)   # ['sit'] <- unexpectedly shared across instances!\n```\n\nBecause `tricks` is a mutable **class** attribute, all instances share the\nexact same list object. Calling `.append()` on it through any instance\nmutates that one shared list for every instance, which is almost never the\nintended behavior.\n\nThe fix is to initialize mutable attributes per-instance inside `__init__`:\n\n```python\nclass Dog:\n    def __init__(self, name):\n        self.name = name\n        self.tricks = []   # each instance gets its own list\n\nd1 = Dog(\"Rex\")\nd2 = Dog(\"Bella\")\nd1.add_trick(\"sit\") if hasattr(d1, \"add_trick\") else d1.tricks.append(\"sit\")\nprint(d2.tricks)   # []\n```\n\nThis mirrors the \"mutable default argument\" gotcha for functions — both stem\nfrom the same root cause: an object created once and then shared across\ncontexts that were each expected to have independent state.",
+              "scenario": "A class modeling a shopping cart uses a class-level list for items, and items from one user's cart mysteriously show up in another user's cart.",
+              "commonMistakes": "Defining mutable collections (lists, dicts) directly as class attributes instead of inside __init__.",
+              "followUps": "How would you verify at runtime whether an attribute access resolves to an instance attribute or falls back to a class attribute?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between an instance method, and accessing an attribute directly, in terms of when parentheses are needed?",
+              "answer": "An **attribute** is a piece of data stored on an object; you access its\nvalue by name, with no parentheses:\n\n```python\nmy_dog.name     # the attribute's value, e.g. \"Rex\"\n```\n\nA **method** is a function defined in the class that you *call* using\nparentheses, which executes its code and (optionally) returns a value:\n\n```python\nmy_dog.bark()   # calls the method, executing its body\n```\n\nForgetting the parentheses on a method access doesn't raise an error — it\nsimply returns a reference to the **bound method object itself**, not the\nresult of calling it, which is a subtle and common source of bugs:\n\n```python\nclass Dog:\n    def bark(self):\n        return \"Woof!\"\n\nd = Dog()\nresult = d.bark     # no parentheses: result is a method object, not \"Woof!\"\nprint(result)       # <bound method Dog.bark of <...>>\nprint(result())     # calling it now: \"Woof!\"\n```\n\nThis is an easy mistake to make, especially when a method happens to have no\nrequired arguments, since the missing-call bug doesn't surface as an\nexception — it silently produces the wrong kind of value.",
+              "scenario": null,
+              "commonMistakes": "Writing `if my_dog.is_hungry:` instead of `if my_dog.is_hungry():` when is_hungry is a method, which always evaluates truthy (a method object is truthy) regardless of the actual condition.",
+              "followUps": "What's the difference between a bound method and an unbound function reference in Python 3?"
+            }
+          ]
+        },
+        {
+          "title": "Inheritance & super()",
+          "slug": "inheritance-and-super",
+          "summary": "Share and extend behavior between classes using inheritance and the super() function.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Single Inheritance",
+              "slug": "single-inheritance",
+              "contentMarkdown": "\n## Inheritance\n\nInheritance lets a class (the **subclass**/**child**) reuse and extend the\nbehavior of another class (the **superclass**/**parent**), avoiding\nduplicated code for shared behavior.\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f\"{self.name} makes a sound\"\n\nclass Dog(Animal):\n    def speak(self):\n        return f\"{self.name} barks\"\n\nclass Cat(Animal):\n    def speak(self):\n        return f\"{self.name} meows\"\n\nanimals = [Dog(\"Rex\"), Cat(\"Whiskers\")]\nfor animal in animals:\n    print(animal.speak())\n```\n\nHere, `Dog` and `Cat` both inherit the `__init__` method from `Animal` (they\ndon't redefine it), but each overrides `speak()` with its own specific\nbehavior — this is **polymorphism**: the same method name behaves differently\ndepending on the actual object's class.\n\n### Checking inheritance relationships\n\n```python\nrex = Dog(\"Rex\")\nprint(isinstance(rex, Dog))      # True\nprint(isinstance(rex, Animal))   # True -- Dog IS-A Animal\nprint(issubclass(Dog, Animal))   # True\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Subclasses overriding a parent method (polymorphism)",
+                  "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f\"{self.name} makes a sound\"\n\nclass Dog(Animal):\n    def speak(self):\n        return f\"{self.name} barks\"\n\nclass Cat(Animal):\n    def speak(self):\n        return f\"{self.name} meows\"\n\nfor animal in [Dog(\"Rex\"), Cat(\"Whiskers\")]:\n    print(animal.speak())",
+                  "expectedOutput": "Rex barks\nWhiskers meows"
+                },
+                {
+                  "description": "isinstance() and issubclass() with inheritance",
+                  "code": "class Animal:\n    pass\n\nclass Dog(Animal):\n    pass\n\nrex = Dog()\nprint(isinstance(rex, Dog))\nprint(isinstance(rex, Animal))\nprint(issubclass(Dog, Animal))",
+                  "expectedOutput": "True\nTrue\nTrue"
+                }
+              ]
+            },
+            {
+              "title": "Method Resolution Order and super()",
+              "slug": "method-resolution-order-and-super",
+              "contentMarkdown": "\n## `super()`\n\n`super()` gives you a proxy to the parent class, most commonly used inside a\nsubclass's `__init__` to call the parent's `__init__` and reuse its setup\nlogic instead of duplicating it.\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f\"{self.name} makes a sound\"\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)   # reuse Animal's init logic\n        self.breed = breed\n\n    def speak(self):\n        base = super().speak()\n        return f\"{base}, specifically a bark\"\n\nrex = Dog(\"Rex\", \"Labrador\")\nprint(rex.name, rex.breed)\nprint(rex.speak())\n```\n\n## Method Resolution Order (MRO)\n\nWhen a class inherits from multiple classes, Python needs a deterministic\norder to decide which method to use if several parents define the same name.\nThis is the **Method Resolution Order**, computed with the C3 linearization\nalgorithm, and you can inspect it with `ClassName.__mro__` or `ClassName.mro()`.\n\n```python\nclass A:\n    def greet(self):\n        return \"A\"\n\nclass B(A):\n    def greet(self):\n        return \"B\"\n\nclass C(A):\n    def greet(self):\n        return \"C\"\n\nclass D(B, C):\n    pass\n\nprint(D().greet())              # \"B\" -- found first in MRO\nprint([cls.__name__ for cls in D.__mro__])\n```\n\n`super()` always follows the MRO, which is why it's the safe way to call\n\"the next method in line\" even in complex multiple-inheritance hierarchies.\n",
+              "codeExamples": [
+                {
+                  "description": "super().__init__() to reuse parent constructor logic",
+                  "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f\"{self.name} makes a sound\"\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\n    def speak(self):\n        return super().speak() + \", specifically a bark\"\n\nrex = Dog(\"Rex\", \"Labrador\")\nprint(rex.name, rex.breed)\nprint(rex.speak())",
+                  "expectedOutput": "Rex Labrador\nRex makes a sound, specifically a bark"
+                },
+                {
+                  "description": "Method Resolution Order with multiple inheritance",
+                  "code": "class A:\n    def greet(self):\n        return \"A\"\n\nclass B(A):\n    def greet(self):\n        return \"B\"\n\nclass C(A):\n    def greet(self):\n        return \"C\"\n\nclass D(B, C):\n    pass\n\nprint(D().greet())\nprint([cls.__name__ for cls in D.__mro__])",
+                  "expectedOutput": "B\n['D', 'B', 'C', 'A', 'object']"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "Why would you call `super().__init__()` in a subclass's constructor instead of just setting the attributes directly?",
+              "answer": "`super().__init__()` delegates initialization logic to the parent class\ninstead of duplicating it. This keeps the code **DRY** (Don't Repeat\nYourself) and ensures that if the parent's initialization logic changes\nlater, every subclass automatically benefits without needing edits.\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n        self.is_alive = True   # some shared setup logic\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)   # reuse Animal's setup, including is_alive\n        self.breed = breed\n```\n\nWithout `super()`, you'd have to manually copy `self.name = name` and\n`self.is_alive = True` into every subclass, and if `Animal.__init__` later\nadded a new field, every subclass would need to be updated by hand — a\nmaintenance risk.\n\n`super()` also correctly follows the **Method Resolution Order (MRO)** in\nmultiple-inheritance scenarios, calling the \"next\" class's method in the\nchain rather than hard-coding a specific parent class name — which makes\ncooperative multiple inheritance work correctly.",
+              "scenario": "A new field (e.g. created_at timestamp) is added to a shared base model class, and every subclass model should pick it up automatically.",
+              "commonMistakes": "Calling the parent class by name directly (`Animal.__init__(self, name)`) instead of using super() — this works for simple single inheritance but breaks the cooperative chain in multiple inheritance.",
+              "followUps": "How does calling the parent class by name directly differ from using super() in a multiple-inheritance hierarchy?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Explain Method Resolution Order (MRO) in Python and why the 'diamond problem' is handled safely by C3 linearization.",
+              "answer": "The **diamond problem** occurs when a class inherits from two classes that\nboth inherit from a common ancestor:\n\n```python\nclass A:\n    def greet(self):\n        return \"A\"\n\nclass B(A):\n    def greet(self):\n        return \"B\"\n\nclass C(A):\n    def greet(self):\n        return \"C\"\n\nclass D(B, C):\n    pass\n```\n\nHere, `D` inherits from both `B` and `C`, which both inherit from `A`. If you\ncall `D().greet()`, which implementation runs — B's, C's, or A's?\n\nPython resolves this deterministically using the **C3 linearization\nalgorithm**, which computes a single, consistent **Method Resolution\nOrder**: a list of classes to search, in order, for an attribute/method. You\ncan inspect it directly:\n\n```python\nprint([cls.__name__ for cls in D.__mro__])\n# ['D', 'B', 'C', 'A', 'object']\n```\n\nSo `D().greet()` returns `\"B\"` — Python checks `D` (no `greet` defined),\nthen `B` (found). Critically, C3 linearization guarantees:\n\n1. A subclass always appears before its parents.\n2. The order of the parent classes you wrote (`class D(B, C)`) is respected.\n3. Each class appears exactly once in the final order, even in more complex\n   hierarchies.\n\nThis makes `super()` calls predictable and \"cooperative\" even across complex\nmulti-parent hierarchies, because `super()` simply calls the next class in\nthe MRO rather than hard-coding a specific parent — avoiding the ambiguity\nthat plagues diamond inheritance in languages without a well-defined\nlinearization rule.",
+              "scenario": "Designing a plugin/mixin-based class hierarchy (e.g. combining a LoggingMixin and a CachingMixin into a single service class) where method resolution order determines which mixin's behavior takes precedence.",
+              "commonMistakes": "Assuming multiple inheritance always resolves depth-first in the naive left-to-right parent order, without understanding that C3 linearization can produce a different order to maintain consistency.",
+              "followUps": "How would you design mixin classes so cooperative multiple inheritance works reliably with super()?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does it mean for a Dog class and a Cat class to both 'be an' Animal, and how does Python let you treat them uniformly?",
+              "answer": "When `Dog` and `Cat` both inherit from `Animal`, they establish an **IS-A**\nrelationship: a `Dog` is an `Animal`, and a `Cat` is an `Animal`. This lets\nyou write code that operates on the general `Animal` type without caring\nabout the specific subclass — a concept called **polymorphism**.\n\n```python\nclass Animal:\n    def speak(self):\n        raise NotImplementedError\n\nclass Dog(Animal):\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat(Animal):\n    def speak(self):\n        return \"Meow!\"\n\nanimals = [Dog(), Cat()]\nfor animal in animals:\n    print(animal.speak())   # calls the correct overridden version automatically\n```\n\nThe loop doesn't need an `if isinstance(animal, Dog)` check — calling\n`animal.speak()` automatically dispatches to whichever subclass's\nimplementation matches the object's actual type. This is the core benefit of\ninheritance-based polymorphism: code that works with the general `Animal`\ninterface continues to work correctly as new subclasses (e.g. `Bird`) are\nadded later, without modifying the existing loop.",
+              "scenario": null,
+              "commonMistakes": "Writing explicit isinstance()/type() checks and if/elif branches for each subclass instead of relying on method overriding to dispatch behavior automatically.",
+              "followUps": "What is duck typing, and how does it relate to polymorphism without requiring formal inheritance?"
+            }
+          ]
+        },
+        {
+          "title": "Dunder Methods",
+          "slug": "dunder-methods",
+          "summary": "Customize how your objects are constructed, displayed, and compared using special 'magic' methods.",
+          "difficulty": "Advanced",
+          "lessons": [
+            {
+              "title": "__init__ and __str__ / __repr__",
+              "slug": "init-and-str-repr",
+              "contentMarkdown": "\n## `__init__`: the Constructor\n\n`__init__` is automatically invoked right after a new instance is created, to\nset up its initial state. It's technically not the method that *creates* the\nobject (that's `__new__`, rarely overridden), just the one that *initializes*\nit.\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\np = Point(3, 4)\nprint(p.x, p.y)\n```\n\n## `__str__` vs `__repr__`\n\nBy default, printing an object shows an unhelpful memory address like\n`<__main__.Point object at 0x...>`. Defining `__str__` and/or `__repr__` lets\nyou control that representation.\n\n- **`__repr__`**: an unambiguous, developer-facing representation, ideally\n  one that could recreate the object if evaluated (`eval(repr(obj)) == obj`\n  as a guiding principle). Used by `repr()`, the REPL, and as a fallback by\n  `print()` if `__str__` is not defined.\n- **`__str__`**: a readable, user-facing representation. Used by `str()`,\n  `print()`, and f-strings.\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __repr__(self):\n        return f\"Point(x={self.x}, y={self.y})\"\n\n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\np = Point(3, 4)\nprint(p)         # uses __str__ -> (3, 4)\nprint(repr(p))   # uses __repr__ -> Point(x=3, y=4)\n```\n\nIf you only define one, define `__repr__` — it's the more broadly useful\nfallback for debugging, logging, and container displays (e.g. printing a\nlist of these objects uses each one's `__repr__`, not `__str__`).\n",
+              "codeExamples": [
+                {
+                  "description": "Default repr vs custom __str__/__repr__",
+                  "code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __repr__(self):\n        return f\"Point(x={self.x}, y={self.y})\"\n\n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\np = Point(3, 4)\nprint(p)\nprint(repr(p))",
+                  "expectedOutput": "(3, 4)\nPoint(x=3, y=4)"
+                },
+                {
+                  "description": "A list of objects uses __repr__ for each element",
+                  "code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __repr__(self):\n        return f\"Point({self.x}, {self.y})\"\n\npoints = [Point(1, 2), Point(3, 4)]\nprint(points)",
+                  "expectedOutput": "[Point(1, 2), Point(3, 4)]"
+                }
+              ]
+            },
+            {
+              "title": "__eq__ and Other Operator Dunders",
+              "slug": "eq-and-other-operator-dunders",
+              "contentMarkdown": "\n## `__eq__`: Custom Equality\n\nBy default, `==` on custom objects compares **identity** (same as `is`),\nbecause the default `__eq__` inherited from `object` just checks if it's the\nsame object in memory. Overriding `__eq__` lets you define equality based on\nthe object's *data* instead.\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __eq__(self, other):\n        if not isinstance(other, Point):\n            return NotImplemented\n        return self.x == other.x and self.y == other.y\n\np1 = Point(1, 2)\np2 = Point(1, 2)\nprint(p1 == p2)    # True, thanks to custom __eq__\nprint(p1 is p2)    # False, still different objects\n```\n\n**Important**: if you override `__eq__`, Python sets `__hash__` to `None` by\ndefault, making instances unhashable (can't use them in a set or as a dict\nkey) — you must also define `__hash__` explicitly if you need that.\n\n## Other Common Dunder Methods\n\n| Dunder        | Triggered by      | Purpose                              |\n|---------------|--------------------|----------------------------------------|\n| `__lt__`      | `<`                | Less-than comparison                   |\n| `__add__`     | `+`                | Addition / combining two objects       |\n| `__len__`     | `len(obj)`         | Length of a custom container           |\n| `__getitem__` | `obj[key]`         | Indexing / subscripting support        |\n| `__contains__`| `in`               | Membership testing                     |\n\n```python\nclass Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n\n    def __repr__(self):\n        return f\"Vector({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nprint(v1 + v2)\n```\n\nThese dunder methods are how Python implements **operator overloading**,\nletting custom objects integrate naturally with built-in syntax and\nfunctions.\n",
+              "codeExamples": [
+                {
+                  "description": "Custom __eq__ for value-based equality",
+                  "code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __eq__(self, other):\n        if not isinstance(other, Point):\n            return NotImplemented\n        return self.x == other.x and self.y == other.y\n\np1 = Point(1, 2)\np2 = Point(1, 2)\nprint(p1 == p2)\nprint(p1 is p2)",
+                  "expectedOutput": "True\nFalse"
+                },
+                {
+                  "description": "Operator overloading with __add__",
+                  "code": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n\n    def __repr__(self):\n        return f\"Vector({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nprint(v1 + v2)",
+                  "expectedOutput": "Vector(4, 6)"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between `__str__` and `__repr__`, and which one does `print()` use?",
+              "answer": "- **`__repr__`** should return an unambiguous, developer-oriented string,\n  ideally one that looks like valid Python code that could recreate the\n  object. It's meant for debugging, logging, and the interactive console.\n- **`__str__`** should return a readable, user-facing string, meant for\n  display to end users.\n\n`print(obj)` and `str(obj)` call `__str__` **if it's defined**; if a class\nonly defines `__repr__`, Python falls back to using `__repr__` for both\ncases (since `object.__str__` defaults to calling `self.__repr__()`).\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    def __repr__(self):\n        return f\"Point({self.x}, {self.y})\"\n\np = Point(1, 2)\nprint(p)          # uses __str__, falls back to __repr__ -> Point(1, 2)\nprint(str(p))     # same fallback -> Point(1, 2)\nprint(repr(p))    # always __repr__ -> Point(1, 2)\n```\n\nA good rule of thumb taught in most Python style guides: always implement\n`__repr__` on classes you expect to debug or log; add `__str__` only if you\nneed a distinctly different, friendlier display format for end users.",
+              "scenario": null,
+              "commonMistakes": "Defining only __str__ and being surprised that printing a list of these objects shows the default memory-address repr, since containers always use each element's __repr__, not __str__.",
+              "followUps": "Why does printing a list of custom objects use __repr__ instead of __str__ for each element?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "If you override `__eq__` on a class, why might instances suddenly become unusable as dictionary keys or set elements, and how do you fix it?",
+              "answer": "By default, every Python object is hashable: `object.__hash__` returns a\nhash based on the object's `id()` (identity), consistent with the default\n`__eq__` (also identity-based) — two objects are only \"equal\" if they are\nliterally the same object, so this is self-consistent.\n\nWhen you override `__eq__` to compare by **value** instead of identity,\nPython automatically sets `__hash__` to `None` on that class, because the\ninherited identity-based hash would now be inconsistent with your new\nvalue-based equality (two unequal-looking objects could end up with the same\nhash, or — more subtly — two value-equal objects could have different\ndefault hashes, violating the fundamental rule that **equal objects must\nhave equal hashes**).\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    def __eq__(self, other):\n        return isinstance(other, Point) and (self.x, self.y) == (other.x, other.y)\n\np = Point(1, 2)\nmy_set = {p}   # TypeError: unhashable type: 'Point'\n```\n\nThe fix is to explicitly define `__hash__` as well, consistent with your\n`__eq__` logic — typically by hashing the same fields used for equality:\n\n```python\nclass Point:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    def __eq__(self, other):\n        return isinstance(other, Point) and (self.x, self.y) == (other.x, other.y)\n\n    def __hash__(self):\n        return hash((self.x, self.y))\n\np1, p2 = Point(1, 2), Point(1, 2)\nprint({p1, p2})       # treated as one element, since they're equal and hash the same\n```\n\nA simpler alternative for simple value objects is to use a `@dataclass`,\noptionally with `frozen=True` and `eq=True`, which generates correct,\nconsistent `__eq__` and `__hash__` implementations automatically.",
+              "scenario": "A set of 'coordinate' or 'event' objects is being built for deduplication, but adding instances to a set raises TypeError: unhashable type after __eq__ was added for value comparison.",
+              "commonMistakes": "Overriding __eq__ without also overriding __hash__, not realizing Python silently disables hashing to prevent broken hash-table invariants.",
+              "followUps": "How does @dataclass(frozen=True) simplify generating correct __eq__ and __hash__ together?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does operator overloading mean in Python, and how does defining `__add__` let you use the `+` operator on custom objects?",
+              "answer": "**Operator overloading** means giving a built-in operator (like `+`, `-`,\n`==`, `<`) custom meaning when applied to instances of your own class, by\nimplementing the corresponding **dunder (double-underscore) method**.\n\nWhen Python evaluates `a + b`, it actually calls `a.__add__(b)` behind the\nscenes (falling back to `b.__radd__(a)` if the first returns\n`NotImplemented`). By defining `__add__` on your class, you teach `+` how to\ncombine two instances meaningfully.\n\n```python\nclass Vector:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n\n    def __repr__(self):\n        return f\"Vector({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nprint(v1 + v2)   # Vector(4, 6) -- Python calls v1.__add__(v2) under the hood\n```\n\nWithout `__add__`, writing `v1 + v2` on plain objects would raise a\n`TypeError: unsupported operand type(s)`. This same pattern extends to many\nother operators: `__sub__` for `-`, `__mul__` for `*`, `__lt__` for `<`, and\nso on, each mapping a Python operator symbol to a method you implement.",
+              "scenario": null,
+              "commonMistakes": "Forgetting to return a new object from __add__ (or returning None), or mutating self in place instead of returning a fresh combined result, which breaks the usual expectation that a + b doesn't change a.",
+              "followUps": "What is the difference between __add__ and __iadd__ (for the += operator)?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Modules & Error Handling",
+      "slug": "modules-error-handling",
+      "topics": [
+        {
+          "title": "Modules and Packages",
+          "slug": "modules-and-packages",
+          "summary": "Organize code into reusable modules and packages using Python's import system.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "Importing Modules",
+              "slug": "importing-modules",
+              "contentMarkdown": "\n## What is a Module?\n\nA module is simply a `.py` file containing Python code (functions, classes,\nvariables) that can be imported and reused elsewhere. Python ships with a\nlarge **standard library** of built-in modules.\n\n```python\nimport math\nprint(math.sqrt(16))\nprint(math.pi)\n```\n\n### Different import styles\n\n```python\nimport math                    # access via math.sqrt(...)\nfrom math import sqrt, pi       # import specific names directly\nfrom math import sqrt as square_root   # import with an alias\nimport math as m                # alias the whole module\n```\n\n```python\nfrom math import sqrt, pi\nprint(sqrt(25))\nprint(round(pi, 2))\n```\n\n### The `if __name__ == \"__main__\":` idiom\n\nEvery module has a `__name__` attribute. When a file is run directly, its\n`__name__` is `\"__main__\"`; when it's imported by another file, `__name__` is\nthe module's own name instead. This idiom lets a file provide both reusable\nfunctions *and* a runnable script entry point.\n\n```python\ndef main():\n    print(\"Running as a script\")\n\nif __name__ == \"__main__\":\n    main()\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Importing the standard library math module",
+                  "code": "import math\nprint(math.sqrt(16))\nprint(round(math.pi, 2))",
+                  "expectedOutput": "4.0\n3.14"
+                },
+                {
+                  "description": "Importing specific names with from...import and an alias",
+                  "code": "from math import sqrt as square_root\nprint(square_root(81))",
+                  "expectedOutput": "9.0"
+                }
+              ]
+            },
+            {
+              "title": "Creating Your Own Packages",
+              "slug": "creating-your-own-packages",
+              "contentMarkdown": "\n## Packages\n\nA **package** is a directory containing multiple module files, plus a special\n`__init__.py` file that marks it as an importable package (in modern Python,\n`__init__.py` can even be empty, though it's still commonly used to control\nwhat the package exposes).\n\n```\nmy_project/\n    shapes/\n        __init__.py\n        circle.py\n        square.py\n    main.py\n```\n\n```python\n# circle.py\ndef area(radius):\n    return 3.14159 * radius ** 2\n```\n\n```python\n# main.py\nfrom shapes import circle\nprint(circle.area(5))\n```\n\n### Why organize code into modules/packages?\n\n- **Reusability**: shared logic lives in one place instead of being copied.\n- **Namespacing**: `shapes.circle.area` vs `shapes.square.area` avoids naming\n  collisions between similarly named functions.\n- **Maintainability**: related functionality is grouped logically, making a\n  large codebase easier to navigate.\n\n### Relative vs absolute imports\n\nInside a package, you can import sibling modules using a relative import\n(`from . import square`) or the full absolute path\n(`from my_project.shapes import square`). Absolute imports are generally\nrecommended by PEP 8 for clarity, with relative imports reserved for closely\nrelated modules within the same package.\n\n```python\n# Conceptual example (not run standalone): inside shapes/__init__.py\n# from . import circle\n# from . import square\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Simulating a package module's function (area calculation)",
+                  "code": "def area(radius):\n    return 3.14159 * radius ** 2\n\nprint(round(area(5), 2))",
+                  "expectedOutput": "78.54"
+                },
+                {
+                  "description": "Demonstrating __name__ for the script entry point idiom",
+                  "code": "def main():\n    print(\"Running as a script\")\n\nif __name__ == \"__main__\":\n    main()",
+                  "expectedOutput": "Running as a script"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between `import module_name` and `from module_name import something`?",
+              "answer": "`import module_name` imports the **entire module** as a single namespace\nobject. You must prefix every access with the module name:\n\n```python\nimport math\nprint(math.sqrt(16))\nprint(math.pi)\n```\n\n`from module_name import something` imports **specific names** (functions,\nclasses, variables) directly into your current namespace, so you use them\nwithout the module prefix:\n\n```python\nfrom math import sqrt, pi\nprint(sqrt(16))\nprint(pi)\n```\n\n**Trade-offs**:\n- `import module_name` is more explicit about *where* a function comes from\n  when reading code later (`math.sqrt` clearly comes from `math`), and avoids\n  name collisions between modules that define similarly named functions.\n- `from module_name import something` is more concise, but can make it\n  harder to tell at a glance which module a bare name like `sqrt` came from,\n  especially with `from module import *` (a wildcard import), which is\n  generally discouraged because it pollutes the namespace unpredictably and\n  can silently shadow existing names.",
+              "scenario": null,
+              "commonMistakes": "Using `from module import *` in production code, which makes it unclear where names originate and risks silent name collisions.",
+              "followUps": "Why is `from module import *` generally discouraged in production code?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the purpose of the `if __name__ == '__main__':` idiom, and what would happen without it?",
+              "answer": "Every Python module has a built-in `__name__` attribute. Its value depends\non how the file is being used:\n\n- If the file is **run directly** (`python my_script.py`), `__name__` is set\n  to the string `\"__main__\"`.\n- If the file is **imported** as a module from elsewhere (`import my_script`),\n  `__name__` is set to the module's own name (`\"my_script\"`), not `\"__main__\"`.\n\n```python\ndef main():\n    print(\"Doing the real work\")\n\nif __name__ == \"__main__\":\n    main()\n```\n\nThis idiom lets a `.py` file serve two purposes simultaneously:\n\n1. As a **reusable library** — other files can `import` it to reuse its\n   functions/classes without triggering any top-level script behavior.\n2. As a **standalone script** — running it directly executes the code inside\n   the `if` block.\n\nWithout this guard, any \"script-like\" top-level code (e.g., a call to\n`main()`, test code, or a demo run) would execute automatically **every\nsingle time the module is imported anywhere**, even if the importer only\nwanted to reuse one function — this is almost always undesirable and can\ncause confusing side effects (e.g., re-running a demo, printing unwanted\noutput, or even re-executing a database migration) as soon as the module is\nimported.",
+              "scenario": "A utility module defines helper functions and also includes a quick self-test/demo block at the bottom that should only run when the file is executed directly, not when its functions are imported elsewhere.",
+              "commonMistakes": "Putting script execution code at the module's top level without the __name__ guard, causing it to run unexpectedly whenever the module is imported.",
+              "followUps": "How does this idiom interact with unit testing a module's functions via pytest?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What does `__init__.py` do in a Python package, and is it still required in modern Python?",
+              "answer": "`__init__.py` is a special file placed in a directory to mark it as a\n**regular package** so it can be imported with dotted notation\n(`import shapes.circle`). Historically (Python 2 and early Python 3), this\nfile was **mandatory** — without it, the directory wasn't recognized as an\nimportable package at all.\n\nSince Python 3.3, Python supports **namespace packages**, which allow a\ndirectory *without* an `__init__.py` to still be treated as an importable\npackage in many cases. So strictly speaking, `__init__.py` is no longer\nalways required.\n\nHowever, it's still **widely used and recommended** in practice because it:\n\n1. Clearly and explicitly marks a directory as a package (avoiding ambiguity\n   with namespace packages, which have subtler, less predictable behavior).\n2. Can run initialization code when the package is first imported.\n3. Can control the package's public interface by explicitly importing and\n   re-exposing selected names from submodules, e.g.:\n\n```python\n# shapes/__init__.py\nfrom .circle import area as circle_area\nfrom .square import area as square_area\n```\n\nThis lets users write `from shapes import circle_area` instead of needing to\nknow the internal submodule structure (`shapes.circle.area`), giving you a\nclean, stable public API even as the internal file layout evolves.",
+              "scenario": null,
+              "commonMistakes": "Assuming __init__.py must always be non-empty, or forgetting that an empty __init__.py file is perfectly valid and common — its mere presence is often what matters, not its content.",
+              "followUps": "What is a 'namespace package' and how does its behavior differ from a regular package?"
+            }
+          ]
+        },
+        {
+          "title": "Exceptions",
+          "slug": "exceptions",
+          "summary": "Handle runtime errors gracefully with try/except/finally and design custom exception types.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "try / except / finally",
+              "slug": "try-except-finally",
+              "contentMarkdown": "\n## Handling Exceptions\n\nWrap code that might fail in a `try` block, and handle specific error types\nin one or more `except` blocks. This prevents an unhandled exception from\ncrashing the whole program.\n\n```python\ntry:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero\")\n```\n\n### Catching multiple exception types\n\n```python\ndef safe_convert(value):\n    try:\n        return int(value)\n    except ValueError:\n        return None\n    except TypeError:\n        return None\n\nprint(safe_convert(\"42\"))\nprint(safe_convert(\"abc\"))\nprint(safe_convert(None))\n```\n\nYou can also combine multiple exception types in a single `except` clause\nwith a tuple: `except (ValueError, TypeError):`.\n\n### `else` and `finally`\n\n- The `else` block runs only if the `try` block completed **without** raising\n  an exception.\n- The `finally` block **always** runs, whether an exception occurred or not —\n  ideal for cleanup code (closing files, releasing locks, etc.).\n\n```python\ntry:\n    value = int(\"42\")\nexcept ValueError:\n    print(\"Conversion failed\")\nelse:\n    print(f\"Conversion succeeded: {value}\")\nfinally:\n    print(\"Done attempting conversion\")\n```\n\n### Accessing the exception object\n\n```python\ntry:\n    1 / 0\nexcept ZeroDivisionError as e:\n    print(f\"Error occurred: {e}\")\n```\n",
+              "codeExamples": [
+                {
+                  "description": "Catching specific exceptions and returning a fallback",
+                  "code": "def safe_convert(value):\n    try:\n        return int(value)\n    except (ValueError, TypeError):\n        return None\n\nprint(safe_convert(\"42\"))\nprint(safe_convert(\"abc\"))\nprint(safe_convert(None))",
+                  "expectedOutput": "42\nNone\nNone"
+                },
+                {
+                  "description": "try/except/else/finally execution order",
+                  "code": "try:\n    value = int(\"42\")\nexcept ValueError:\n    print(\"Conversion failed\")\nelse:\n    print(f\"Conversion succeeded: {value}\")\nfinally:\n    print(\"Done attempting conversion\")",
+                  "expectedOutput": "Conversion succeeded: 42\nDone attempting conversion"
+                }
+              ]
+            },
+            {
+              "title": "Custom Exceptions",
+              "slug": "custom-exceptions",
+              "contentMarkdown": "\n## Defining Custom Exceptions\n\nFor domain-specific error conditions, define your own exception classes by\nsubclassing `Exception` (directly or indirectly). This lets callers catch\nyour specific error type precisely, rather than a broad generic exception.\n\n```python\nclass InsufficientFundsError(Exception):\n    # Raised when a withdrawal exceeds the available balance.\n    def __init__(self, balance, amount):\n        self.balance = balance\n        self.amount = amount\n        super().__init__(\n            f\"Cannot withdraw {amount}: balance is only {balance}\"\n        )\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(balance, amount)\n    return balance - amount\n\ntry:\n    withdraw(100, 150)\nexcept InsufficientFundsError as e:\n    print(e)\n```\n\n### Exception hierarchies\n\nCustom exceptions can form a hierarchy, letting callers catch broadly or\nnarrowly depending on their needs.\n\n```python\nclass AppError(Exception):\n    # Base class for all application-specific errors.\n    pass\n\nclass ValidationError(AppError):\n    pass\n\nclass NotFoundError(AppError):\n    pass\n\ndef handle(error):\n    try:\n        raise error\n    except ValidationError:\n        print(\"Fix your input and try again\")\n    except NotFoundError:\n        print(\"The requested item doesn't exist\")\n    except AppError:\n        print(\"A general application error occurred\")\n\nhandle(ValidationError(\"bad input\"))\nhandle(NotFoundError(\"missing record\"))\n```\n\n### Re-raising exceptions\n\nSometimes you want to log or react to an error but still propagate it up to\nthe caller — use a bare `raise` inside an `except` block to re-raise the\noriginal exception with its original traceback intact.\n",
+              "codeExamples": [
+                {
+                  "description": "Custom exception with extra context attributes",
+                  "code": "class InsufficientFundsError(Exception):\n    def __init__(self, balance, amount):\n        self.balance = balance\n        self.amount = amount\n        super().__init__(f\"Cannot withdraw {amount}: balance is only {balance}\")\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(balance, amount)\n    return balance - amount\n\ntry:\n    withdraw(100, 150)\nexcept InsufficientFundsError as e:\n    print(e)",
+                  "expectedOutput": "Cannot withdraw 150: balance is only 100"
+                },
+                {
+                  "description": "Custom exception hierarchy with multiple except clauses",
+                  "code": "class AppError(Exception):\n    pass\n\nclass ValidationError(AppError):\n    pass\n\nclass NotFoundError(AppError):\n    pass\n\ndef handle(error):\n    try:\n        raise error\n    except ValidationError:\n        print(\"Fix your input and try again\")\n    except NotFoundError:\n        print(\"The requested item doesn't exist\")\n\nhandle(ValidationError(\"bad input\"))\nhandle(NotFoundError(\"missing record\"))",
+                  "expectedOutput": "Fix your input and try again\nThe requested item doesn't exist"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What is the difference between the `else` and `finally` clauses in a try statement?",
+              "answer": "- **`else`** runs only if the `try` block completes **without raising any\n  exception**. It's skipped entirely if an exception was caught.\n- **`finally`** runs **unconditionally** — whether the `try` block succeeded,\n  an exception was raised and caught, or even if an exception was raised and\n  NOT caught (in which case `finally` still runs before the exception\n  propagates further up).\n\n```python\ntry:\n    x = 10 / 2\nexcept ZeroDivisionError:\n    print(\"Error!\")\nelse:\n    print(f\"Success: {x}\")     # runs, no exception occurred\nfinally:\n    print(\"Always runs\")        # always runs\n```\n\nA practical distinction: put code that should run **only on success** (like\nlogging a confirmation, or using a value that's only valid if no error\noccurred) in `else`. Put **cleanup code** that must always execute\nregardless of outcome (closing a file handle, releasing a lock, closing a\ndatabase connection) in `finally`.",
+              "scenario": null,
+              "commonMistakes": "Putting success-dependent logic directly after the try block (outside any clause) instead of in else, which can accidentally catch and mask exceptions raised by that logic too if it's placed inside the try block instead.",
+              "followUps": "Why might you put code in else instead of directly in the try block after the risky operation?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "When should you create a custom exception class instead of raising a built-in exception like `ValueError`?",
+              "answer": "Create a **custom exception** when:\n\n1. **The error represents a specific domain concept** that built-in\n   exceptions don't capture precisely (e.g. `InsufficientFundsError` is far\n   more meaningful to callers than a generic `ValueError`).\n2. **Callers need to catch your error specifically**, without accidentally\n   also catching unrelated `ValueError`s raised elsewhere in the same `try`\n   block.\n3. **You want to attach extra structured data** to the exception (e.g. the\n   account balance and requested amount), which a generic exception's\n   message string can't carry cleanly.\n\n```python\nclass InsufficientFundsError(Exception):\n    def __init__(self, balance, amount):\n        self.balance = balance\n        self.amount = amount\n        super().__init__(f\"Cannot withdraw {amount}, balance is {balance}\")\n```\n\nUse a **built-in exception** (like `ValueError`, `TypeError`, `KeyError`)\nwhen the error is a standard, well-understood condition that other Python\ndevelopers (and tools) already expect — e.g. `ValueError` for \"this value is\nthe right type but an inappropriate value\", `TypeError` for \"wrong type\nentirely\". Reusing standard exceptions where they genuinely fit keeps your\nAPI consistent with the rest of the Python ecosystem and avoids forcing every\ncaller to learn a new exception type for a case that `ValueError` already\ncommunicates clearly.\n\nBest practice for larger applications: define a small **hierarchy** rooted at\none base exception (e.g. `class AppError(Exception)`), so callers can choose\nto catch broadly (`except AppError`) or narrowly (`except ValidationError`)\ndepending on their needs.",
+              "scenario": "A payment processing library needs callers to distinguish 'insufficient funds' from 'invalid card number' from 'network timeout' without parsing error message strings.",
+              "commonMistakes": "Creating one custom exception per tiny variation without a shared base class, making it hard for callers to catch a general category of related errors at once.",
+              "followUps": "How would you design an exception hierarchy for a library with multiple distinct failure modes?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "What is exception chaining in Python (`raise ... from ...`), and why is it useful for debugging?",
+              "answer": "When an exception is raised **while already handling another exception**\n(e.g. inside an `except` block), Python automatically records the original\nexception as the `__context__` of the new one, and shows both in the\ntraceback by default — this is **implicit chaining**.\n\n**Explicit chaining** with `raise NewException(...) from original_exception`\nlets you deliberately convert a low-level exception into a more meaningful\nhigher-level one, while still preserving the original cause for debugging:\n\n```python\nclass ConfigError(Exception):\n    pass\n\ndef load_config(path):\n    try:\n        with open(path) as f:\n            return f.read()\n    except FileNotFoundError as e:\n        raise ConfigError(f\"Could not load config from {path}\") from e\n\ntry:\n    load_config(\"missing.yaml\")\nexcept ConfigError as e:\n    print(e)\n    print(e.__cause__)\n```\n\nThis prints the `ConfigError` message, and `e.__cause__` gives direct\nprogrammatic access to the original `FileNotFoundError` — useful for logging\ntools that want to show the full chain, or for code that wants to inspect\nthe root cause without losing the higher-level, more meaningful exception\ntype it caught.\n\nWithout chaining (or by using `raise NewException(...) from None` to\nsuppress it explicitly), the original low-level traceback context is lost or\nhidden, which can make debugging much harder in production, since you'd only\nsee \"ConfigError: Could not load config\" without any hint of *why* the\nunderlying file operation failed.",
+              "scenario": "A data pipeline wraps low-level I/O or parsing errors in a higher-level, domain-specific exception for callers, but the on-call engineer still needs the original stack trace to diagnose production incidents.",
+              "commonMistakes": "Swallowing the original exception entirely (catching broadly and raising a brand new exception with no `from e`), which erases crucial debugging context from logs and tracebacks.",
+              "followUps": "What does `raise NewException(...) from None` do, and when would you deliberately want to suppress the chain?"
+            }
+          ]
+        },
+        {
+          "title": "File I/O",
+          "slug": "file-io",
+          "summary": "Read from and write to files safely using the with statement, and work with structured file formats.",
+          "difficulty": "Intermediate",
+          "lessons": [
+            {
+              "title": "Reading and Writing Files with with open()",
+              "slug": "reading-and-writing-files-with-open",
+              "contentMarkdown": "\n## The `with` Statement for File Handling\n\nOpening a file returns a file object that holds an OS-level resource (a file\nhandle) which should always be closed when you're done. The `with` statement\n(a **context manager**) guarantees the file is properly closed automatically,\neven if an exception occurs inside the block — this is the idiomatic,\nrecommended way to work with files in Python.\n\n```python\nwith open(\"notes.txt\", \"w\") as f:\n    f.write(\"Hello, file!\\n\")\n    f.write(\"Second line\\n\")\n\nwith open(\"notes.txt\", \"r\") as f:\n    content = f.read()\nprint(content)\n```\n\n### Common file modes\n\n| Mode | Meaning                               |\n|------|-----------------------------------------|\n| `\"r\"`| Read (default); error if file missing  |\n| `\"w\"`| Write; creates file or truncates it     |\n| `\"a\"`| Append; creates file if missing         |\n| `\"x\"`| Exclusive create; errors if file exists |\n\n### Reading line by line\n\n```python\nwith open(\"notes.txt\", \"r\") as f:\n    for line in f:\n        print(line.strip())    # strip() removes the trailing newline\n```\n\n### Why not just call `.close()` manually?\n\n```python\nf = open(\"notes.txt\", \"r\")\ncontent = f.read()\nf.close()    # if an exception happened before this line, the file stays open!\n```\n\nIf an exception is raised between `open()` and the manual `.close()` call,\nthe file handle leaks — it never gets closed. `with` eliminates this risk\nentirely by guaranteeing cleanup via the file object's context manager\nprotocol (`__enter__`/`__exit__`), regardless of how the block exits.\n",
+              "codeExamples": [
+                {
+                  "description": "Writing then reading a text file with with open()",
+                  "code": "with open(\"notes.txt\", \"w\") as f:\n    f.write(\"Hello, file!\\n\")\n    f.write(\"Second line\\n\")\n\nwith open(\"notes.txt\", \"r\") as f:\n    content = f.read()\nprint(content, end=\"\")",
+                  "expectedOutput": "Hello, file!\nSecond line"
+                },
+                {
+                  "description": "Reading a file line by line and stripping newlines",
+                  "code": "with open(\"notes.txt\", \"w\") as f:\n    f.write(\"line one\\nline two\\nline three\\n\")\n\nwith open(\"notes.txt\", \"r\") as f:\n    for line in f:\n        print(line.strip())",
+                  "expectedOutput": "line one\nline two\nline three"
+                }
+              ]
+            },
+            {
+              "title": "Working with CSV and JSON Files",
+              "slug": "working-with-csv-and-json-files",
+              "contentMarkdown": "\n## The `json` Module\n\nPython's built-in `json` module converts between Python objects and JSON\ntext — essential for config files, APIs, and data interchange.\n\n```python\nimport json\n\ndata = {\"name\": \"Alice\", \"age\": 30, \"active\": True}\n\nwith open(\"person.json\", \"w\") as f:\n    json.dump(data, f)\n\nwith open(\"person.json\", \"r\") as f:\n    loaded = json.load(f)\nprint(loaded)\nprint(loaded[\"name\"])\n```\n\n`json.dumps()`/`json.loads()` (with an \"s\" for \"string\") convert to/from a\nJSON **string** in memory, without touching a file — useful for APIs and\nlogging.\n\n```python\nimport json\ndata = {\"name\": \"Alice\", \"scores\": [90, 85, 92]}\njson_text = json.dumps(data)\nprint(json_text)\nparsed = json.loads(json_text)\nprint(parsed[\"scores\"])\n```\n\n## The `csv` Module\n\nThe `csv` module handles comma-separated value files robustly (correctly\nhandling quoting, embedded commas, etc. — safer than manually splitting on\ncommas).\n\n```python\nimport csv\n\nrows = [[\"name\", \"age\"], [\"Alice\", \"30\"], [\"Bob\", \"25\"]]\nwith open(\"people.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)\n    writer.writerows(rows)\n\nwith open(\"people.csv\", \"r\", newline=\"\") as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)\n```\n\n`csv.DictReader`/`csv.DictWriter` work similarly but read/write rows as\ndictionaries keyed by the header row, which is often more convenient when\ncolumns might be reordered or you want to access fields by name.\n",
+              "codeExamples": [
+                {
+                  "description": "Writing and reading a JSON file with the json module",
+                  "code": "import json\n\ndata = {\"name\": \"Alice\", \"age\": 30, \"active\": True}\nwith open(\"person.json\", \"w\") as f:\n    json.dump(data, f)\n\nwith open(\"person.json\", \"r\") as f:\n    loaded = json.load(f)\nprint(loaded)",
+                  "expectedOutput": "{'name': 'Alice', 'age': 30, 'active': True}"
+                },
+                {
+                  "description": "Converting to/from a JSON string with dumps()/loads()",
+                  "code": "import json\ndata = {\"name\": \"Alice\", \"scores\": [90, 85, 92]}\njson_text = json.dumps(data)\nprint(json_text)\nparsed = json.loads(json_text)\nprint(parsed[\"scores\"])",
+                  "expectedOutput": "{\"name\": \"Alice\", \"scores\": [90, 85, 92]}\n[90, 85, 92]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "Why is `with open(...) as f:` preferred over manually calling `open()` and `f.close()`?",
+              "answer": "`with` uses Python's **context manager protocol** to guarantee that\n`f.close()` is called automatically when the block exits — whether it exits\nnormally or because an exception was raised inside it.\n\n```python\nwith open(\"data.txt\", \"r\") as f:\n    content = f.read()\n# file is guaranteed closed here, even if .read() had raised an exception\n```\n\nWith manual open/close, an exception raised between `open()` and `close()`\nwould skip the `close()` call entirely, **leaking the file handle** (the OS\nresource stays allocated until the program exits or garbage collection\nhappens to clean it up, which isn't guaranteed to be prompt):\n\n```python\nf = open(\"data.txt\", \"r\")\ncontent = f.read()   # if this raises, f.close() below never executes\nf.close()\n```\n\nLeaked file handles can eventually exhaust the OS's limit on open file\ndescriptors in long-running programs, and can also cause data loss on write\noperations if buffered content was never flushed to disk. `with` removes this\nentire class of bug by handling cleanup deterministically and automatically,\nwhich is why it's considered the idiomatic, required style for file handling\nin professional Python code.",
+              "scenario": null,
+              "commonMistakes": "Manually calling f.close() right after the reading/writing code, forgetting that an exception raised in between would skip the close() call entirely.",
+              "followUps": "What other built-in objects besides files support the context manager protocol (the `with` statement)?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the difference between `json.dump()`/`json.load()` and `json.dumps()`/`json.loads()`?",
+              "answer": "The trailing **\"s\"** stands for \"string\":\n\n- **`json.dump(obj, file)`** and **`json.load(file)`** work directly with a\n  **file object**, writing to or reading from it.\n- **`json.dumps(obj)`** and **`json.loads(json_string)`** work with a plain\n  Python **string** in memory — no file involved.\n\n```python\nimport json\ndata = {\"name\": \"Alice\"}\n\n# File-based\nwith open(\"data.json\", \"w\") as f:\n    json.dump(data, f)\n\n# String-based\njson_text = json.dumps(data)   # '{\"name\": \"Alice\"}'\nparsed = json.loads(json_text)  # {'name': 'Alice'}\n```\n\nUse the file variants (`dump`/`load`) when persisting data directly to disk.\nUse the string variants (`dumps`/`loads`) when you need the JSON as a string\nfor another purpose — e.g. sending it as an HTTP request body, logging it,\nstoring it in a database text column, or sending it over a network socket —\nanywhere you need the serialized text itself rather than a file on disk.",
+              "scenario": "An API client needs to serialize a Python dict into a JSON string to include in an HTTP POST request body, rather than saving it to a local file.",
+              "commonMistakes": "Trying to pass a plain string to json.load() (which expects a file-like object) instead of json.loads(), or vice versa, causing an AttributeError or TypeError.",
+              "followUps": "What extra argument would you pass to json.dumps() to make the output nicely indented for a human-readable config file?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "Why is it recommended to use the `csv` module instead of manually splitting lines on commas when parsing a CSV file?",
+              "answer": "Manually splitting on commas (`line.split(\",\")`) breaks on common, valid CSV\nedge cases that the `csv` module handles correctly:\n\n1. **Quoted fields containing commas**: a value like `\"Smith, John\"` (a\n   single field with an embedded comma, wrapped in quotes) would be\n   incorrectly split into two fields by a naive `.split(\",\")`.\n2. **Quoted fields containing newlines**: a field can legitimately contain a\n   newline character inside quotes, which a simple line-by-line split would\n   break across multiple rows.\n3. **Escaped quote characters** inside quoted fields (`\"\"` representing a\n   literal `\"`).\n4. **Different dialects**: some CSV-like files use semicolons, tabs, or other\n   delimiters, and `csv.reader` lets you specify this via the `delimiter`\n   parameter.\n\n```python\nimport csv\n\nwith open(\"people.csv\", \"r\", newline=\"\") as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)   # correctly handles quoting/commas within fields\n```\n\nThe `csv` module implements the full CSV dialect rules (based on RFC 4180\nand common real-world variations), so it correctly parses files that a naive\nstring-split approach would silently corrupt — often without any visible\nerror, just subtly wrong data.",
+              "scenario": "Importing a customer export file where a 'notes' or 'address' column legitimately contains commas inside quoted values.",
+              "commonMistakes": "Manually calling .split(',') on each line, which silently produces the wrong number of fields whenever a value contains a comma or newline inside quotes.",
+              "followUps": "What's the purpose of the `newline=''` argument when opening a file for csv reading/writing?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Advanced Python",
+      "slug": "advanced-python",
+      "topics": [
+        {
+          "title": "Decorators",
+          "slug": "decorators",
+          "summary": "Wrap and extend function behavior cleanly using Python's decorator syntax.",
+          "difficulty": "Advanced",
+          "lessons": [
+            {
+              "title": "Writing Basic Decorators",
+              "slug": "writing-basic-decorators",
+              "contentMarkdown": "\n## What is a Decorator?\n\nA decorator is a function that takes another function as input and returns a\nnew function that usually adds some behavior before and/or after calling the\noriginal. Because functions are first-class objects in Python (they can be\npassed around like any other value), this is possible without any special\nlanguage support beyond the `@` syntax, which is just syntactic sugar.\n\n```python\ndef shout(func):\n    def wrapper():\n        result = func()\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet():\n    return \"hello\"\n\nprint(greet())\n```\n\n`@shout` above `def greet():` is exactly equivalent to writing:\n\n```python\ndef greet():\n    return \"hello\"\ngreet = shout(greet)\n```\n\n### A practical example: timing a function\n\n```python\nimport time\n\ndef log_duration(func):\n    def wrapper():\n        start = time.perf_counter()\n        result = func()\n        duration = time.perf_counter() - start\n        print(f\"{func.__name__} took {duration:.6f}s\")\n        return result\n    return wrapper\n\n@log_duration\ndef compute():\n    return sum(range(1000))\n\ncompute()\n```\n\n### Decorators that accept arguments on the wrapped function\n\nIf the decorated function takes arguments, the `wrapper` must accept and\nforward them using `*args, **kwargs`:\n\n```python\ndef shout(func):\n    def wrapper(*args, **kwargs):\n        result = func(*args, **kwargs)\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet(name):\n    return f\"hello {name}\"\n\nprint(greet(\"alice\"))\n```\n",
+              "codeExamples": [
+                {
+                  "description": "A basic decorator that transforms a function's return value",
+                  "code": "def shout(func):\n    def wrapper():\n        result = func()\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet():\n    return \"hello\"\n\nprint(greet())",
+                  "expectedOutput": "HELLO"
+                },
+                {
+                  "description": "A decorator forwarding arguments with *args and **kwargs",
+                  "code": "def shout(func):\n    def wrapper(*args, **kwargs):\n        result = func(*args, **kwargs)\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet(name):\n    return f\"hello {name}\"\n\nprint(greet(\"alice\"))",
+                  "expectedOutput": "HELLO ALICE"
+                }
+              ]
+            },
+            {
+              "title": "Decorators with Arguments and functools.wraps",
+              "slug": "decorators-with-arguments-and-functools-wraps",
+              "contentMarkdown": "\n## The `functools.wraps` Problem\n\nWithout `functools.wraps`, a decorated function loses its original `__name__`,\ndocstring, and other metadata, because the `wrapper` function replaces it\nentirely. This can break introspection, documentation tools, and debugging.\n\n```python\ndef log_calls(func):\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    # Add two numbers.\n    return a + b\n\nprint(add.__name__)   # 'wrapper', not 'add' -- confusing!\n```\n\n`functools.wraps` fixes this by copying over the original function's\nmetadata onto the wrapper.\n\n```python\nfrom functools import wraps\n\ndef log_calls(func):\n    @wraps(func)\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    '''Add two numbers.'''\n    return a + b\n\nprint(add.__name__)\nprint(add.__doc__)\n```\n\n## Decorators That Accept Their Own Arguments\n\nTo make a decorator configurable (e.g. `@retry(times=3)`), add an extra outer\nfunction layer: the outermost function takes the decorator's own arguments\nand returns the actual decorator.\n\n```python\nfrom functools import wraps\n\ndef repeat(times):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            results = []\n            for _ in range(times):\n                results.append(func(*args, **kwargs))\n            return results\n        return wrapper\n    return decorator\n\n@repeat(times=3)\ndef say_hi():\n    return \"hi\"\n\nprint(say_hi())\n```\n",
+              "codeExamples": [
+                {
+                  "description": "functools.wraps preserves the original function's __name__",
+                  "code": "from functools import wraps\n\ndef log_calls(func):\n    @wraps(func)\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    \"\"\"Add two numbers.\"\"\"\n    return a + b\n\nprint(add.__name__)\nprint(add(2, 3))",
+                  "expectedOutput": "add\n5"
+                },
+                {
+                  "description": "A parameterized decorator using an extra function layer",
+                  "code": "from functools import wraps\n\ndef repeat(times):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            results = []\n            for _ in range(times):\n                results.append(func(*args, **kwargs))\n            return results\n        return wrapper\n    return decorator\n\n@repeat(times=3)\ndef say_hi():\n    return \"hi\"\n\nprint(say_hi())",
+                  "expectedOutput": "['hi', 'hi', 'hi']"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "What is a decorator in Python and what problem does the `@` syntax solve?",
+              "answer": "A decorator is a function that wraps another function (or class) to extend\nor modify its behavior without permanently changing its source code. The `@`\nsyntax is pure **syntactic sugar** for reassigning a function to the result\nof passing it through another function.\n\n```python\ndef my_decorator(func):\n    def wrapper(*args, **kwargs):\n        print(\"Before the function runs\")\n        result = func(*args, **kwargs)\n        print(\"After the function runs\")\n        return result\n    return wrapper\n\n@my_decorator\ndef say_hello():\n    print(\"Hello!\")\n\nsay_hello()\n```\n\nThis is exactly equivalent to writing `say_hello = my_decorator(say_hello)`\nmanually. Decorators solve the problem of applying **cross-cutting\nconcerns** — logging, timing, authentication/permission checks, caching,\nretry logic — to many functions without duplicating that logic inside each\none. Instead of copy-pasting a logging block into ten different functions,\nyou write the logging logic once as a decorator and apply `@log_calls` above\neach function that needs it, keeping each function's own body focused purely\non its core responsibility (separation of concerns).",
+              "scenario": "A web framework needs to add authentication checks to several route handler functions without duplicating the same permission-checking code in each one.",
+              "commonMistakes": "Forgetting that a decorator replaces the original function object entirely, which (without functools.wraps) silently loses the original function's __name__ and docstring.",
+              "followUps": "How do decorators interact with instance methods and the `self` parameter?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Why is `functools.wraps` important when writing decorators, and what specifically breaks if you omit it?",
+              "answer": "Without `@wraps(func)`, the `wrapper` function returned by your decorator\ncompletely replaces the original function's identity — including its\n`__name__`, `__doc__` (docstring), and `__module__` attributes — because\n`wrapper` is a distinct function object with its own (generic) metadata.\n\n```python\ndef log_calls(func):\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    \"\"\"Add two numbers together.\"\"\"\n    return a + b\n\nprint(add.__name__)   # 'wrapper'  -- should be 'add'!\nprint(add.__doc__)    # None       -- lost the original docstring!\n```\n\nThis breaks:\n- **Debugging and tracebacks**: error messages and stack traces show the\n  generic name `wrapper` instead of the actual function that failed, making\n  it harder to pinpoint the problem.\n- **Documentation tools** (like Sphinx) and `help()`, which rely on\n  `__doc__` and `__name__` to generate accurate docs.\n- **Introspection-based tools and frameworks** that inspect function metadata\n  (e.g. some test frameworks, API routers that use function names for\n  endpoint naming).\n\n`functools.wraps` fixes this by copying the original function's `__name__`,\n`__doc__`, `__module__`, and other metadata onto the wrapper automatically:\n\n```python\nfrom functools import wraps\n\ndef log_calls(func):\n    @wraps(func)\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs)\n    return wrapper\n```\n\nAs a rule, every decorator you write that defines an inner `wrapper` function\nshould apply `@wraps(func)` to it, with essentially no downside.",
+              "scenario": "A production bug report shows a traceback with the function name 'wrapper' repeated for every decorated endpoint, making it impossible to tell which actual route handler failed.",
+              "commonMistakes": "Omitting functools.wraps entirely, or applying @wraps to the outer decorator function instead of the inner wrapper function.",
+              "followUps": "How would you write a decorator that works correctly whether or not it's called with arguments, e.g. both @my_decorator and @my_decorator(option=True)?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "How would you write a decorator that accepts its own configuration argument, like `@repeat(times=3)`?",
+              "answer": "A decorator that itself takes arguments requires **three levels of\nnesting** instead of the usual two:\n\n1. The outermost function (`repeat`) accepts the decorator's own\n   configuration arguments (`times`) and returns the actual decorator.\n2. The middle function (`decorator`) accepts the function being decorated\n   (`func`) and returns the wrapper.\n3. The innermost function (`wrapper`) accepts `*args, **kwargs` to forward\n   calls to the original function, applying the configured behavior.\n\n```python\nfrom functools import wraps\n\ndef repeat(times):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            results = []\n            for _ in range(times):\n                results.append(func(*args, **kwargs))\n            return results\n        return wrapper\n    return decorator\n\n@repeat(times=3)\ndef say_hi():\n    return \"hi\"\n\nprint(say_hi())   # ['hi', 'hi', 'hi']\n```\n\n`@repeat(times=3)` is evaluated in two steps: first, `repeat(times=3)` is\ncalled immediately, which returns the actual `decorator` function; then\n*that* function is applied to `say_hi` as the real decorator, exactly as\n`@decorator` would be. This pattern explains why `@repeat(times=3)` needs the\nparentheses — `repeat` itself is a **decorator factory**, not the decorator.",
+              "scenario": "Implementing a retry-on-failure decorator where the number of retry attempts and delay between attempts should be configurable per function.",
+              "commonMistakes": "Forgetting one level of nesting — writing a decorator that accepts arguments directly instead of returning an inner decorator function first — which causes a TypeError when applied with @.",
+              "followUps": "How would this pattern change if you wanted the decorator to work both as @repeat and @repeat(times=3)?"
+            }
+          ]
+        },
+        {
+          "title": "Generators & yield",
+          "slug": "generators-and-yield",
+          "summary": "Produce values lazily, one at a time, with memory-efficient generator functions and expressions.",
+          "difficulty": "Advanced",
+          "lessons": [
+            {
+              "title": "Creating Generators",
+              "slug": "creating-generators",
+              "contentMarkdown": "\n## What is a Generator?\n\nA generator function looks like a normal function but uses `yield` instead\nof (or alongside) `return`. Calling it doesn't run the function body\nimmediately — it returns a **generator object**, which produces values\n**lazily**, one at a time, only as they're requested (e.g. by a `for` loop or\n`next()`).\n\n```python\ndef count_up_to(n):\n    count = 1\n    while count <= n:\n        yield count\n        count += 1\n\nfor number in count_up_to(5):\n    print(number)\n```\n\n### How execution pauses and resumes\n\nEach time `yield` is reached, the function's entire state (local variables,\nexecution position) is **paused**, and the yielded value is handed back to\nwhoever is iterating. Execution resumes from exactly that point the next time\na value is requested.\n\n```python\ndef simple_gen():\n    print(\"start\")\n    yield 1\n    print(\"middle\")\n    yield 2\n    print(\"end\")\n\ngen = simple_gen()\nprint(next(gen))\nprint(next(gen))\n```\n\n### Why use a generator instead of returning a list?\n\nGenerators are **memory-efficient**: they produce one value at a time instead\nof building an entire collection in memory up front. This matters enormously\nfor large or infinite sequences.\n\n```python\ndef infinite_counter():\n    n = 0\n    while True:\n        yield n\n        n += 1\n\ncounter = infinite_counter()\nfirst_three = [next(counter) for _ in range(3)]\nprint(first_three)\n```\n",
+              "codeExamples": [
+                {
+                  "description": "A basic generator function used in a for loop",
+                  "code": "def count_up_to(n):\n    count = 1\n    while count <= n:\n        yield count\n        count += 1\n\nfor number in count_up_to(5):\n    print(number)",
+                  "expectedOutput": "1\n2\n3\n4\n5"
+                },
+                {
+                  "description": "Observing paused/resumed execution with next()",
+                  "code": "def simple_gen():\n    print(\"start\")\n    yield 1\n    print(\"middle\")\n    yield 2\n    print(\"end\")\n\ngen = simple_gen()\nprint(next(gen))\nprint(next(gen))",
+                  "expectedOutput": "start\n1\nmiddle\n2"
+                }
+              ]
+            },
+            {
+              "title": "Generator Expressions and itertools",
+              "slug": "generator-expressions-and-itertools",
+              "contentMarkdown": "\n## Generator Expressions\n\nA generator expression is like a list comprehension, but with parentheses\ninstead of square brackets, and it produces values lazily instead of building\nthe whole list in memory immediately.\n\n```python\nsquares_list = [x ** 2 for x in range(1000000)]     # builds the full list now\nsquares_gen = (x ** 2 for x in range(1000000))      # builds nothing yet\n\nprint(next(squares_gen))\nprint(next(squares_gen))\n```\n\nThis is especially useful when passing data straight into a function that\nconsumes it one item at a time, like `sum()` or `any()`, since the full\nintermediate collection never needs to exist in memory:\n\n```python\nnumbers = range(1, 11)\ntotal = sum(x ** 2 for x in numbers)\nprint(total)\n```\n\n## The `itertools` Module\n\n`itertools` provides a toolbox of fast, memory-efficient iterator building\nblocks, designed to work naturally with generators.\n\n```python\nfrom itertools import islice, chain, count\n\n# islice: take a slice of an (even infinite) iterator\ncounter = count(start=1)              # infinite generator: 1, 2, 3, ...\nfirst_five = list(islice(counter, 5))\nprint(first_five)\n\n# chain: iterate over several iterables as if they were one\ncombined = list(chain([1, 2], [3, 4], [5]))\nprint(combined)\n```\n\n### Generators vs. lists: when to choose which\n\nUse a generator when you only need to **iterate once**, especially over\nlarge or unbounded data. Use a list when you need to **index into the data,\niterate multiple times, or know its length** (`len()` doesn't work on a\ngenerator, and once exhausted, a generator cannot be restarted or reused).\n",
+              "codeExamples": [
+                {
+                  "description": "A generator expression consumed lazily with next() and sum()",
+                  "code": "squares_gen = (x ** 2 for x in range(5))\nprint(next(squares_gen))\nprint(next(squares_gen))\ntotal = sum(x ** 2 for x in range(1, 11))\nprint(total)",
+                  "expectedOutput": "0\n1\n385"
+                },
+                {
+                  "description": "itertools.islice and chain working with an infinite counter",
+                  "code": "from itertools import islice, chain, count\n\ncounter = count(start=1)\nfirst_five = list(islice(counter, 5))\nprint(first_five)\n\ncombined = list(chain([1, 2], [3, 4], [5]))\nprint(combined)",
+                  "expectedOutput": "[1, 2, 3, 4, 5]\n[1, 2, 3, 4, 5]"
+                }
+              ]
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Intermediate",
+              "question": "What is the key difference between a function that uses `return` and one that uses `yield`, in terms of execution?",
+              "answer": "A function with **`return`** executes fully from start to finish (or until\nthe `return` statement), then hands back a single value and its entire local\nstate is discarded immediately.\n\nA function containing **`yield`** is a **generator function**: calling it\ndoesn't execute any of its code immediately — it returns a generator object.\nThe function body only starts running when you iterate it (via a `for` loop\nor `next()`), and execution **pauses** at each `yield`, preserving all local\nstate, resuming exactly where it left off the next time a value is\nrequested.\n\n```python\ndef normal_function():\n    return [1, 2, 3]       # computes everything, returns one list, done\n\ndef generator_function():\n    yield 1                # pauses here after producing 1\n    yield 2                # resumes, then pauses here after producing 2\n    yield 3                # resumes, then pauses here after producing 3\n\nfor value in generator_function():\n    print(value)\n```\n\nThis difference is the foundation of **lazy evaluation**: a generator only\ncomputes the next value when it's actually asked for one, which is why\ngenerators can represent even infinite sequences without ever running out of\nmemory, something a `return`-based function returning a full list never\ncould.",
+              "scenario": null,
+              "commonMistakes": "Trying to call len() on a generator, or iterating over the same generator object a second time expecting it to restart from the beginning (a fully consumed generator stays exhausted).",
+              "followUps": "What happens if you try to iterate over an already-exhausted generator a second time?"
+            },
+            {
+              "difficulty": "Advanced",
+              "question": "Why are generators more memory-efficient than lists for processing large datasets, and what's a concrete scenario where this matters?",
+              "answer": "A list comprehension builds the **entire collection in memory at once**,\nregardless of how much of it you actually end up using. A generator produces\nvalues **one at a time, on demand**, holding only the current item (plus a\nsmall amount of state) in memory at any point — not the whole sequence.\n\n```python\n# Builds a list of 10 million items in memory immediately\nsquares_list = [x ** 2 for x in range(10_000_000)]\n\n# Produces one value at a time; memory usage stays ~constant\nsquares_gen = (x ** 2 for x in range(10_000_000))\n```\n\n**Concrete scenario**: processing a huge log file line by line to find\nentries matching a pattern. Reading the whole file into a list of lines first\n(`lines = file.readlines()`) could consume gigabytes of RAM for a large file.\nIterating the file object directly (which is itself a generator-like\niterator) processes one line at a time:\n\n```python\ndef find_errors(filename):\n    with open(filename) as f:\n        for line in f:                 # one line in memory at a time\n            if \"ERROR\" in line:\n                yield line.strip()\n\nfor error_line in find_errors(\"huge_log.txt\"):\n    print(error_line)\n```\n\nThis pattern lets you process files or data streams **larger than available\nRAM**, and lets consumers start getting results immediately rather than\nwaiting for the entire dataset to be loaded and processed up front. The\ntrade-off: you give up random access (`squares_gen[5]` doesn't work) and the\nability to iterate more than once, since a generator is consumed as you go.",
+              "scenario": "A data pipeline needs to process a multi-gigabyte CSV or log file without loading the entire file into memory at once, since the production server has limited RAM.",
+              "commonMistakes": "Converting a generator to a list immediately (`list(my_generator())`) just to 'see all the values', which defeats the entire memory-saving purpose for large datasets.",
+              "followUps": "How would you chain multiple generator-based processing steps together (e.g. filter, then transform) without materializing intermediate lists?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is the syntax difference between a list comprehension and a generator expression, and how does that difference affect behavior?",
+              "answer": "Syntactically, the only difference is the brackets:\n\n```python\nlist_comp = [x * 2 for x in range(5)]    # square brackets -> list\ngen_expr  = (x * 2 for x in range(5))    # parentheses     -> generator\n```\n\nDespite the tiny syntactic difference, the behavior differs significantly:\n\n- `list_comp` is a fully built **list**: all five values are computed\n  immediately, you can index it (`list_comp[2]`), check its length\n  (`len(list_comp)`), and iterate over it as many times as you like.\n- `gen_expr` is a **generator object**: no values are computed yet. Values\n  are produced one at a time only as you call `next()` on it or iterate it\n  in a `for` loop, it cannot be indexed or measured with `len()`, and once\n  you've iterated through all its values, it's **exhausted** — iterating it\n  again yields nothing further.\n\n```python\ngen_expr = (x * 2 for x in range(3))\nprint(list(gen_expr))   # [0, 2, 4]\nprint(list(gen_expr))   # []  <- already exhausted, nothing left\n```\n\nA generator expression is the natural choice when you're feeding the values\ndirectly into something that consumes them one at a time anyway (like\n`sum(...)`, `any(...)`, or a `for` loop) and you don't need the full\ncollection to exist in memory or be reused.",
+              "scenario": null,
+              "commonMistakes": "Passing a generator expression where a function expects something it can iterate over multiple times (e.g. a plotting or reporting function called twice on the same 'collection'), and being confused why the second call returns nothing.",
+              "followUps": "If you needed to pass the same generated sequence to two different functions, how would you handle that given a generator can only be consumed once?"
+            }
+          ]
+        },
+        {
+          "title": "Virtual Environments & pip",
+          "slug": "virtual-environments-and-pip",
+          "summary": "Isolate project dependencies and manage third-party packages using venv and pip.",
+          "difficulty": "Beginner",
+          "lessons": [
+            {
+              "title": "What Are Virtual Environments?",
+              "slug": "what-are-virtual-environments",
+              "contentMarkdown": "\n## The Problem Virtual Environments Solve\n\nWithout isolation, every Python project on your machine would share the same\nset of globally installed packages. If Project A needs `django==3.2` and\nProject B needs `django==4.2`, installing one breaks the other — this is\noften called \"dependency hell\".\n\nA **virtual environment** is an isolated Python installation (really, a\nlightweight directory structure that references the main Python interpreter\nbut keeps its own separate set of installed packages) dedicated to a single\nproject. Each project gets its own independent set of dependencies, with no\nrisk of conflicting with any other project's requirements or the system-wide\nPython installation.\n\n### Creating and activating a virtual environment\n\n```bash\n# Create a virtual environment named \"venv\" in the current directory\npython -m venv venv\n\n# Activate it (macOS/Linux)\nsource venv/bin/activate\n\n# Activate it (Windows PowerShell)\nvenv\\Scripts\\Activate.ps1\n\n# Once activated, your shell prompt usually shows the environment name,\n# and `python`/`pip` now refer to the isolated environment's copies.\n\n# Deactivate when you're done\ndeactivate\n```\n\n### Why this matters for teams and deployment\n\nUsing a per-project virtual environment ensures that:\n- Every developer on the team installs the exact same dependency versions.\n- The project's dependencies don't silently depend on whatever happens to be\n  installed globally on one developer's machine.\n- Production deployments can reliably recreate the same environment the\n  application was developed and tested against.\n\nThis lesson is conceptual — virtual environment and `pip` commands are run in\na terminal, not inside a Python script, so there's no runnable code example\nhere; the focus is understanding the workflow and why it matters.\n",
+              "codeExamples": []
+            },
+            {
+              "title": "Using pip to Manage Packages",
+              "slug": "using-pip-to-manage-packages",
+              "contentMarkdown": "\n## `pip`: Python's Package Installer\n\n`pip` is the standard tool for installing third-party packages from the\nPython Package Index (PyPI) and other sources, and should always be run\n**inside an activated virtual environment** for project work so installed\npackages stay isolated to that project.\n\n```bash\n# Install the latest version of a package\npip install requests\n\n# Install a specific version\npip install django==4.2.7\n\n# Install multiple packages at once\npip install requests flask pytest\n\n# Upgrade an already-installed package\npip install --upgrade requests\n\n# Uninstall a package\npip uninstall requests\n\n# List installed packages and their versions\npip list\n```\n\n## `requirements.txt`: Reproducible Dependencies\n\nA `requirements.txt` file records the exact packages (and ideally exact\nversions) a project depends on, so anyone else — or any deployment pipeline —\ncan recreate the same environment reliably.\n\n```bash\n# Generate a requirements.txt from the current environment's installed packages\npip freeze > requirements.txt\n\n# Install everything listed in a requirements.txt (e.g. after cloning a repo)\npip install -r requirements.txt\n```\n\nA typical `requirements.txt` file looks like:\n\n```\nrequests==2.31.0\nflask==3.0.0\npytest==7.4.3\n```\n\n### Best practice workflow\n\n1. Create and activate a virtual environment for the project.\n2. Install only the packages the project actually needs with `pip install`.\n3. Run `pip freeze > requirements.txt` to capture exact versions.\n4. Commit `requirements.txt` to version control (never commit the `venv`\n   directory itself — it's large, machine-specific, and easily recreated).\n5. Teammates run `pip install -r requirements.txt` after cloning to get an\n   identical set of dependencies.\n\nThis lesson is conceptual — these are terminal/shell commands for managing\npackages, not Python code to execute, so there's no runnable code example\nhere.\n",
+              "codeExamples": []
+            }
+          ],
+          "interviewQuestions": [
+            {
+              "difficulty": "Beginner",
+              "question": "What problem do virtual environments solve, and why shouldn't you just install all packages globally?",
+              "answer": "Installing packages **globally** (system-wide, without a virtual\nenvironment) means every Python project on the machine shares exactly one\nset of installed package versions. This causes serious problems once you\nhave more than one project:\n\n1. **Version conflicts**: Project A needs `requests==2.20`, Project B needs\n   `requests==2.31` — installing one for one project breaks the other,\n   since there's only one global copy.\n2. **Unreproducible environments**: a project might accidentally rely on a\n   package that happens to be installed globally but isn't declared as a\n   dependency anywhere, so it silently fails for teammates or in production\n   where that package isn't present.\n3. **Risk to system tools**: some operating systems ship with Python\n   pre-installed and use it to run system utilities; carelessly upgrading or\n   removing global packages can break those tools.\n\nA **virtual environment** (`python -m venv venv`) creates an isolated,\nproject-specific set of installed packages. Activating it points `python`\nand `pip` at that isolated environment, so installing or upgrading packages\nfor one project has zero effect on any other project or the system Python.\nThis is considered a non-negotiable best practice for any real Python\nproject, however small.",
+              "scenario": "Two client projects on the same developer machine need incompatible versions of the same third-party library, and installing one globally breaks the other project's build.",
+              "commonMistakes": "Installing packages with a plain `pip install` without first activating a virtual environment, polluting the global/system Python installation.",
+              "followUps": "What is the difference between venv (built into Python) and third-party tools like virtualenv, conda, or Poetry?"
+            },
+            {
+              "difficulty": "Beginner",
+              "question": "What is the purpose of a `requirements.txt` file, and how do you generate and use one?",
+              "answer": "`requirements.txt` is a plain text file listing a project's third-party\ndependencies, typically with exact version numbers, so that the project's\nenvironment can be reliably recreated elsewhere — by a teammate cloning the\nrepository, or by a deployment/CI pipeline.\n\n**Generating one** from your current virtual environment's installed\npackages:\n\n```bash\npip freeze > requirements.txt\n```\n\nThis captures every currently installed package and its exact version, e.g.:\n\n```\nrequests==2.31.0\nflask==3.0.0\npytest==7.4.3\n```\n\n**Using one** to install all listed dependencies (typically right after\ncreating and activating a fresh virtual environment for a cloned project):\n\n```bash\npip install -r requirements.txt\n```\n\nThis workflow ensures that anyone setting up the project — a new teammate, a\nCI server, or a production deployment — ends up with the **exact same**\npackage versions the project was developed and tested against, avoiding the\nclassic \"works on my machine\" problem caused by subtly different dependency\nversions.",
+              "scenario": "A new developer joins the team and needs to get a Python project running locally with the exact same dependency versions as everyone else, without manually figuring out what to install.",
+              "commonMistakes": "Committing the entire venv/ directory to version control instead of just requirements.txt — this bloats the repository and isn't portable across operating systems, since a venv is tied to the machine it was created on.",
+              "followUps": "What is the difference between pip freeze output and a manually curated requirements.txt that only lists direct (top-level) dependencies?"
+            },
+            {
+              "difficulty": "Intermediate",
+              "question": "What's the difference between `pip install package` and `pip install package==1.2.3`, and why would a production project pin exact versions?",
+              "answer": "`pip install package` installs the **latest available version** of a\npackage from PyPI at the time the command runs. `pip install\npackage==1.2.3` installs that **exact, specific version**, regardless of\nwhat newer versions exist.\n\n```bash\npip install requests          # gets whatever the newest version is today\npip install requests==2.31.0  # gets exactly 2.31.0, always, forever\n```\n\n**Why pin exact versions in production**:\n\n1. **Reproducibility**: without pinning, running `pip install -r\n   requirements.txt` today versus six months from now could silently install\n   different package versions, potentially introducing breaking changes or\n   new bugs that weren't present when the project was tested.\n2. **Stability**: a new major version of a dependency might change its API\n   or behavior in ways that break your code, even though your own code\n   hasn't changed at all.\n3. **Auditability**: knowing the exact versions deployed makes it far easier\n   to reason about security vulnerabilities (e.g. \"are we affected by this\n   CVE in version X?\") and to debug issues that only appear with specific\n   dependency versions.\n\nThe trade-off is that pinned dependencies don't automatically receive\nsecurity patches or bug fixes — teams typically use tools (like `pip-audit`,\nDependabot, or periodic manual review) to deliberately and carefully update\npinned versions on a regular cadence, rather than leaving versions\ncompletely unconstrained or never updating them at all.",
+              "scenario": "A production deployment pipeline needs to guarantee that every deploy uses the exact same dependency versions that passed testing in staging, with zero surprises from an upstream package release.",
+              "commonMistakes": "Leaving dependencies unpinned in a production requirements.txt, allowing an automatic upgrade of a dependency to silently introduce a breaking change or vulnerability between deployments.",
+              "followUps": "How do lock files in tools like Poetry or pipenv improve on a plain requirements.txt for managing transitive dependencies?"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
