@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -12,6 +13,7 @@ import {
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useNetworkStatus } from '../../../hooks/useNetworkStatus';
@@ -21,6 +23,12 @@ import { LoadingSkeleton } from '../../../components/LoadingSkeleton';
 import * as chatRepo from '../../../data/chat';
 import { streamChatMessage } from '../../../api/sse';
 import { ChatMessage } from '../../../types/models';
+
+interface PendingImage {
+  uri: string;
+  base64: string;
+  mimeType: string;
+}
 
 export default function ChatScreen() {
   const params = useLocalSearchParams<{ sessionId: string; contextTopicId?: string; starter?: string }>();
@@ -35,6 +43,8 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState(params.starter ?? '');
   const [streamingId, setStreamingId] = useState<string | null>(null);
+  const [pendingImage, setPendingImage] = useState<PendingImage | null>(null);
+  const [capturing, setCapturing] = useState(false);
   // Created lazily on first send (see handleSend) and reused across retries
   // after a failed send, so a flaky first attempt doesn't leave behind one
   // orphan session per retry.
@@ -48,10 +58,33 @@ export default function ChatScreen() {
     requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: true }));
   }, []);
 
+  const handleCapturePhoto = useCallback(async () => {
+    if (capturing) return;
+    setCapturing(true);
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Camera access needed',
+          'Allow camera access for CodeAtlas in your device settings to capture a photo for the AI tutor.'
+        );
+        return;
+      }
+      const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.5, base64: true });
+      const asset = result.canceled ? null : result.assets[0];
+      if (!asset?.base64) return;
+      setPendingImage({ uri: asset.uri, base64: asset.base64, mimeType: asset.mimeType ?? 'image/jpeg' });
+    } finally {
+      setCapturing(false);
+    }
+  }, [capturing]);
+
   const handleSend = useCallback(async () => {
     const content = input.trim();
-    if (!content || !isOnline || streamingId) return;
+    const image = pendingImage;
+    if ((!content && !image) || !isOnline || streamingId) return;
     setInput('');
+    setPendingImage(null);
 
     let sessionId = params.sessionId;
     if (isNew) {
@@ -62,54 +95,73 @@ export default function ChatScreen() {
       sessionId = draftSessionIdRef.current;
     }
 
-    const userMessage = await chatRepo.addLocalMessage(sessionId, 'User', content);
+    // The backend requires non-empty content; a bare photo gets a sensible
+    // default prompt so the learner isn't forced to type anything first.
+    const messageText = content || "What's shown in this photo?";
+
+    const userMessage = await chatRepo.addLocalMessage(sessionId, 'User', messageText, image?.uri);
     const assistantMessage = await chatRepo.addLocalMessage(sessionId, 'Assistant', '');
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
     setStreamingId(assistantMessage.id);
     scrollToEnd();
 
     let accumulated = '';
-    streamChatMessage(sessionId, content, {
-      onDelta: (delta) => {
-        accumulated += delta;
-        const snapshot = accumulated;
-        setMessages((prev) => prev.map((m) => (m.id === assistantMessage.id ? { ...m, content: snapshot } : m)));
-        void chatRepo.updateLocalMessageContent(assistantMessage.id, snapshot);
-        scrollToEnd();
+    streamChatMessage(
+      sessionId,
+      messageText,
+      {
+        onDelta: (delta) => {
+          accumulated += delta;
+          const snapshot = accumulated;
+          setMessages((prev) => prev.map((m) => (m.id === assistantMessage.id ? { ...m, content: snapshot } : m)));
+          void chatRepo.updateLocalMessageContent(assistantMessage.id, snapshot);
+          scrollToEnd();
+        },
+        onDone: () => {
+          setStreamingId(null);
+          void chatRepo.markMessageSynced(assistantMessage.id);
+          void chatRepo.markMessageSynced(userMessage.id);
+          // Only now swap the URL from the "new" draft placeholder to the real
+          // session id — the server has actually persisted this exchange by
+          // this point. Doing this right after creating the session instead
+          // (before the message was even sent) flips `isNew` false and enables
+          // the server-messages fetch while the reply is still streaming; that
+          // fetch would see a session with zero messages yet and wipe the
+          // optimistic UI with an empty list.
+          if (isNew) {
+            queryClient.invalidateQueries({ queryKey: ['chat-sessions'] });
+            router.replace({ pathname: '/(tabs)/ai-tutor/[sessionId]', params: { sessionId } });
+          }
+        },
+        onError: () => {
+          setStreamingId(null);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantMessage.id
+                ? { ...m, content: accumulated || '_Sorry, something went wrong. Please try again._' }
+                : m
+            )
+          );
+          // Leave the URL on "new" so the screen keeps showing this local,
+          // unsynced state rather than racing a now-enabled server fetch that
+          // may see an incomplete (or empty) version of this turn. The session
+          // itself is kept in draftSessionIdRef so a retry reuses it instead
+          // of creating another one.
+        },
       },
-      onDone: () => {
-        setStreamingId(null);
-        void chatRepo.markMessageSynced(assistantMessage.id);
-        void chatRepo.markMessageSynced(userMessage.id);
-        // Only now swap the URL from the "new" draft placeholder to the real
-        // session id — the server has actually persisted this exchange by
-        // this point. Doing this right after creating the session instead
-        // (before the message was even sent) flips `isNew` false and enables
-        // the server-messages fetch while the reply is still streaming; that
-        // fetch would see a session with zero messages yet and wipe the
-        // optimistic UI with an empty list.
-        if (isNew) {
-          queryClient.invalidateQueries({ queryKey: ['chat-sessions'] });
-          router.replace({ pathname: '/(tabs)/ai-tutor/[sessionId]', params: { sessionId } });
-        }
-      },
-      onError: () => {
-        setStreamingId(null);
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMessage.id
-              ? { ...m, content: accumulated || '_Sorry, something went wrong. Please try again._' }
-              : m
-          )
-        );
-        // Leave the URL on "new" so the screen keeps showing this local,
-        // unsynced state rather than racing a now-enabled server fetch that
-        // may see an incomplete (or empty) version of this turn. The session
-        // itself is kept in draftSessionIdRef so a retry reuses it instead
-        // of creating another one.
-      },
-    });
-  }, [input, isOnline, isNew, streamingId, params.sessionId, params.contextTopicId, queryClient, scrollToEnd]);
+      image ? { base64: image.base64, mimeType: image.mimeType } : undefined
+    );
+  }, [
+    input,
+    pendingImage,
+    isOnline,
+    isNew,
+    streamingId,
+    params.sessionId,
+    params.contextTopicId,
+    queryClient,
+    scrollToEnd,
+  ]);
 
   const handleDelete = useCallback(() => {
     Alert.alert('Delete conversation?', 'This chat history will be permanently deleted.', [
@@ -194,7 +246,36 @@ export default function ChatScreen() {
         </View>
       )}
 
+      {pendingImage && (
+        <View style={[styles.previewRow, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+          <Image source={{ uri: pendingImage.uri }} style={styles.previewThumb} />
+          <Text style={{ color: colors.textMuted, fontSize: 12, flex: 1 }} numberOfLines={2}>
+            Photo attached — it'll be sent with your next message.
+          </Text>
+          <Pressable
+            onPress={() => setPendingImage(null)}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel="Remove photo"
+          >
+            <Ionicons name="close-circle" size={22} color={colors.textMuted} />
+          </Pressable>
+        </View>
+      )}
+
       <View style={[styles.inputRow, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+        <Pressable
+          onPress={handleCapturePhoto}
+          disabled={!isOnline || capturing}
+          accessibilityRole="button"
+          accessibilityLabel="Capture photo"
+          style={({ pressed }) => [
+            styles.cameraBtn,
+            { backgroundColor: colors.surfaceAlt, opacity: !isOnline ? 0.4 : pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Ionicons name="camera-outline" size={22} color={colors.text} />
+        </Pressable>
         <TextInput
           value={input}
           onChangeText={setInput}
@@ -207,14 +288,14 @@ export default function ChatScreen() {
         />
         <Pressable
           onPress={handleSend}
-          disabled={!isOnline || !input.trim() || Boolean(streamingId)}
+          disabled={!isOnline || (!input.trim() && !pendingImage) || Boolean(streamingId)}
           accessibilityRole="button"
           accessibilityLabel="Send message"
           style={({ pressed }) => [
             styles.sendBtn,
             {
               backgroundColor: colors.primary,
-              opacity: !isOnline || !input.trim() || streamingId ? 0.4 : pressed ? 0.85 : 1,
+              opacity: !isOnline || (!input.trim() && !pendingImage) || streamingId ? 0.4 : pressed ? 0.85 : 1,
             },
           ]}
         >
@@ -238,5 +319,15 @@ const styles = StyleSheet.create({
   },
   input: { flex: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, maxHeight: 120, fontSize: 15 },
   sendBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  cameraBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   backBtn: { paddingHorizontal: 4, paddingVertical: 4 },
+  previewRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  previewThumb: { width: 44, height: 44, borderRadius: 8 },
 });

@@ -106,8 +106,11 @@ public class ChatController : ControllerBase
         bufferingFeature?.DisableBuffering();
 
         var fullReply = new StringBuilder();
+        ChatImageAttachment? image = request.ImageBase64 is not null && request.ImageMimeType is not null
+            ? new ChatImageAttachment(request.ImageBase64, request.ImageMimeType)
+            : null;
 
-        await foreach (var chunk in _aiChatService.StreamReplyAsync(request.Content, topicContext, ct))
+        await foreach (var chunk in _aiChatService.StreamReplyAsync(request.Content, topicContext, image, ct))
         {
             fullReply.Append(chunk);
 

@@ -7,5 +7,8 @@ namespace CodeAtlas.Application.Interfaces;
 /// </summary>
 public interface IAiChatService
 {
-    IAsyncEnumerable<string> StreamReplyAsync(string userMessage, string? topicContext, CancellationToken ct);
+    IAsyncEnumerable<string> StreamReplyAsync(string userMessage, string? topicContext, ChatImageAttachment? image, CancellationToken ct);
 }
+
+/// <summary>A photo captured by the mobile client, sent along with the turn it was attached to (never persisted).</summary>
+public record ChatImageAttachment(string Base64Data, string MimeType);

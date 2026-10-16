@@ -31,7 +31,13 @@
       "expo-sqlite",
       "expo-secure-store",
       "expo-status-bar",
-      "expo-splash-screen"
+      "expo-splash-screen",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "CodeAtlas uses the camera so you can snap a photo of a problem and ask the AI tutor about it."
+        }
+      ]
     ]
   }
 }

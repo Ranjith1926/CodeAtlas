@@ -91,7 +91,8 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   role TEXT NOT NULL,
   content TEXT NOT NULL,
   createdAt TEXT,
-  pendingSync INTEGER DEFAULT 0
+  pendingSync INTEGER DEFAULT 0,
+  imageUri TEXT
 );
 
 CREATE TABLE IF NOT EXISTS downloads (
@@ -105,6 +106,16 @@ export function getDb(): Promise<SQLite.SQLiteDatabase> {
   if (!dbPromise) {
     dbPromise = SQLite.openDatabaseAsync(SQLITE_DB_NAME).then(async (db) => {
       await db.execAsync(SCHEMA);
+      // `CREATE TABLE IF NOT EXISTS` above only shapes a brand-new database —
+      // an install that already has a chat_messages table from before this
+      // column existed needs it added explicitly. SQLite has no "ADD COLUMN
+      // IF NOT EXISTS", so just swallow the "duplicate column" error on a
+      // database that already has it.
+      try {
+        await db.execAsync('ALTER TABLE chat_messages ADD COLUMN imageUri TEXT');
+      } catch {
+        // already present
+      }
       return db;
     });
   }

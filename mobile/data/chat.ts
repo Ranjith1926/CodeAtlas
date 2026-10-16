@@ -68,8 +68,13 @@ async function cacheMessages(sessionId: string, messages: ChatMessage[]) {
   await runWrite((db) =>
     db.withTransactionAsync(async () => {
       for (const m of messages) {
+        // ON CONFLICT (not INSERT OR REPLACE) so re-caching a message the
+        // server already knows about doesn't null out its local-only
+        // imageUri, which the server response never carries.
         await db.runAsync(
-          'INSERT OR REPLACE INTO chat_messages (id, sessionId, role, content, createdAt, pendingSync) VALUES (?, ?, ?, ?, ?, 0)',
+          `INSERT INTO chat_messages (id, sessionId, role, content, createdAt, pendingSync)
+           VALUES (?, ?, ?, ?, ?, 0)
+           ON CONFLICT(id) DO UPDATE SET role = excluded.role, content = excluded.content, createdAt = excluded.createdAt, pendingSync = 0`,
           [m.id, sessionId, m.role, m.content, m.createdAt]
         );
       }
@@ -80,26 +85,27 @@ async function cacheMessages(sessionId: string, messages: ChatMessage[]) {
 async function readCachedMessages(sessionId: string): Promise<ChatMessage[]> {
   const db = await getDb();
   return db.getAllAsync<ChatMessage>(
-    'SELECT id, role, content, createdAt FROM chat_messages WHERE sessionId = ? ORDER BY createdAt ASC',
+    'SELECT id, role, content, createdAt, imageUri FROM chat_messages WHERE sessionId = ? ORDER BY createdAt ASC',
     [sessionId]
   );
 }
 
-/** Adds a message locally before/while it's being sent or streamed. */
+/** Adds a message locally before/while it's being sent or streamed. `imageUri` is device-local only — never sent to or read back from the server. */
 export async function addLocalMessage(
   sessionId: string,
   role: 'User' | 'Assistant',
-  content: string
+  content: string,
+  imageUri?: string | null
 ): Promise<ChatMessage> {
   const id = makeLocalId();
   const createdAt = new Date().toISOString();
   await runWrite((db) =>
     db.runAsync(
-      'INSERT INTO chat_messages (id, sessionId, role, content, createdAt, pendingSync) VALUES (?, ?, ?, ?, ?, 1)',
-      [id, sessionId, role, content, createdAt]
+      'INSERT INTO chat_messages (id, sessionId, role, content, createdAt, pendingSync, imageUri) VALUES (?, ?, ?, ?, ?, 1, ?)',
+      [id, sessionId, role, content, createdAt, imageUri ?? null]
     )
   );
-  return { id, role, content, createdAt };
+  return { id, role, content, createdAt, imageUri: imageUri ?? null };
 }
 
 /** Called on every streamed delta to keep the local cache current. */

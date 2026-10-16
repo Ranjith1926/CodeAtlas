@@ -78,9 +78,14 @@ public class MockAiChatService : IAiChatService
     public async IAsyncEnumerable<string> StreamReplyAsync(
         string userMessage,
         string? topicContext,
+        ChatImageAttachment? image,
         [EnumeratorCancellation] CancellationToken ct)
     {
-        var reply = BuildReply(userMessage, topicContext);
+        var reply = image is not null
+            ? "I can see you've attached a photo! I'm currently running as a **demo AI tutor**, so I can't actually " +
+              "look at images yet — that needs the real Gemini-backed tutor. Once that's switched on, you'll be able " +
+              "to snap a photo of a problem, a whiteboard, or some code and ask me about it directly."
+            : BuildReply(userMessage, topicContext);
         var words = reply.Split(' ');
 
         for (var i = 0; i < words.Length; i++)

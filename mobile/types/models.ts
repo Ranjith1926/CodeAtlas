@@ -142,4 +142,6 @@ export interface ChatMessage {
   role: 'User' | 'Assistant';
   content: string;
   createdAt: string;
+  /** Local-only: the photo this message was sent with, if any. Device-local (not synced, not returned by the server). */
+  imageUri?: string | null;
 }

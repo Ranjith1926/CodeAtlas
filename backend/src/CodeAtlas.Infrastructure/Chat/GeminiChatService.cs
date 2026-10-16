@@ -34,6 +34,7 @@ public class GeminiChatService : IAiChatService
     public async IAsyncEnumerable<string> StreamReplyAsync(
         string userMessage,
         string? topicContext,
+        ChatImageAttachment? image,
         [EnumeratorCancellation] CancellationToken ct)
     {
         var options = Options;
@@ -48,12 +49,21 @@ public class GeminiChatService : IAiChatService
             ? userMessage
             : $"(The learner is currently viewing the topic \"{topicContext}\".)\n\n{userMessage}";
 
+        // A photo attached from the camera rides alongside the text as a second
+        // "part" in the same turn — Gemini's multimodal models read both together,
+        // which is what lets a learner snap a photo of a problem and ask about it.
+        var parts = new List<object> { new { text = promptText } };
+        if (image is not null)
+        {
+            parts.Add(new { inline_data = new { mime_type = image.MimeType, data = image.Base64Data } });
+        }
+
         var requestBody = new
         {
             systemInstruction = new { parts = new[] { new { text = SystemInstruction } } },
             contents = new[]
             {
-                new { role = "user", parts = new[] { new { text = promptText } } }
+                new { role = "user", parts }
             }
         };
 

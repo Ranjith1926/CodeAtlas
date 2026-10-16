@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { MarkdownContent } from './MarkdownContent';
 import { ChatMessage } from '../types/models';
@@ -25,8 +25,11 @@ export function ChatBubble({ message, isStreaming }: ChatBubbleProps) {
           },
         ]}
       >
+        {message.imageUri ? (
+          <Image source={{ uri: message.imageUri }} style={styles.image} resizeMode="cover" />
+        ) : null}
         {isUser ? (
-          <Text style={{ color: colors.primaryText, fontSize: 15 }}>{message.content}</Text>
+          message.content ? <Text style={{ color: colors.primaryText, fontSize: 15 }}>{message.content}</Text> : null
         ) : message.content ? (
           <MarkdownContent content={message.content} />
         ) : isStreaming ? (
@@ -48,4 +51,5 @@ const styles = StyleSheet.create({
   rowRight: { justifyContent: 'flex-end' },
   bubble: { maxWidth: '85%', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
   typingRow: { marginTop: 4, alignItems: 'flex-start' },
+  image: { width: 200, height: 150, borderRadius: 10, marginBottom: 6 },
 });

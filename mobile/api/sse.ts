@@ -22,10 +22,16 @@ export interface StreamHandle {
   abort: () => void;
 }
 
+export interface ChatImageAttachment {
+  base64: string;
+  mimeType: string;
+}
+
 export function streamChatMessage(
   sessionId: string,
   content: string,
-  handlers: StreamHandlers
+  handlers: StreamHandlers,
+  image?: ChatImageAttachment
 ): StreamHandle {
   const xhr = new XMLHttpRequest();
   let processedLength = 0;
@@ -95,7 +101,13 @@ export function streamChatMessage(
     }
   };
 
-  xhr.send(JSON.stringify({ content }));
+  xhr.send(
+    JSON.stringify(
+      image
+        ? { content, imageBase64: image.base64, imageMimeType: image.mimeType }
+        : { content }
+    )
+  );
 
   return {
     abort: () => {

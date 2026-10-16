@@ -17,7 +17,7 @@ public class OpenAiChatService : IAiChatService
         _options = options.Value;
     }
 
-    public IAsyncEnumerable<string> StreamReplyAsync(string userMessage, string? topicContext, CancellationToken ct)
+    public IAsyncEnumerable<string> StreamReplyAsync(string userMessage, string? topicContext, ChatImageAttachment? image, CancellationToken ct)
     {
         throw new NotSupportedException(
             "OpenAiChatService is not implemented yet. Set AiProvider=OpenAI only after wiring up the " +

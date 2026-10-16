@@ -29,4 +29,10 @@ public class PostChatMessageRequest
 {
     [Required]
     public string Content { get; set; } = string.Empty;
+
+    /// <summary>Base64-encoded photo captured from the mobile client's camera, if any. Never persisted — used only for this one turn's prompt to the AI.</summary>
+    public string? ImageBase64 { get; set; }
+
+    /// <summary>MIME type of <see cref="ImageBase64"/>, e.g. "image/jpeg". Required when ImageBase64 is set.</summary>
+    public string? ImageMimeType { get; set; }
 }
